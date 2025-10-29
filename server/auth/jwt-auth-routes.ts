@@ -33,6 +33,32 @@ export function setupJWTAuthRoutes(app: Express): void {
   // Add cookie parser middleware
   app.use(cookieParser());
 
+  /**
+   * @swagger
+   * /auth/register:
+   *   post:
+   *     summary: Register a new user
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/RegisterRequest'
+   *     responses:
+   *       201:
+   *         description: User registered successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/LoginResponse'
+   *       400:
+   *         description: Username or email already exists
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   // JWT Register endpoint
   app.post(
     "/api/auth/register",
@@ -133,7 +159,7 @@ export function setupJWTAuthRoutes(app: Express): void {
         });
 
         // Return user data and access token
-        const { password, ...userWithoutPassword } = user;
+        const { password: _password, ...userWithoutPassword } = user;
         res.status(201).json({
           user: userWithoutPassword as PublicUser,
           accessToken: finalTokens.accessToken,
@@ -153,6 +179,32 @@ export function setupJWTAuthRoutes(app: Express): void {
     },
   );
 
+  /**
+   * @swagger
+   * /auth/login:
+   *   post:
+   *     summary: Login user
+   *     tags: [Authentication]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/LoginRequest'
+   *     responses:
+   *       200:
+   *         description: Login successful
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/LoginResponse'
+   *       401:
+   *         description: Invalid credentials
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/Error'
+   */
   // JWT Login endpoint
   app.post(
     "/api/auth/login",
@@ -244,7 +296,7 @@ export function setupJWTAuthRoutes(app: Express): void {
         });
 
         // Return user data and access token
-        const { password, ...userWithoutPassword } = user;
+        const { password: _password, ...userWithoutPassword } = user;
         res.json({
           user: userWithoutPassword as PublicUser,
           accessToken: finalTokens.accessToken,
@@ -360,7 +412,7 @@ export function setupJWTAuthRoutes(app: Express): void {
         });
 
         // Return new access token and user data
-        const { password, ...userWithoutPassword } = user;
+        const { password: _password, ...userWithoutPassword } = user;
         res.json({
           user: userWithoutPassword as PublicUser,
           accessToken: newTokens.accessToken,
@@ -434,7 +486,7 @@ export function setupJWTAuthRoutes(app: Express): void {
           return;
         }
 
-        const { password, ...userWithoutPassword } = user;
+        const { password: _password, ...userWithoutPassword } = user;
         res.json(userWithoutPassword as PublicUser);
       } catch (error) {
         next(error);

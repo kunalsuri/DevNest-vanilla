@@ -4,6 +4,8 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupSwagger } from "./swagger";
+import { initSentry, setupSentryErrorHandler } from "./monitoring/sentry";
 import logger from "./logger";
 import { env } from "./env";
 
@@ -11,6 +13,9 @@ import { env } from "./env";
 export const SERVER_START_TIME = new Date();
 
 const app = express();
+
+// Initialize Sentry (must be first)
+initSentry(app);
 
 // Security: Helmet middleware for setting various HTTP headers
 app.use(
@@ -179,32 +184,45 @@ app.use((req, res, next) => {
   const { storage } = await import("./storage");
   await storage.ready();
 
+  // Setup API documentation
+  setupSwagger(app);
+
   const server = await registerRoutes(app);
 
+  // Setup Sentry error handler (must be before other error handlers)
+  setupSentryErrorHandler(app);
+
   // Enhanced error handling middleware
-  app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+  app.use(
+    (
+      err: Error & { status?: number; statusCode?: number; details?: unknown },
+      req: Request,
+      res: Response,
+      _next: NextFunction,
+    ) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
 
-    // Log error details with Winston
-    logger.error(`Error ${status} on ${req.method} ${req.path}`, {
-      message: err.message,
-      stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-      body: req.body,
-      statusCode: status,
-      method: req.method,
-      path: req.path,
-    });
+      // Log error details with Winston
+      logger.error(`Error ${status} on ${req.method} ${req.path}`, {
+        message: err.message,
+        stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+        body: req.body,
+        statusCode: status,
+        method: req.method,
+        path: req.path,
+      });
 
-    // Send structured error response
-    res.status(status).json({
-      message,
-      ...(process.env.NODE_ENV === "development" && {
-        stack: err.stack,
-        details: err.details,
-      }),
-    });
-  });
+      // Send structured error response
+      res.status(status).json({
+        message,
+        ...(process.env.NODE_ENV === "development" && {
+          stack: err.stack,
+          details: err.details,
+        }),
+      });
+    },
+  );
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route

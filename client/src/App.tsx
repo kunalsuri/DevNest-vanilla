@@ -11,6 +11,10 @@ import { ErrorBoundary, RouteErrorBoundary } from "@/components/error-boundary";
 import { Loader2 } from "lucide-react";
 import { usePageObservability } from "@/hooks/use-observability";
 import { initializeObservability } from "@/features/observability";
+import { initSentry } from "@/lib/sentry";
+
+// Initialize Sentry
+initSentry();
 
 // Code-split pages with React.lazy for better performance
 const LandingPage = lazy(() => import("@/pages/landing-page"));

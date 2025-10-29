@@ -47,6 +47,26 @@ interface HealthStatus {
 }
 
 /**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Basic health check
+ *     tags: [Health]
+ *     responses:
+ *       200:
+ *         description: Service is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HealthResponse'
+ *       503:
+ *         description: Service is unhealthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/HealthResponse'
+ */
+/**
  * Basic health check endpoint
  * Returns 200 if the application is running
  */

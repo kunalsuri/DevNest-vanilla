@@ -46,6 +46,26 @@ const profileUpdateSchema = z.object({
 });
 
 export function setupProfile(app: Express) {
+  /**
+   * @swagger
+   * /profile:
+   *   get:
+   *     summary: Get user profile
+   *     tags: [Profile]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: User profile retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/User'
+   *       401:
+   *         description: Unauthorized
+   *       404:
+   *         description: User not found
+   */
   // Get user profile
   app.get("/api/profile", validateAccessToken, async (req, res) => {
     try {
