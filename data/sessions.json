@@ -1,0 +1,33 @@
+[
+  {
+    "sessionId": "87091273af7bff7cfc9363afd0a76bf1e91a85f9d7b8b6b4860b046c6beef26c",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "baf08d38c7685abdd68ef72bacab555ee55fc498e8f14e1a2b96370c46aa70fc",
+    "csrfTokenHash": "0e73bf2cd75a61ab868f54aa356822a2e1b2767270bf3991bfdecfdd3e812229",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+    "ip": "172.31.118.162",
+    "createdAt": "2025-10-25T03:37:09.176Z",
+    "expiresAt": "2025-11-01T03:37:09.176Z"
+  },
+  {
+    "sessionId": "cbd10912277559821714bdfd0bc305aabd431911f686a4911949b05ab6fe093f",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "3e6d219e4e755836b2c03f56988d1ffa4efb703424e777181897cf369485847e",
+    "csrfTokenHash": "7dae514b16795811b38cd58af1a9206bf0bec29f2d2469bc1fa3455a5359b754",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2025-10-29T07:55:26.298Z",
+    "expiresAt": "2025-11-05T07:55:26.298Z",
+    "revokedAt": "2025-10-29T14:10:55.994Z"
+  },
+  {
+    "sessionId": "fe7bcde94037cfd3d772b184d80a8a0747f16618a331ab446b0cf6dae0be78b0",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "c28f15db26468b84d2146d661a7ea1b49301459fd3dcad5466ea2eea1d0841aa",
+    "csrfTokenHash": "05f016201cb7c9fb959d27ff75daf80f5fa7ad32b7d0a82c5f74eff36e3a5622",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2025-10-29T14:10:58.446Z",
+    "expiresAt": "2025-11-05T14:10:58.446Z"
+  }
+]

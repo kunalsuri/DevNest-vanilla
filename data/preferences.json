@@ -1,0 +1,11 @@
+[
+  {
+    "userId": "359e85e9-765a-435c-8ff3-034194be8f76",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "system"
+  }
+]

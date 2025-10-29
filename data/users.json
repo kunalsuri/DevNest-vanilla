@@ -1,0 +1,46 @@
+[
+  {
+    "username": "admin",
+    "email": "admin@devnest.com",
+    "password": "5a3f8a6d2e7035a113a69bcf8f2c1df331254625095579382ca4cd569f77a33520788a347720b30c13c66e50e80c652fadb0316df623a2a4d4f2b98406c87e3c.d47c43733dfe958e0a7af4c916fcc99c",
+    "firstName": "Admin",
+    "lastName": "User",
+    "role": "admin",
+    "id": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "profilePicture": null,
+    "createdAt": "2025-09-24T22:15:13.726Z"
+  },
+  {
+    "username": "testuser123",
+    "email": "test123@example.com",
+    "password": "$2b$12$CBMpr8mXmEAVy9FzjaIHJ.p.nd.Q6AMoqv//Exlg6QzYPtuqA7Dkm",
+    "firstName": "Test",
+    "lastName": "User",
+    "id": "c66debb8-0d73-4739-b842-893f5ab09b4b",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-09-28T18:41:43.758Z"
+  },
+  {
+    "username": "testuser456",
+    "email": "test456@example.com",
+    "password": "$2b$12$B80pb8dSBRUM.pw.ftUa0ecrgbC4vYjOb1zVoJSL/xdlhtfBhFNDK",
+    "firstName": "Test",
+    "lastName": "User",
+    "id": "05ac1129-707f-4bcb-b842-e9523087d18e",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-09-28T19:38:08.428Z"
+  },
+  {
+    "username": "newuser789",
+    "email": "new789@example.com",
+    "password": "$2b$12$7fIvSq1sY9lfVQm0US6CreSx6D8GhTVCszFwTJ0JmPVlKeX5MH3i2",
+    "firstName": "New",
+    "lastName": "User",
+    "id": "0b6d869f-5592-474e-933b-e8c555871b9e",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-09-28T19:39:24.305Z"
+  }
+]

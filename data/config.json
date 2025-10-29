@@ -1,0 +1,22 @@
+{
+  "jwt": {
+    "accessTokenSecret": "dev-access-secret-change-in-production",
+    "refreshTokenSecret": "dev-refresh-secret-change-in-production",
+    "accessTokenExpiresIn": "15m",
+    "refreshTokenExpiresIn": "7d"
+  },
+  "security": {
+    "bcryptRounds": 12,
+    "csrfTokenLength": 24,
+    "sessionTokenLength": 32
+  },
+  "cookies": {
+    "secure": false,
+    "sameSite": "lax",
+    "refreshTokenMaxAge": 604800000,
+    "csrfTokenMaxAge": 604800000
+  },
+  "session": {
+    "cleanupInterval": 3600000
+  }
+}
