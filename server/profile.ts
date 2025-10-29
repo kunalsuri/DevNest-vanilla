@@ -1,5 +1,4 @@
-import { Express } from "express";
-import express from "express";
+import { Express, Request, Response, static as expressStatic } from "express";
 import multer from "multer";
 import { storage } from "./storage";
 import { validateAccessToken } from "./auth/auth-middleware";
@@ -7,18 +6,24 @@ import { z } from "zod";
 import path from "node:path";
 import fs from "node:fs/promises";
 import logger from "./logger";
+import {
+  validateProfileUpdate,
+  handleValidationErrors,
+} from "./middleware/validation";
 
 // Configure multer for file uploads
 const upload = multer({
   storage: multer.diskStorage({
-    destination: async (req, file, cb) => {
+    destination: (req, file, cb) => {
       const uploadDir = 'uploads/profile-pictures';
-      await fs.mkdir(uploadDir, { recursive: true });
-      cb(null, uploadDir);
+      fs.mkdir(uploadDir, { recursive: true })
+        .then(() => cb(null, uploadDir))
+        .catch((err) => cb(err, uploadDir));
     },
     filename: (req, file, cb) => {
       const ext = path.extname(file.originalname);
-      const filename = `${req.user?.id}_${Date.now()}${ext}`;
+      const jwtReq = req as Request & { jwtUser?: { userId: string } };
+      const filename = `${jwtReq.jwtUser?.userId || 'unknown'}_${Date.now()}${ext}`;
       cb(null, filename);
     }
   }),
@@ -62,14 +67,19 @@ export function setupProfile(app: Express) {
   });
 
   // Update user profile
-  app.put("/api/profile", validateAccessToken, async (req, res) => {
-    try {
-      const currentUser = await storage.getUser(req.jwtUser!.userId);
-      if (!currentUser) {
-        return res.status(404).json({ message: "User not found" });
-      }
+  app.put(
+    "/api/profile",
+    validateAccessToken,
+    validateProfileUpdate,
+    handleValidationErrors,
+    async (req: Request, res: Response) => {
+      try {
+        const currentUser = await storage.getUser(req.jwtUser!.userId);
+        if (!currentUser) {
+          return res.status(404).json({ message: "User not found" });
+        }
 
-      const validatedData = profileUpdateSchema.parse(req.body);
+        const validatedData = profileUpdateSchema.parse(req.body);
       
       // Check if email is already taken by another user
       if (validatedData.email && validatedData.email !== currentUser.email) {
@@ -94,13 +104,14 @@ export function setupProfile(app: Express) {
           errors: error.errors 
         });
       }
-      logger.error("Profile update error", { 
-        error: error instanceof Error ? error.message : String(error),
-        userId: req.jwtUser?.userId
-      });
-      res.status(500).json({ message: "Internal server error" });
+        logger.error("Profile update error", { 
+          error: error instanceof Error ? error.message : String(error),
+          userId: req.jwtUser?.userId
+        });
+        res.status(500).json({ message: "Internal server error" });
+      }
     }
-  });
+  );
 
   // Upload profile picture (with auth guard before multer)
   app.post("/api/profile/upload-picture", validateAccessToken, async (req, res, next) => {
@@ -221,5 +232,5 @@ export function setupProfile(app: Express) {
   });
 
   // Serve uploaded profile pictures
-  app.use('/uploads', express.static('uploads'));
+  app.use('/uploads', expressStatic('uploads'));
 }

@@ -1,14 +1,138 @@
 import express, { type Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import logger from "./logger";
+import { env } from "./env";
 
 // Server startup timestamp to help invalidate stale sessions
 export const SERVER_START_TIME = new Date();
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+// Security: Helmet middleware for setting various HTTP headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: [
+          "'self'", 
+          "'unsafe-inline'", // Required for Tailwind and inline styles
+          "https://fonts.googleapis.com" // Google Fonts CSS
+        ],
+        scriptSrc: [
+          "'self'", 
+          ...(env.NODE_ENV === "development" ? ["'unsafe-inline'", "'unsafe-eval'"] : [])
+        ], // unsafe-inline and unsafe-eval needed for Vite HMR and React Fast Refresh in dev
+        imgSrc: ["'self'", "data:", "https:", "blob:"],
+        connectSrc: ["'self'", ...(env.NODE_ENV === "development" ? ["ws:", "wss:"] : [])],
+        fontSrc: [
+          "'self'", 
+          "data:", 
+          "https://fonts.gstatic.com" // Google Fonts files
+        ],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // Disable for development compatibility
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+    noSniff: true,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    xssFilter: true,
+  })
+);
+
+// Security: CORS configuration
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (env.ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        logger.warn(`CORS blocked request from unauthorized origin: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow cookies
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
+    exposedHeaders: ["X-RateLimit-Limit", "X-RateLimit-Remaining"],
+    maxAge: 86400, // 24 hours
+  })
+);
+
+// Security: Rate limiting for API endpoints
+const apiLimiter = rateLimit({
+  windowMs: env.RATE_LIMIT_WINDOW_MS,
+  max: env.RATE_LIMIT_MAX_REQUESTS,
+  message: {
+    message: "Too many requests from this IP, please try again later.",
+    code: "RATE_LIMIT_EXCEEDED",
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  handler: (req, res) => {
+    logger.warn(`Rate limit exceeded for IP: ${req.ip}`, {
+      ip: req.ip,
+      path: req.path,
+      method: req.method,
+    });
+    res.status(429).json({
+      message: "Too many requests from this IP, please try again later.",
+      code: "RATE_LIMIT_EXCEEDED",
+      retryAfter: Math.ceil(env.RATE_LIMIT_WINDOW_MS / 1000),
+    });
+  },
+});
+
+// Apply rate limiting to all API routes
+app.use("/api/", apiLimiter);
+
+// Stricter rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per window
+  skipSuccessfulRequests: true, // Don't count successful requests
+  message: {
+    message: "Too many authentication attempts, please try again later.",
+    code: "AUTH_RATE_LIMIT_EXCEEDED",
+  },
+  handler: (req, res) => {
+    logger.warn(`Auth rate limit exceeded for IP: ${req.ip}`, {
+      ip: req.ip,
+      path: req.path,
+    });
+    res.status(429).json({
+      message: "Too many authentication attempts, please try again later.",
+      code: "AUTH_RATE_LIMIT_EXCEEDED",
+      retryAfter: 900, // 15 minutes in seconds
+    });
+  },
+});
+
+// Apply stricter rate limiting to auth endpoints
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
+app.use("/api/auth/refresh", authLimiter);
+
+// Body parsing middleware
+app.use(express.json({ limit: "10mb" })); // Add size limit for security
+app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
 // Security: Block access to data directory
 app.use('/data/*', (req, res) => {

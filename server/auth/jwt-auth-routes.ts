@@ -20,6 +20,11 @@ import { sessionManager } from './session-manager';
 import { storage } from '../storage';
 import logger from '../logger';
 import { z } from 'zod';
+import {
+  validateRegister,
+  validateLogin,
+  handleValidationErrors,
+} from '../middleware/validation';
 
 /**
  * Setup JWT-based authentication routes
@@ -29,9 +34,13 @@ export function setupJWTAuthRoutes(app: Express): void {
   app.use(cookieParser());
 
   // JWT Register endpoint
-  app.post('/api/auth/register', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const validatedData: JWTRegisterData = jwtRegisterSchema.parse(req.body);
+  app.post(
+    '/api/auth/register',
+    validateRegister,
+    handleValidationErrors,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const validatedData: JWTRegisterData = jwtRegisterSchema.parse(req.body);
       
       // Check if user already exists
       const existingUser = await storage.getUserByUsername(validatedData.username);
@@ -129,14 +138,19 @@ export function setupJWTAuthRoutes(app: Express): void {
         });
         return;
       }
-      next(error);
+        next(error);
+      }
     }
-  });
+  );
 
   // JWT Login endpoint
-  app.post('/api/auth/login', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const validatedData: JWTLoginData = jwtLoginSchema.parse(req.body);
+  app.post(
+    '/api/auth/login',
+    validateLogin,
+    handleValidationErrors,
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const validatedData: JWTLoginData = jwtLoginSchema.parse(req.body);
       
       // Find user
       const user = await storage.getUserByUsername(validatedData.username);
@@ -217,18 +231,19 @@ export function setupJWTAuthRoutes(app: Express): void {
         csrfToken,
       });
 
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ 
-          message: 'Validation error', 
-          errors: error.errors,
-          code: 'VALIDATION_ERROR'
-        });
-        return;
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          res.status(400).json({ 
+            message: 'Validation error', 
+            errors: error.errors,
+            code: 'VALIDATION_ERROR'
+          });
+          return;
+        }
+        next(error);
       }
-      next(error);
     }
-  });
+  );
 
   // JWT Refresh endpoint
   app.post('/api/auth/refresh', async (req: Request, res: Response, next: NextFunction) => {

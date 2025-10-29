@@ -4,20 +4,23 @@ import crypto, { scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { AccessTokenPayload, RefreshTokenPayload } from '@shared/schema';
 import logger from '../logger';
+import { env } from '../env';
 
 const scryptAsync = promisify(scrypt);
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'dev-access-secret';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'dev-refresh-secret';
 
 export function generateTokenPair(payload: any): { accessToken: string; refreshToken: string } {
-  const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '15m' });
-  const refreshToken = jwt.sign({ userId: payload.userId, sessionId: payload.sessionId }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+  const accessToken = jwt.sign(payload, env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+  const refreshToken = jwt.sign(
+    { userId: payload.userId, sessionId: payload.sessionId },
+    env.JWT_REFRESH_SECRET,
+    { expiresIn: '7d' }
+  );
   return { accessToken, refreshToken };
 }
 
 export function verifyAccessToken(token: string): AccessTokenPayload | null {
   try {
-    return jwt.verify(token, JWT_ACCESS_SECRET) as AccessTokenPayload;
+    return jwt.verify(token, env.JWT_ACCESS_SECRET) as AccessTokenPayload;
   } catch {
     return null;
   }
@@ -25,7 +28,7 @@ export function verifyAccessToken(token: string): AccessTokenPayload | null {
 
 export function verifyRefreshToken(token: string): RefreshTokenPayload | null {
   try {
-    return jwt.verify(token, JWT_REFRESH_SECRET) as RefreshTokenPayload;
+    return jwt.verify(token, env.JWT_REFRESH_SECRET) as RefreshTokenPayload;
   } catch {
     return null;
   }
