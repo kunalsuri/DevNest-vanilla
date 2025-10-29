@@ -1,33 +1,38 @@
+import { ComponentType, JSX, LazyExoticComponent } from "react";
 import { useJWTAuth } from "@/features/auth";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
 
+interface ProtectedRouteProps {
+  readonly path: string;
+  readonly component:
+    | (() => JSX.Element)
+    | LazyExoticComponent<ComponentType<Record<string, never>>>;
+}
+
 export function ProtectedRoute({
   path,
   component: Component,
-}: {
-  path: string;
-  component: () => React.JSX.Element;
-}) {
+}: ProtectedRouteProps) {
   const { user, isLoading } = useJWTAuth();
 
-  if (isLoading) {
-    return (
-      <Route path={path}>
-        <div className="flex items-center justify-center min-h-screen bg-background">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      </Route>
-    );
-  }
+  return (
+    <Route path={path}>
+      {() => {
+        if (isLoading) {
+          return (
+            <div className="flex items-center justify-center min-h-screen bg-background">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          );
+        }
 
-  if (!user) {
-    return (
-      <Route path={path}>
-        <Redirect to="/auth" />
-      </Route>
-    );
-  }
+        if (!user) {
+          return <Redirect to="/auth" />;
+        }
 
-  return <Route path={path} component={Component} />;
+        return <Component />;
+      }}
+    </Route>
+  );
 }

@@ -1,3 +1,4 @@
+import { lazy, Suspense, useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -7,18 +8,32 @@ import { JWTAuthProvider, useJWTAuth } from "./features/auth";
 import { ThemeProvider } from "./hooks/use-theme";
 import { ProtectedRoute } from "./lib/protected-route";
 import { ErrorBoundary, RouteErrorBoundary } from "@/components/error-boundary";
-import LandingPage from "@/pages/landing-page";
-import AuthPage from "@/pages/auth-page";
-import { DashboardPage } from "@/pages/dashboard-page";
-import ProfilePage from "@/pages/profile-page";
-import PreferencesPage from "@/pages/preferences-page";
-import WorkspacesPage from "@/pages/workspaces-page";
-import HelpPage from "@/pages/help-page";
-import NotFound from "@/pages/not-found";
 import { Loader2 } from "lucide-react";
 import { usePageObservability } from "@/hooks/use-observability";
 import { initializeObservability } from "@/features/observability";
-import { useEffect } from "react";
+
+// Code-split pages with React.lazy for better performance
+const LandingPage = lazy(() => import("@/pages/landing-page"));
+const AuthPage = lazy(() => import("@/pages/auth-page"));
+const DashboardPage = lazy(() =>
+  import("@/pages/dashboard-page").then((mod) => ({
+    default: mod.DashboardPage,
+  })),
+);
+const ProfilePage = lazy(() => import("@/pages/profile-page"));
+const PreferencesPage = lazy(() => import("@/pages/preferences-page"));
+const WorkspacesPage = lazy(() => import("@/pages/workspaces-page"));
+const HelpPage = lazy(() => import("@/pages/help-page"));
+const NotFound = lazy(() => import("@/pages/not-found"));
+
+// Loading fallback component
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    </div>
+  );
+}
 
 function HomePage() {
   const { isLoading } = useJWTAuth();
@@ -38,20 +53,22 @@ function HomePage() {
 function Router() {
   return (
     <RouteErrorBoundary>
-      <Switch>
-        <Route path="/" component={HomePage} />
-        <Route path="/landing" component={LandingPage} />
-        <Route path="/auth" component={AuthPage} />
-        <ProtectedRoute path="/dashboard" component={DashboardPage} />
-        <ProtectedRoute path="/profile" component={ProfilePage} />
-        <ProtectedRoute
-          path="/profile/preferences"
-          component={PreferencesPage}
-        />
-        <ProtectedRoute path="/workspaces" component={WorkspacesPage} />
-        <ProtectedRoute path="/help" component={HelpPage} />
-        <Route component={NotFound} />
-      </Switch>
+      <Suspense fallback={<PageLoader />}>
+        <Switch>
+          <Route path="/" component={HomePage} />
+          <Route path="/landing" component={LandingPage} />
+          <Route path="/auth" component={AuthPage} />
+          <ProtectedRoute path="/dashboard" component={DashboardPage} />
+          <ProtectedRoute path="/profile" component={ProfilePage} />
+          <ProtectedRoute
+            path="/profile/preferences"
+            component={PreferencesPage}
+          />
+          <ProtectedRoute path="/workspaces" component={WorkspacesPage} />
+          <ProtectedRoute path="/help" component={HelpPage} />
+          <Route component={NotFound} />
+        </Switch>
+      </Suspense>
     </RouteErrorBoundary>
   );
 }
