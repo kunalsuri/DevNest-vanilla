@@ -10,24 +10,24 @@
     "expiresAt": "2025-11-01T03:37:09.176Z"
   },
   {
-    "sessionId": "cbd10912277559821714bdfd0bc305aabd431911f686a4911949b05ab6fe093f",
-    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "3e6d219e4e755836b2c03f56988d1ffa4efb703424e777181897cf369485847e",
-    "csrfTokenHash": "7dae514b16795811b38cd58af1a9206bf0bec29f2d2469bc1fa3455a5359b754",
-    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
-    "ip": "127.0.0.1",
-    "createdAt": "2025-10-29T07:55:26.298Z",
-    "expiresAt": "2025-11-05T07:55:26.298Z",
-    "revokedAt": "2025-10-29T14:10:55.994Z"
-  },
-  {
     "sessionId": "fe7bcde94037cfd3d772b184d80a8a0747f16618a331ab446b0cf6dae0be78b0",
     "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "c28f15db26468b84d2146d661a7ea1b49301459fd3dcad5466ea2eea1d0841aa",
-    "csrfTokenHash": "05f016201cb7c9fb959d27ff75daf80f5fa7ad32b7d0a82c5f74eff36e3a5622",
+    "refreshTokenHash": "f6603c7ab352e2267ea6e616ada36f499294b38d4b2d85c0e348097ab50b8248",
+    "csrfTokenHash": "34487387e5acd801aa0c810c5f403209918eb0d93441a33dd1c03c3a25e26999",
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
     "ip": "127.0.0.1",
     "createdAt": "2025-10-29T14:10:58.446Z",
-    "expiresAt": "2025-11-05T14:10:58.446Z"
+    "expiresAt": "2025-11-05T14:10:58.446Z",
+    "revokedAt": "2025-10-29T14:37:31.682Z"
+  },
+  {
+    "sessionId": "fd1a0ebb8dd316414b32298ff2e265d377e51762a2d341a5a997313f5b904208",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "22ce1bca0d39135aacf5f5e70f31cf130f96c67f13db7daa36dc070a409a3cfa",
+    "csrfTokenHash": "d7fded0d59d4d93f8f3d76c731c64e011ff78ddbba6b92285ad66b1f57c6b4b9",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2025-10-29T14:37:34.449Z",
+    "expiresAt": "2025-11-05T14:37:34.449Z"
   }
 ]
