@@ -32,14 +32,16 @@ export function AppSidebar() {
         <Link href="/dashboard">
           <div className="flex items-center gap-2 cursor-pointer p-2">
             <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">DN</span>
+              <span className="text-primary-foreground font-bold text-sm">
+                DN
+              </span>
             </div>
             <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">
               DevNest
             </span>
           </div>
         </Link>
-        
+
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
           <SidebarInput
@@ -65,7 +67,7 @@ export function AppSidebar() {
                         asChild
                         isActive={isActive}
                         tooltip={item.title}
-                        data-testid={`link-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        data-testid={`link-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                       >
                         <Link href={item.href}>
                           <Icon />
@@ -93,7 +95,7 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   asChild
                   tooltip={item.title}
-                  data-testid={`link-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  data-testid={`link-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                 >
                   <Link href={item.href}>
                     <Icon />
@@ -103,9 +105,9 @@ export function AppSidebar() {
               </SidebarMenuItem>
             );
           })}
-          
+
           <SidebarSeparator />
-          
+
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={handleLogout}

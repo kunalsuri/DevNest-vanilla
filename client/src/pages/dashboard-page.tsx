@@ -9,7 +9,10 @@ export function DashboardPage() {
       <div className="space-y-6">
         {/* Page Header */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight" data-testid="text-dashboard-title">
+          <h1
+            className="text-3xl font-bold tracking-tight"
+            data-testid="text-dashboard-title"
+          >
             Dashboard
           </h1>
           <p className="text-muted-foreground">
@@ -25,11 +28,17 @@ export function DashboardPage() {
         {/* Charts and Activity */}
         <Tabs defaultValue="overview" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="overview" data-testid="tab-overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" data-testid="tab-analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="reports" data-testid="tab-reports">Reports</TabsTrigger>
+            <TabsTrigger value="overview" data-testid="tab-overview">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="analytics" data-testid="tab-analytics">
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="reports" data-testid="tab-reports">
+              Reports
+            </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="overview" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-4">
@@ -40,7 +49,7 @@ export function DashboardPage() {
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="analytics" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
               <div className="col-span-7">
@@ -48,7 +57,7 @@ export function DashboardPage() {
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="reports" className="space-y-4">
             <div className="grid gap-4">
               <RecentActivity />

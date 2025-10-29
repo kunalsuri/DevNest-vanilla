@@ -1,9 +1,9 @@
 // server/auth/auth-middleware.ts
-import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken, extractBearerToken } from './jwt-utils';
-import { sessionManager } from './session-manager';
-import { AccessTokenPayload } from '@shared/schema';
-import logger from '../logger';
+import { Request, Response, NextFunction } from "express";
+import { verifyAccessToken, extractBearerToken } from "./jwt-utils";
+import { sessionManager } from "./session-manager";
+import { AccessTokenPayload } from "@shared/schema";
+import logger from "../logger";
 
 // Extend Express Request interface
 declare global {
@@ -18,23 +18,27 @@ declare global {
 /**
  * Middleware to validate JWT access token
  */
-export function validateAccessToken(req: Request, res: Response, next: NextFunction): void {
+export function validateAccessToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const authHeader = req.headers.authorization;
   const token = extractBearerToken(authHeader);
 
   if (!token) {
-    res.status(401).json({ 
-      message: 'Access token required',
-      code: 'MISSING_TOKEN'
+    res.status(401).json({
+      message: "Access token required",
+      code: "MISSING_TOKEN",
     });
     return;
   }
 
   const payload = verifyAccessToken(token);
   if (!payload) {
-    res.status(401).json({ 
-      message: 'Invalid or expired access token',
-      code: 'INVALID_TOKEN'
+    res.status(401).json({
+      message: "Invalid or expired access token",
+      code: "INVALID_TOKEN",
     });
     return;
   }
@@ -48,7 +52,11 @@ export function validateAccessToken(req: Request, res: Response, next: NextFunct
 /**
  * Optional authentication middleware - doesn't fail if no token
  */
-export function optionalAuth(req: Request, res: Response, next: NextFunction): void {
+export function optionalAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const authHeader = req.headers.authorization;
   const token = extractBearerToken(authHeader);
 
@@ -66,51 +74,56 @@ export function optionalAuth(req: Request, res: Response, next: NextFunction): v
 /**
  * Middleware to validate CSRF token for state-changing operations
  */
-export function validateCSRF(req: Request, res: Response, next: NextFunction): void {
+export function validateCSRF(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   // Only validate CSRF for state-changing HTTP methods
-  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
+  if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
     next();
     return;
   }
 
-  const csrfToken = req.headers['x-csrf-token'] as string;
+  const csrfToken = req.headers["x-csrf-token"] as string;
   const sessionId = req.sessionId;
 
   if (!sessionId) {
-    res.status(401).json({ 
-      message: 'Session required for CSRF validation',
-      code: 'NO_SESSION'
+    res.status(401).json({
+      message: "Session required for CSRF validation",
+      code: "NO_SESSION",
     });
     return;
   }
 
   if (!csrfToken) {
-    res.status(403).json({ 
-      message: 'CSRF token required',
-      code: 'MISSING_CSRF_TOKEN'
+    res.status(403).json({
+      message: "CSRF token required",
+      code: "MISSING_CSRF_TOKEN",
     });
     return;
   }
 
   // Validate CSRF token against session
-  sessionManager.validateCSRFToken(sessionId, csrfToken)
-    .then(isValid => {
+  sessionManager
+    .validateCSRFToken(sessionId, csrfToken)
+    .then((isValid) => {
       if (!isValid) {
-        res.status(403).json({ 
-          message: 'Invalid CSRF token',
-          code: 'INVALID_CSRF_TOKEN'
+        res.status(403).json({
+          message: "Invalid CSRF token",
+          code: "INVALID_CSRF_TOKEN",
         });
         return;
       }
       next();
     })
-    .catch(error => {
-      logger.error('CSRF validation error', { 
-        error: error instanceof Error ? error.message : String(error) 
+    .catch((error) => {
+      logger.error("CSRF validation error", {
+        error: error instanceof Error ? error.message : String(error),
       });
-      res.status(500).json({ 
-        message: 'Internal server error during CSRF validation',
-        code: 'CSRF_VALIDATION_ERROR'
+      res.status(500).json({
+        message: "Internal server error during CSRF validation",
+        code: "CSRF_VALIDATION_ERROR",
       });
     });
 }
@@ -121,17 +134,17 @@ export function validateCSRF(req: Request, res: Response, next: NextFunction): v
 export function requireRole(role: string) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.jwtUser) {
-      res.status(401).json({ 
-        message: 'Authentication required',
-        code: 'AUTH_REQUIRED'
+      res.status(401).json({
+        message: "Authentication required",
+        code: "AUTH_REQUIRED",
       });
       return;
     }
 
     if (req.jwtUser.role !== role) {
-      res.status(403).json({ 
+      res.status(403).json({
         message: `Access denied. Required role: ${role}`,
-        code: 'INSUFFICIENT_PERMISSIONS'
+        code: "INSUFFICIENT_PERMISSIONS",
       });
       return;
     }
@@ -143,12 +156,16 @@ export function requireRole(role: string) {
 /**
  * Admin access control middleware
  */
-export const requireAdmin = requireRole('admin');
+export const requireAdmin = requireRole("admin");
 
 /**
  * Combined middleware for authenticated + CSRF protected routes
  */
-export function protectedRoute(req: Request, res: Response, next: NextFunction): void {
+export function protectedRoute(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   validateAccessToken(req, res, (err) => {
     if (err) {
       next(err);
@@ -161,7 +178,11 @@ export function protectedRoute(req: Request, res: Response, next: NextFunction):
 /**
  * Middleware to check session validity
  */
-export function validateSession(req: Request, res: Response, next: NextFunction): void {
+export function validateSession(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const sessionId = req.sessionId;
 
   if (!sessionId) {
@@ -169,25 +190,26 @@ export function validateSession(req: Request, res: Response, next: NextFunction)
     return;
   }
 
-  sessionManager.getSession(sessionId)
-    .then(session => {
+  sessionManager
+    .getSession(sessionId)
+    .then((session) => {
       if (!session) {
         // Session is invalid, expired, or revoked
-        res.status(401).json({ 
-          message: 'Invalid or expired session',
-          code: 'INVALID_SESSION'
+        res.status(401).json({
+          message: "Invalid or expired session",
+          code: "INVALID_SESSION",
         });
         return;
       }
       next();
     })
-    .catch(error => {
-      logger.error('Session validation error', { 
-        error: error instanceof Error ? error.message : String(error) 
+    .catch((error) => {
+      logger.error("Session validation error", {
+        error: error instanceof Error ? error.message : String(error),
       });
-      res.status(500).json({ 
-        message: 'Internal server error during session validation',
-        code: 'SESSION_VALIDATION_ERROR'
+      res.status(500).json({
+        message: "Internal server error during session validation",
+        code: "SESSION_VALIDATION_ERROR",
       });
     });
 }
@@ -195,7 +217,11 @@ export function validateSession(req: Request, res: Response, next: NextFunction)
 /**
  * Combined authentication and session validation middleware
  */
-export function authenticate(req: Request, res: Response, next: NextFunction): void {
+export function authenticate(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   validateAccessToken(req, res, (err) => {
     if (err) {
       next(err);

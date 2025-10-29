@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useProfile } from "../hooks/use-profile";
 import { useJWTAuth } from "@/features/auth";
@@ -12,7 +19,10 @@ import { Edit3, Check, X, Mail } from "lucide-react";
 import { useErrorHandler } from "@/hooks/use-error-handler";
 
 const accountEmailSchema = z.object({
-  email: z.string().email("Please enter a valid email address").min(1, "Email is required"),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .min(1, "Email is required"),
 });
 
 type AccountEmailFormData = z.infer<typeof accountEmailSchema>;
@@ -25,7 +35,7 @@ export function AccountEmailSection() {
 
   const form = useForm<AccountEmailFormData>({
     resolver: zodResolver(accountEmailSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       email: user?.email || "",
     },
@@ -52,26 +62,33 @@ export function AccountEmailSection() {
       });
       setIsEditing(false);
     } catch (error) {
-      handleError(error as Error, 'Email update failed');
+      handleError(error as Error, "Email update failed");
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-primary">Account email</CardTitle>
-        <p className="text-sm text-muted-foreground">Change your account email address.</p>
+        <CardTitle className="text-lg font-semibold text-primary">
+          Account email
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Change your account email address.
+        </p>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted">
             <Mail className="h-5 w-5 text-muted-foreground" />
           </div>
-          
+
           <div className="flex-1">
             {isEditing ? (
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-3"
+                >
                   <FormField
                     control={form.control}
                     name="email"
@@ -94,7 +111,9 @@ export function AccountEmailSection() {
                     <Button
                       type="submit"
                       size="sm"
-                      disabled={updateProfile.isPending || !form.formState.isValid}
+                      disabled={
+                        updateProfile.isPending || !form.formState.isValid
+                      }
                       data-testid="button-save-email"
                     >
                       <Check className="h-4 w-4 mr-1" />

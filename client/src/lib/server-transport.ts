@@ -1,12 +1,12 @@
 /**
  * Server Transport for Browser-to-Server Log Persistence
- * 
+ *
  * This transport sends logs from browser clients to the server
  * via HTTP POST requests, enabling file persistence even when
  * running in browser environments.
  */
 
-import { LogEntry, LogTransport } from './logger';
+import { LogEntry, LogTransport } from "./logger";
 
 interface ServerTransportConfig {
   endpoint?: string;
@@ -17,14 +17,14 @@ interface ServerTransportConfig {
 }
 
 export class ServerTransport implements LogTransport {
-  name = 'server';
+  name = "server";
   private readonly config: Required<ServerTransportConfig>;
   private buffer: LogEntry[] = [];
   private flushTimer: number | null = null;
 
   constructor(config: ServerTransportConfig = {}) {
     this.config = {
-      endpoint: config.endpoint || '/api/logs',
+      endpoint: config.endpoint || "/api/logs",
       batchSize: config.batchSize || 10,
       flushInterval: config.flushInterval || 5000, // 5 seconds
       retryAttempts: config.retryAttempts || 3,
@@ -37,9 +37,9 @@ export class ServerTransport implements LogTransport {
     }
 
     // Flush remaining logs when page is unloading
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => this.flush());
-      window.addEventListener('visibilitychange', () => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => this.flush());
+      window.addEventListener("visibilitychange", () => {
         if (document.hidden) {
           this.flush();
         }
@@ -51,7 +51,7 @@ export class ServerTransport implements LogTransport {
     if (this.config.enableBuffering) {
       // Add to buffer
       this.buffer.push(entry);
-      
+
       // Flush if buffer is full
       if (this.buffer.length >= this.config.batchSize) {
         await this.flush();
@@ -66,7 +66,9 @@ export class ServerTransport implements LogTransport {
    * Flush all buffered logs to server
    */
   async flush(): Promise<void> {
-    if (this.buffer.length === 0) return;
+    if (this.buffer.length === 0) {
+      return;
+    }
 
     const logsToSend = [...this.buffer];
     this.buffer = []; // Clear buffer immediately
@@ -87,43 +89,53 @@ export class ServerTransport implements LogTransport {
    * Send logs to server endpoint
    */
   private async sendLogs(logs: LogEntry[]): Promise<void> {
-    if (logs.length === 0) return;
+    if (logs.length === 0) {
+      return;
+    }
 
     let lastError: Error | null = null;
-    
+
     for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
       try {
         const response = await fetch(this.config.endpoint, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ logs }),
         });
 
         if (!response.ok) {
-          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+          throw new Error(
+            `Server responded with ${response.status}: ${response.statusText}`,
+          );
         }
 
         // Success - logs sent to server
         return;
-        
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         // Wait before retry (exponential backoff)
         if (attempt < this.config.retryAttempts) {
-          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.pow(2, attempt) * 1000),
+          );
         }
       }
     }
 
     // All retries failed
-    console.error('[ServerTransport] Failed to send logs after', this.config.retryAttempts, 'attempts:', lastError);
-    
+    console.error(
+      "[ServerTransport] Failed to send logs after",
+      this.config.retryAttempts,
+      "attempts:",
+      lastError,
+    );
+
     // In development, also log to console as fallback
-    if (process.env.NODE_ENV === 'development') {
-      logs.forEach(log => {
+    if (process.env.NODE_ENV === "development") {
+      logs.forEach((log) => {
         console.log(`[${log.levelName}] ${log.message}`, log);
       });
     }
@@ -133,12 +145,14 @@ export class ServerTransport implements LogTransport {
    * Start periodic flush timer
    */
   private startPeriodicFlush(): void {
-    if (this.flushTimer) return;
+    if (this.flushTimer) {
+      return;
+    }
 
     this.flushTimer = window.setInterval(() => {
       if (this.buffer.length > 0) {
-        this.flush().catch(error => {
-          console.error('[ServerTransport] Periodic flush failed:', error);
+        this.flush().catch((error) => {
+          console.error("[ServerTransport] Periodic flush failed:", error);
         });
       }
     }, this.config.flushInterval);
@@ -152,10 +166,10 @@ export class ServerTransport implements LogTransport {
       clearInterval(this.flushTimer);
       this.flushTimer = null;
     }
-    
+
     // Final flush
-    this.flush().catch(error => {
-      console.error('[ServerTransport] Final flush failed:', error);
+    this.flush().catch((error) => {
+      console.error("[ServerTransport] Final flush failed:", error);
     });
   }
 }

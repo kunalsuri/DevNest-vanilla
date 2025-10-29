@@ -1,6 +1,6 @@
 ---
-mode: 'agent'
-description: 'Design and implement a full observability system (logging, tracing, metrics) for React + TypeScript projects.'
+mode: "agent"
+description: "Design and implement a full observability system (logging, tracing, metrics) for React + TypeScript projects."
 ---
 
 Act as a Full Observability Architect.  
@@ -9,6 +9,7 @@ Your task is to design and integrate a **comprehensive observability system** pr
 ### ✅ Requirements
 
 #### 1. Logging
+
 - Use **structured logging** (JSON or key-value) for machine readability.
 - Implement **log levels**: `debug`, `info`, `warn`, `error`, `fatal`.
 - Centralize logging via a **logger utility/service**.
@@ -21,6 +22,7 @@ Your task is to design and integrate a **comprehensive observability system** pr
 - Avoid logging sensitive information (PII, tokens).
 
 #### 2. Tracing
+
 - Use **OpenTelemetry or similar** to instrument:
   - Component lifecycle events
   - API calls / service requests
@@ -29,6 +31,7 @@ Your task is to design and integrate a **comprehensive observability system** pr
 - Provide a central **tracing utility** that can wrap functions, hooks, and async operations.
 
 #### 3. Metrics
+
 - Track **key performance indicators (KPIs)**:
   - Component render times
   - API request latency and success/failure counts
@@ -36,11 +39,13 @@ Your task is to design and integrate a **comprehensive observability system** pr
 - Expose metrics via a **metrics utility** that supports aggregation and optional reporting to external monitoring systems (Prometheus, Datadog).
 
 #### 4. Error Handling Integration
+
 - Integrate observability into **React error boundaries**.
 - Capture uncaught exceptions and rejected promises.
 - Enrich logs/traces with relevant metadata.
 
 #### 5. Developer Guidelines
+
 - Provide **hooks/utilities** for easy logging and tracing in components, hooks, and services.
 - Ensure minimal performance overhead (lazy evaluation, batching, sampling where necessary).
 - Include best practices checklist:
@@ -50,6 +55,7 @@ Your task is to design and integrate a **comprehensive observability system** pr
   - Consistent metrics naming and units
 
 ### 📦 Output
+
 - `logger.ts` utility with pluggable transports and structured logs.
 - `tracing.ts` utility for function/component instrumentation.
 - `metrics.ts` utility for KPI tracking.

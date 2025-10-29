@@ -1,5 +1,11 @@
 import { AppLayout } from "@/features/app-shell";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { HelpCircle, Book, MessageCircle, Mail } from "lucide-react";
@@ -9,7 +15,10 @@ export default function HelpPage() {
     <AppLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight" data-testid="heading-help">
+          <h1
+            className="text-3xl font-bold tracking-tight"
+            data-testid="heading-help"
+          >
             Help & Support
           </h1>
           <p className="text-muted-foreground">

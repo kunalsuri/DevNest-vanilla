@@ -1,13 +1,19 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  ResponsiveContainer, 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
   Tooltip,
-  Legend
+  Legend,
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -30,9 +36,7 @@ export function UsageChart({ isLoading }: UsageChartProps) {
     <Card data-testid="card-usage-chart">
       <CardHeader>
         <CardTitle>Usage Overview</CardTitle>
-        <CardDescription>
-          Monthly active users and API calls
-        </CardDescription>
+        <CardDescription>Monthly active users and API calls</CardDescription>
       </CardHeader>
       <CardContent className="pl-2">
         {isLoading ? (
@@ -46,40 +50,37 @@ export function UsageChart({ isLoading }: UsageChartProps) {
           <ResponsiveContainer width="100%" height={350}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis 
-                dataKey="name" 
+              <XAxis
+                dataKey="name"
                 className="text-muted-foreground"
                 fontSize={12}
               />
-              <YAxis 
-                className="text-muted-foreground"
-                fontSize={12}
-              />
-              <Tooltip 
+              <YAxis className="text-muted-foreground" fontSize={12} />
+              <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                  backgroundColor: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "8px",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
                 }}
-                labelStyle={{ color: 'hsl(var(--foreground))' }}
+                labelStyle={{ color: "hsl(var(--foreground))" }}
               />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="users" 
-                stroke="hsl(var(--primary))" 
+              <Line
+                type="monotone"
+                dataKey="users"
+                stroke="hsl(var(--primary))"
                 strokeWidth={2}
                 name="Active Users"
-                dot={{ fill: 'hsl(var(--primary))' }}
+                dot={{ fill: "hsl(var(--primary))" }}
               />
-              <Line 
-                type="monotone" 
-                dataKey="apiCalls" 
-                stroke="hsl(var(--chart-2))" 
+              <Line
+                type="monotone"
+                dataKey="apiCalls"
+                stroke="hsl(var(--chart-2))"
                 strokeWidth={2}
                 name="API Calls"
-                dot={{ fill: 'hsl(var(--chart-2))' }}
+                dot={{ fill: "hsl(var(--chart-2))" }}
               />
             </LineChart>
           </ResponsiveContainer>

@@ -1,4 +1,5 @@
 # Start
+
 A full-stack monorepo template application built with React, TypeScript, and Express that serves as a foundation for future projects. Name it DevNest. The app features a modern landing page with light/dark theme toggle, authentication flow (login/signup pages), and a dashboard accessible after login. All user and session data is stored as JSON files in a /data/ directory without requiring a database. The codebase follows a specific monorepo structure with apps/ (web frontend, api backend) and packages/ (feature modules like user-profile/, shared components) to enable modular development and parallel team collaboration.
 
 Core Features:
@@ -15,7 +16,7 @@ Style Guide:
 Colors: Primary #0070F3 (blue), Secondary #7928CA (purple), Dark theme #000000, Light theme #FFFFFF, Text light #333333, Text dark #FFFFFF, Accent #FF0080
 Design: Inter/SF Pro Display fonts, modern card-based UI with responsive grid system, 16px base spacing, Tailwind CSS for utility-first styling, Lucide icons for consistency, smooth theme transitions with proper contrast ratios
 
-# Follow ups 
+# Follow ups
 
 ## Follow-up-01
 
@@ -26,5 +27,3 @@ Image in /attached_assets/Screenshot-Example-01.png
 ## Follow-up-02
 
 Use the components from https://ui.shadcn.com/ to design the sidebar, the dashboard, and other relevant state of the art ui. Keep them in seperate feature folders based on the best practices.
-
-

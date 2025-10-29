@@ -17,7 +17,9 @@ export function LinkedAccountsSection() {
       {/* Linked Accounts */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-primary">Linked accounts</CardTitle>
+          <CardTitle className="text-lg font-semibold text-primary">
+            Linked accounts
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -29,14 +31,22 @@ export function LinkedAccountsSection() {
                 </div>
                 <div>
                   <p className="font-medium">Email</p>
-                  <p className="text-sm text-muted-foreground" data-testid="text-linked-email">
+                  <p
+                    className="text-sm text-muted-foreground"
+                    data-testid="text-linked-email"
+                  >
                     {user?.email}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <p className="text-sm text-muted-foreground">Sign-in provider</p>
-                <Badge variant="secondary" className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300">
+                <p className="text-sm text-muted-foreground">
+                  Sign-in provider
+                </p>
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+                >
                   google.com
                 </Badge>
               </div>
@@ -48,14 +58,17 @@ export function LinkedAccountsSection() {
       {/* Connect More Providers */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-primary">Connect more sign-in providers</CardTitle>
+          <CardTitle className="text-lg font-semibold text-primary">
+            Connect more sign-in providers
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
-            You can also link sign-in provider accounts associated with a different email.
+            You can also link sign-in provider accounts associated with a
+            different email.
           </p>
         </CardHeader>
         <CardContent>
-          <Button 
-            className="w-fit" 
+          <Button
+            className="w-fit"
             onClick={handleConnectProvider}
             data-testid="button-connect-provider"
           >
@@ -68,11 +81,13 @@ export function LinkedAccountsSection() {
       {/* Sign Out */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-primary">Sign out</CardTitle>
+          <CardTitle className="text-lg font-semibold text-primary">
+            Sign out
+          </CardTitle>
           <p className="text-sm text-muted-foreground">Sign out.</p>
         </CardHeader>
         <CardContent>
-          <Button 
+          <Button
             variant="secondary"
             className="w-fit"
             onClick={() => logoutMutation.mutate()}
@@ -87,14 +102,17 @@ export function LinkedAccountsSection() {
       {/* Delete Account */}
       <Card className="border-destructive/20">
         <CardHeader>
-          <CardTitle className="text-lg font-semibold text-destructive">Delete account</CardTitle>
+          <CardTitle className="text-lg font-semibold text-destructive">
+            Delete account
+          </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Deleting your account will permanently erase all your data, settings, and preferences from our system. 
-            This action is irreversible.
+            Deleting your account will permanently erase all your data,
+            settings, and preferences from our system. This action is
+            irreversible.
           </p>
         </CardHeader>
         <CardContent>
-          <Button 
+          <Button
             variant="destructive"
             className="w-fit"
             data-testid="button-delete-account-section"

@@ -1,18 +1,24 @@
 /**
  * Observability Dashboard Demo
- * 
+ *
  * This component demonstrates the complete observability dashboard
  * with sample data and interactive features for testing.
  */
 
-import React from 'react';
-import { ObservabilityDashboard } from '@/features/observability';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { AlertTriangle, CheckCircle, Info, ExternalLink } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useAdminAccess } from '@/hooks/use-admin-access';
+import React from "react";
+import { ObservabilityDashboard } from "@/features/observability";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, CheckCircle, Info, ExternalLink } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAdminAccess } from "@/hooks/use-admin-access";
 
 export function ObservabilityDemo() {
   const { hasObservabilityAccess, isAdmin, user } = useAdminAccess();
@@ -34,7 +40,7 @@ export function ObservabilityDemo() {
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">Current user:</p>
               <Badge variant="outline">
-                {user ? `${user.username} (${user.role})` : 'Not logged in'}
+                {user ? `${user.username} (${user.role})` : "Not logged in"}
               </Badge>
             </div>
             <Alert>
@@ -64,8 +70,8 @@ export function ObservabilityDemo() {
             Welcome to the Observability Dashboard
           </CardTitle>
           <CardDescription className="text-green-700 dark:text-green-300">
-            You have admin access! This dashboard provides comprehensive monitoring 
-            and analytics for your DevNest application.
+            You have admin access! This dashboard provides comprehensive
+            monitoring and analytics for your DevNest application.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -74,9 +80,9 @@ export function ObservabilityDemo() {
               Admin Access Active
             </Badge>
             <Button variant="outline" size="sm" asChild>
-              <a 
-                href="https://github.com/kunalsuri/DevNest/blob/main/docs/observability-dashboard.md" 
-                target="_blank" 
+              <a
+                href="https://github.com/kunalsuri/DevNest/blob/main/docs/observability-dashboard.md"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2"
               >
@@ -90,7 +96,7 @@ export function ObservabilityDemo() {
 
       {/* Main Dashboard */}
       <ObservabilityDashboard />
-      
+
       {/* Feature Highlights */}
       <Card>
         <CardHeader>
@@ -104,25 +110,29 @@ export function ObservabilityDemo() {
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">📊 Real-time Metrics</h4>
               <p className="text-xs text-muted-foreground">
-                Live KPI monitoring with automatic refresh and color-coded status indicators
+                Live KPI monitoring with automatic refresh and color-coded
+                status indicators
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">🏥 System Health</h4>
               <p className="text-xs text-muted-foreground">
-                Monitor CPU, memory, and network usage with threshold-based alerts
+                Monitor CPU, memory, and network usage with threshold-based
+                alerts
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">🔍 Error Tracking</h4>
               <p className="text-xs text-muted-foreground">
-                Comprehensive error monitoring with component-level error boundaries
+                Comprehensive error monitoring with component-level error
+                boundaries
               </p>
             </div>
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">⚡ Performance</h4>
               <p className="text-xs text-muted-foreground">
-                Core Web Vitals tracking with industry-standard performance benchmarks
+                Core Web Vitals tracking with industry-standard performance
+                benchmarks
               </p>
             </div>
             <div className="space-y-2">
@@ -134,7 +144,8 @@ export function ObservabilityDemo() {
             <div className="space-y-2">
               <h4 className="font-semibold text-sm">🔗 Integrations</h4>
               <p className="text-xs text-muted-foreground">
-                External service integration with Sentry, DataDog, and Prometheus
+                External service integration with Sentry, DataDog, and
+                Prometheus
               </p>
             </div>
           </div>

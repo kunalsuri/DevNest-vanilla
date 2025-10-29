@@ -4,7 +4,9 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
@@ -16,8 +18,12 @@ export const users = pgTable("users", {
 });
 
 export const passwordResetTokens = pgTable("password_reset_tokens", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   token: text("token").notNull().unique(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
@@ -31,7 +37,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   lastName: true,
 });
 
-export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTokens).pick({
+export const insertPasswordResetTokenSchema = createInsertSchema(
+  passwordResetTokens,
+).pick({
   userId: true,
   token: true,
   expiresAt: true,
@@ -101,9 +109,11 @@ export const refreshTokenPayloadSchema = z.object({
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
-export type PublicUser = Omit<User, 'password'>;
+export type PublicUser = Omit<User, "password">;
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
-export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
+export type InsertPasswordResetToken = z.infer<
+  typeof insertPasswordResetTokenSchema
+>;
 export type PasswordResetRequest = z.infer<typeof passwordResetRequestSchema>;
 export type PasswordResetConfirm = z.infer<typeof passwordResetConfirmSchema>;
 
@@ -123,7 +133,7 @@ export const accountPreferences = z.object({
   marketingEmails: z.boolean().default(false),
   twoFactorEnabled: z.boolean().default(false),
   autoLogout: z.boolean().default(true),
-  theme: z.enum(['light', 'dark', 'system']).default('system'),
+  theme: z.enum(["light", "dark", "system"]).default("system"),
 });
 
 export type AccountPreferences = z.infer<typeof accountPreferences>;

@@ -32,14 +32,16 @@ export function clearAccessToken(): void {
  * Get CSRF token from cookie
  */
 export function getCSRFToken(): string | null {
-  const cookies = document.cookie.split(';');
-  const csrfCookie = cookies.find(cookie => cookie.trim().startsWith('csrfToken='));
-  
+  const cookies = document.cookie.split(";");
+  const csrfCookie = cookies.find((cookie) =>
+    cookie.trim().startsWith("csrfToken="),
+  );
+
   if (!csrfCookie) {
     return null;
   }
-  
-  return csrfCookie.split('=')[1]?.trim() || null;
+
+  return csrfCookie.split("=")[1]?.trim() || null;
 }
 
 /**
@@ -54,7 +56,7 @@ export function isAuthenticated(): boolean {
  */
 export function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   };
 
   // Add access token if available
@@ -65,7 +67,7 @@ export function getAuthHeaders(): Record<string, string> {
   // Add CSRF token for state-changing requests
   const csrfToken = getCSRFToken();
   if (csrfToken) {
-    headers['X-CSRF-Token'] = csrfToken;
+    headers["X-CSRF-Token"] = csrfToken;
   }
 
   return headers;
@@ -75,8 +77,8 @@ export function getAuthHeaders(): Record<string, string> {
  * Make authenticated API request
  */
 export async function authenticatedFetch(
-  url: string, 
-  options: RequestInit = {}
+  url: string,
+  options: RequestInit = {},
 ): Promise<Response> {
   const headers = {
     ...getAuthHeaders(),
@@ -86,7 +88,7 @@ export async function authenticatedFetch(
   return fetch(url, {
     ...options,
     headers,
-    credentials: 'include', // Include cookies for refresh token
+    credentials: "include", // Include cookies for refresh token
   });
 }
 
@@ -112,7 +114,7 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
   try {
     errorData = await response.json();
   } catch {
-    errorData = { message: 'Network error', code: 'NETWORK_ERROR' };
+    errorData = { message: "Network error", code: "NETWORK_ERROR" };
   }
 
   throw new Error(errorData.message || `HTTP ${response.status}`);
@@ -123,9 +125,9 @@ export async function handleApiResponse<T>(response: Response): Promise<T> {
  */
 export async function tryRefreshToken(): Promise<boolean> {
   try {
-    const response = await fetch('/api/auth/refresh', {
-      method: 'POST',
-      credentials: 'include',
+    const response = await fetch("/api/auth/refresh", {
+      method: "POST",
+      credentials: "include",
     });
 
     if (response.ok) {
@@ -142,13 +144,13 @@ export async function tryRefreshToken(): Promise<boolean> {
     }
 
     // Other errors - log them and clear state
-    console.error('Token refresh failed with status:', response.status);
+    console.error("Token refresh failed with status:", response.status);
     clearAccessToken();
     return false;
   } catch (error) {
     // Network errors or other issues - log significant errors and clear state
-    if (error instanceof Error && error.message !== 'Failed to fetch') {
-      console.error('Token refresh error:', error.message);
+    if (error instanceof Error && error.message !== "Failed to fetch") {
+      console.error("Token refresh error:", error.message);
     }
     clearAccessToken();
     return false;
@@ -161,7 +163,7 @@ export async function tryRefreshToken(): Promise<boolean> {
 export function startTokenRefreshTimer(): void {
   // Refresh token every 14 minutes (access token expires in 15 minutes)
   const refreshInterval = 14 * 60 * 1000;
-  
+
   setInterval(async () => {
     if (isAuthenticated()) {
       await tryRefreshToken();
@@ -174,17 +176,17 @@ export function startTokenRefreshTimer(): void {
  */
 export function decodeTokenPayload(token: string): any {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
     );
     return JSON.parse(jsonPayload);
   } catch (error) {
-    console.error('Failed to decode token:', error);
+    console.error("Failed to decode token:", error);
     return null;
   }
 }
@@ -197,7 +199,7 @@ export function isTokenExpired(token: string): boolean {
   if (!payload?.exp) {
     return true;
   }
-  
+
   const currentTime = Math.floor(Date.now() / 1000);
   return payload.exp < currentTime;
 }
@@ -209,6 +211,6 @@ export function getUserFromToken(): any {
   if (!accessToken) {
     return null;
   }
-  
+
   return decodeTokenPayload(accessToken);
 }

@@ -1,7 +1,13 @@
 import { ReactNode } from "react";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LoadingStateProps {
@@ -9,10 +15,13 @@ interface LoadingStateProps {
   size?: "sm" | "md" | "lg";
 }
 
-export function LoadingState({ message = "Loading...", size = "md" }: LoadingStateProps) {
+export function LoadingState({
+  message = "Loading...",
+  size = "md",
+}: LoadingStateProps) {
   const sizeClasses = {
     sm: "h-4 w-4",
-    md: "h-8 w-8", 
+    md: "h-8 w-8",
     lg: "h-12 w-12",
   };
 
@@ -34,12 +43,12 @@ interface ErrorStateProps {
   children?: ReactNode;
 }
 
-export function ErrorState({ 
+export function ErrorState({
   title = "Something went wrong",
   message = "An unexpected error occurred. Please try again.",
   onRetry,
   showRetry = true,
-  children 
+  children,
 }: ErrorStateProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -75,9 +84,9 @@ export function InlineError({ message, onDismiss }: InlineErrorProps) {
       <AlertDescription>
         {message}
         {onDismiss && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={onDismiss}
             className="ml-2 h-auto p-0 text-xs"
           >
@@ -97,12 +106,12 @@ interface AsyncWrapperProps {
   children: ReactNode;
 }
 
-export function AsyncWrapper({ 
-  isLoading, 
-  error, 
-  onRetry, 
+export function AsyncWrapper({
+  isLoading,
+  error,
+  onRetry,
   loadingMessage,
-  children 
+  children,
 }: AsyncWrapperProps) {
   if (isLoading) {
     return <LoadingState message={loadingMessage} />;
@@ -110,7 +119,7 @@ export function AsyncWrapper({
 
   if (error) {
     return (
-      <ErrorState 
+      <ErrorState
         message={error.message}
         onRetry={onRetry}
         showRetry={!!onRetry}

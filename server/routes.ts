@@ -17,8 +17,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupProfile(app);
 
   // Setup logging endpoints for browser log persistence
-  app.post('/api/logs', handleLogSubmission);
-  app.get('/api/logs', handleLogRetrieval);
+  app.post("/api/logs", handleLogSubmission);
+  app.get("/api/logs", handleLogRetrieval);
 
   // Additional API routes can be added here
   // prefix all routes with /api
@@ -34,14 +34,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
  * Start periodic session cleanup
  */
 function startSessionCleanup(): void {
-  setInterval(async () => {
-    try {
-      await sessionManager.cleanupSessions();
-      logger.info('Expired sessions cleaned up');
-    } catch (error) {
-      logger.error('Error during session cleanup', { 
-        error: error instanceof Error ? error.message : String(error) 
-      });
-    }
-  }, 60 * 60 * 1000); // Every hour
+  setInterval(
+    async () => {
+      try {
+        await sessionManager.cleanupSessions();
+        logger.info("Expired sessions cleaned up");
+      } catch (error) {
+        logger.error("Error during session cleanup", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    },
+    60 * 60 * 1000,
+  ); // Every hour
 }

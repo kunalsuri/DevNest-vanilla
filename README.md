@@ -171,11 +171,11 @@ DevNest-vanilla/
 
 ```typescript
 // Use the JWT auth hook in components
-import { useJWTAuth } from '@/features/auth';
+import { useJWTAuth } from "@/features/auth";
 
 function MyComponent() {
   const { user, login, logout, isLoading } = useJWTAuth();
-  
+
   // Access user data, login/logout functions
 }
 ```
@@ -184,12 +184,12 @@ function MyComponent() {
 
 ```typescript
 // Use the logging hook for tracking
-import { useLogger } from '@/hooks/use-logger';
+import { useLogger } from "@/hooks/use-logger";
 
 function MyComponent() {
   const logger = useLogger();
-  
-  logger.info('User action completed', { userId: user.id });
+
+  logger.info("User action completed", { userId: user.id });
 }
 ```
 
@@ -201,7 +201,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
-  
+
   return (
     <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
       Toggle Theme
@@ -242,7 +242,6 @@ We welcome contributions! Please follow these steps:
    ```
 
 3. **Make your changes**
-
    - Follow the existing code style
    - Add tests for new features
    - Update documentation as needed

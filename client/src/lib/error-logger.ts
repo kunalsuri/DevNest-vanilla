@@ -7,7 +7,7 @@ export interface AppError extends Error {
 
 export interface ErrorLogEntry {
   timestamp: string;
-  level: 'error' | 'warn' | 'info';
+  level: "error" | "warn" | "info";
   message: string;
   error?: AppError;
   context?: Record<string, any>;
@@ -17,13 +17,13 @@ export interface ErrorLogEntry {
 }
 
 class ErrorLogger {
-  private isDevelopment = process.env.NODE_ENV === 'development';
+  private isDevelopment = process.env.NODE_ENV === "development";
 
   // Log error with context
   logError(error: AppError | Error, context?: Record<string, any>): void {
     const logEntry: ErrorLogEntry = {
       timestamp: new Date().toISOString(),
-      level: 'error',
+      level: "error",
       message: error.message,
       error: error as AppError,
       context,
@@ -34,8 +34,10 @@ class ErrorLogger {
     // Console logging for development
     if (this.isDevelopment) {
       console.group(`🚨 Error: ${error.message}`);
-      console.error('Error:', error);
-      if (context) console.log('Context:', context);
+      console.error("Error:", error);
+      if (context) {
+        console.log("Context:", context);
+      }
       console.groupEnd();
     }
 
@@ -47,7 +49,7 @@ class ErrorLogger {
   logWarning(message: string, context?: Record<string, any>): void {
     const logEntry: ErrorLogEntry = {
       timestamp: new Date().toISOString(),
-      level: 'warn',
+      level: "warn",
       message,
       context,
       url: window?.location?.href,
@@ -63,7 +65,7 @@ class ErrorLogger {
   // Log API errors specifically
   logApiError(url: string, method: string, status: number, error: Error): void {
     this.logError(error, {
-      type: 'API_ERROR',
+      type: "API_ERROR",
       url,
       method,
       status,
@@ -73,7 +75,7 @@ class ErrorLogger {
   // Log React Query errors
   logQueryError(queryKey: unknown[], error: Error): void {
     this.logError(error, {
-      type: 'QUERY_ERROR',
+      type: "QUERY_ERROR",
       queryKey,
     });
   }
@@ -88,7 +90,7 @@ class ErrorLogger {
   private sendToLoggingService(logEntry: ErrorLogEntry): void {
     // In production, send to external service
     // Examples: Sentry, LogRocket, DataDog, etc.
-    
+
     if (!this.isDevelopment) {
       // Example implementation:
       // fetch('/api/logs', {
@@ -112,7 +114,7 @@ export function createAppError(
   message: string,
   code?: string,
   statusCode?: number,
-  context?: Record<string, any>
+  context?: Record<string, any>,
 ): AppError {
   const error = new Error(message) as AppError;
   error.code = code;
@@ -122,21 +124,28 @@ export function createAppError(
 }
 
 // Network error helper
-export function createNetworkError(url: string, status: number, statusText: string): AppError {
+export function createNetworkError(
+  url: string,
+  status: number,
+  statusText: string,
+): AppError {
   return createAppError(
     `Network request failed: ${status} ${statusText}`,
-    'NETWORK_ERROR',
+    "NETWORK_ERROR",
     status,
-    { url, status, statusText }
+    { url, status, statusText },
   );
 }
 
 // Validation error helper
-export function createValidationError(field: string, message: string): AppError {
+export function createValidationError(
+  field: string,
+  message: string,
+): AppError {
   return createAppError(
     `Validation failed for ${field}: ${message}`,
-    'VALIDATION_ERROR',
+    "VALIDATION_ERROR",
     400,
-    { field }
+    { field },
   );
 }

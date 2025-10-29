@@ -1,6 +1,6 @@
 /**
  * Comprehensive Metrics System for React + TypeScript Applications
- * 
+ *
  * Features:
  * - Performance metrics (timing, counters, gauges, histograms)
  * - Component render time tracking
@@ -10,15 +10,15 @@
  * - Integration with external monitoring systems (Prometheus, DataDog)
  */
 
-import { logger } from './logger';
-import { traceContext } from './tracing';
+import { logger } from "./logger";
+import { traceContext } from "./tracing";
 
 // Metric types
 export enum MetricType {
-  COUNTER = 'counter',
-  GAUGE = 'gauge',
-  HISTOGRAM = 'histogram',
-  TIMER = 'timer',
+  COUNTER = "counter",
+  GAUGE = "gauge",
+  HISTOGRAM = "histogram",
+  TIMER = "timer",
 }
 
 // Metric data structures
@@ -59,7 +59,7 @@ export interface MetricsTransport {
 
 // Console metrics transport for development
 export class ConsoleMetricsTransport implements MetricsTransport {
-  name = 'console-metrics';
+  name = "console-metrics";
 
   async reportMetric(metric: MetricData): Promise<void> {
     if (import.meta.env.DEV) {
@@ -73,7 +73,7 @@ export class ConsoleMetricsTransport implements MetricsTransport {
 
   async reportBatch(metrics: MetricData[]): Promise<void> {
     if (import.meta.env.DEV && metrics.length > 0) {
-      console.group('📊 Metrics Batch');
+      console.group("📊 Metrics Batch");
       for (const metric of metrics) {
         await this.reportMetric(metric);
       }
@@ -84,7 +84,7 @@ export class ConsoleMetricsTransport implements MetricsTransport {
 
 // Prometheus metrics transport
 export class PrometheusTransport implements MetricsTransport {
-  name = 'prometheus';
+  name = "prometheus";
   private config: {
     endpoint: string;
     jobName?: string;
@@ -93,7 +93,7 @@ export class PrometheusTransport implements MetricsTransport {
 
   constructor(config: typeof PrometheusTransport.prototype.config) {
     this.config = {
-      jobName: 'devnest_frontend',
+      jobName: "devnest_frontend",
       instance: window.location.host,
       ...config,
     };
@@ -106,34 +106,41 @@ export class PrometheusTransport implements MetricsTransport {
   async reportBatch(metrics: MetricData[]): Promise<void> {
     try {
       const payload = this.formatForPrometheus(metrics);
-      
-      await fetch(`${this.config.endpoint}/metrics/job/${this.config.jobName}/instance/${this.config.instance}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain',
+
+      await fetch(
+        `${this.config.endpoint}/metrics/job/${this.config.jobName}/instance/${this.config.instance}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: payload,
         },
-        body: payload,
-      });
+      );
     } catch (error) {
-      logger.warn('Failed to send metrics to Prometheus', { 
-        error: error instanceof Error ? error.message : String(error) 
-      }, 'Metrics');
+      logger.warn(
+        "Failed to send metrics to Prometheus",
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+        "Metrics",
+      );
     }
   }
 
   private formatForPrometheus(metrics: MetricData[]): string {
     return metrics
-      .map(metric => {
+      .map((metric) => {
         const tags = Object.entries(metric.tags)
           .map(([key, value]) => `${key}="${value}"`)
-          .join(',');
-        
-        const metricName = metric.name.replace(/[^a-zA-Z0-9_]/g, '_');
-        const tagString = tags ? `{${tags}}` : '';
-        
+          .join(",");
+
+        const metricName = metric.name.replace(/[^a-zA-Z0-9_]/g, "_");
+        const tagString = tags ? `{${tags}}` : "";
+
         return `${metricName}${tagString} ${metric.value} ${metric.timestamp}`;
       })
-      .join('\n');
+      .join("\n");
   }
 }
 
@@ -147,10 +154,13 @@ export class ExternalMetricsTransport implements MetricsTransport {
     environment?: string;
   };
 
-  constructor(name: string, config: typeof ExternalMetricsTransport.prototype.config) {
+  constructor(
+    name: string,
+    config: typeof ExternalMetricsTransport.prototype.config,
+  ) {
     this.name = name;
     this.config = {
-      service: 'devnest-frontend',
+      service: "devnest-frontend",
       environment: import.meta.env.MODE,
       ...config,
     };
@@ -163,11 +173,13 @@ export class ExternalMetricsTransport implements MetricsTransport {
   async reportBatch(metrics: MetricData[]): Promise<void> {
     try {
       const payload = {
-        series: metrics.map(metric => ({
+        series: metrics.map((metric) => ({
           metric: metric.name,
           type: metric.type,
           points: [[metric.timestamp, metric.value]],
-          tags: Object.entries(metric.tags).map(([key, value]) => `${key}:${value}`),
+          tags: Object.entries(metric.tags).map(
+            ([key, value]) => `${key}:${value}`,
+          ),
           host: window.location.host,
           service: this.config.service,
           env: this.config.environment,
@@ -175,18 +187,22 @@ export class ExternalMetricsTransport implements MetricsTransport {
       };
 
       await fetch(this.config.endpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          ...(this.config.apiKey ? { 'DD-API-KEY': this.config.apiKey } : {}),
+          "Content-Type": "application/json",
+          ...(this.config.apiKey ? { "DD-API-KEY": this.config.apiKey } : {}),
         },
         body: JSON.stringify(payload),
       });
     } catch (error) {
-      logger.warn('Failed to send metrics to external service', { 
-        error: error instanceof Error ? error.message : String(error),
-        service: this.name 
-      }, 'Metrics');
+      logger.warn(
+        "Failed to send metrics to external service",
+        {
+          error: error instanceof Error ? error.message : String(error),
+          service: this.name,
+        },
+        "Metrics",
+      );
     }
   }
 }
@@ -200,7 +216,7 @@ export class Histogram {
 
   constructor(buckets: number[] = [0.1, 0.5, 1, 2.5, 5, 10]) {
     this.bucketBounds = [...buckets, Infinity].sort((a, b) => a - b);
-    this.bucketBounds.forEach(bucket => this.buckets.set(bucket, 0));
+    this.bucketBounds.forEach((bucket) => this.buckets.set(bucket, 0));
   }
 
   record(value: number): void {
@@ -244,7 +260,7 @@ export class Histogram {
 
   reset(): void {
     this.buckets.clear();
-    this.bucketBounds.forEach(bucket => this.buckets.set(bucket, 0));
+    this.bucketBounds.forEach((bucket) => this.buckets.set(bucket, 0));
     this.sum = 0;
     this.count = 0;
   }
@@ -291,7 +307,7 @@ export class MetricsCollector {
   setBatchConfig(batchSize: number, flushInterval: number): void {
     this.batchSize = batchSize;
     this.flushInterval = flushInterval;
-    
+
     if (this.flushTimer) {
       clearInterval(this.flushTimer);
       this.startBatchFlushing();
@@ -311,7 +327,7 @@ export class MetricsCollector {
     type: MetricType,
     value: number,
     tags: Record<string, string> = {},
-    unit?: string
+    unit?: string,
   ): MetricData {
     const traceId = traceContext.getCurrentTraceId();
     const spanId = traceContext.getCurrentSpanId();
@@ -322,9 +338,9 @@ export class MetricsCollector {
       value,
       timestamp: Date.now(),
       tags: {
-        environment: import.meta.env.MODE || 'development',
-        service: 'devnest-frontend',
-        version: import.meta.env.VITE_APP_VERSION || 'unknown',
+        environment: import.meta.env.MODE || "development",
+        service: "devnest-frontend",
+        version: import.meta.env.VITE_APP_VERSION || "unknown",
         ...(traceId ? { trace_id: traceId } : {}),
         ...(spanId ? { span_id: spanId } : {}),
         ...tags,
@@ -335,7 +351,9 @@ export class MetricsCollector {
 
   // Report metric to transports
   private async reportMetric(metric: MetricData): Promise<void> {
-    if (!this.enabled) return;
+    if (!this.enabled) {
+      return;
+    }
 
     // Add to batch buffer
     this.batchBuffer.push(metric);
@@ -348,24 +366,35 @@ export class MetricsCollector {
 
   // Flush batch buffer
   async flush(): Promise<void> {
-    if (this.batchBuffer.length === 0) return;
+    if (this.batchBuffer.length === 0) {
+      return;
+    }
 
     const metricsToFlush = [...this.batchBuffer];
     this.batchBuffer = [];
 
-    const promises = Array.from(this.transports.values()).map(transport =>
-      transport.reportBatch(metricsToFlush).catch(error =>
-        logger.error('Metrics transport error', error as Error, { 
-          transport: transport.name 
-        }, 'Metrics')
-      )
+    const promises = Array.from(this.transports.values()).map((transport) =>
+      transport.reportBatch(metricsToFlush).catch((error) =>
+        logger.error(
+          "Metrics transport error",
+          error as Error,
+          {
+            transport: transport.name,
+          },
+          "Metrics",
+        ),
+      ),
     );
 
     await Promise.allSettled(promises);
   }
 
   // Counter methods
-  incrementCounter(name: string, tags: Record<string, string> = {}, value = 1): void {
+  incrementCounter(
+    name: string,
+    tags: Record<string, string> = {},
+    value = 1,
+  ): void {
     const key = `${name}:${JSON.stringify(tags)}`;
     const currentValue = this.counters.get(key) || 0;
     const newValue = currentValue + value;
@@ -376,7 +405,12 @@ export class MetricsCollector {
   }
 
   // Gauge methods
-  setGauge(name: string, value: number, tags: Record<string, string> = {}, unit?: string): void {
+  setGauge(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+    unit?: string,
+  ): void {
     const key = `${name}:${JSON.stringify(tags)}`;
     this.gauges.set(key, value);
 
@@ -385,36 +419,57 @@ export class MetricsCollector {
   }
 
   // Histogram methods
-  recordHistogram(name: string, value: number, tags: Record<string, string> = {}, unit?: string): void {
+  recordHistogram(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+    unit?: string,
+  ): void {
     const key = `${name}:${JSON.stringify(tags)}`;
-    
+
     if (!this.histograms.has(key)) {
       this.histograms.set(key, new Histogram());
     }
-    
+
     const histogram = this.histograms.get(key)!;
     histogram.record(value);
 
-    const metric = this.createMetric(name, MetricType.HISTOGRAM, value, tags, unit);
+    const metric = this.createMetric(
+      name,
+      MetricType.HISTOGRAM,
+      value,
+      tags,
+      unit,
+    );
     this.reportMetric(metric);
   }
 
   // Timer methods
   startTimer(name: string, tags: Record<string, string> = {}): () => void {
     const startTime = performance.now();
-    
+
     return () => {
       const duration = performance.now() - startTime;
       this.recordTimer(name, duration, tags);
     };
   }
 
-  recordTimer(name: string, duration: number, tags: Record<string, string> = {}): void {
-    const metric = this.createMetric(name, MetricType.TIMER, duration, tags, 'ms');
+  recordTimer(
+    name: string,
+    duration: number,
+    tags: Record<string, string> = {},
+  ): void {
+    const metric = this.createMetric(
+      name,
+      MetricType.TIMER,
+      duration,
+      tags,
+      "ms",
+    );
     this.reportMetric(metric);
-    
+
     // Also record in histogram for percentile calculations
-    this.recordHistogram(`${name}.duration`, duration, tags, 'ms');
+    this.recordHistogram(`${name}.duration`, duration, tags, "ms");
   }
 
   // Get current metric values
@@ -428,7 +483,10 @@ export class MetricsCollector {
     return this.gauges.get(key) || 0;
   }
 
-  getHistogram(name: string, tags: Record<string, string> = {}): Histogram | null {
+  getHistogram(
+    name: string,
+    tags: Record<string, string> = {},
+  ): Histogram | null {
     const key = `${name}:${JSON.stringify(tags)}`;
     return this.histograms.get(key) || null;
   }
@@ -458,20 +516,25 @@ export const metrics = new MetricsCollector();
 // Utility functions for common metrics
 export const metricsUtils = {
   // Track API performance
-  trackApiCall: (method: string, endpoint: string, duration: number, status: number): void => {
-    metrics.incrementCounter('api.requests.total', {
+  trackApiCall: (
+    method: string,
+    endpoint: string,
+    duration: number,
+    status: number,
+  ): void => {
+    metrics.incrementCounter("api.requests.total", {
       method,
       endpoint,
       status: status.toString(),
     });
 
-    metrics.recordTimer('api.request.duration', duration, {
+    metrics.recordTimer("api.request.duration", duration, {
       method,
       endpoint,
     });
 
     if (status >= 400) {
-      metrics.incrementCounter('api.errors.total', {
+      metrics.incrementCounter("api.errors.total", {
         method,
         endpoint,
         status: status.toString(),
@@ -480,29 +543,40 @@ export const metricsUtils = {
   },
 
   // Track component performance
-  trackComponentRender: (componentName: string, duration: number, props?: Record<string, any>): void => {
-    metrics.recordTimer('component.render.duration', duration, {
+  trackComponentRender: (
+    componentName: string,
+    duration: number,
+    props?: Record<string, any>,
+  ): void => {
+    metrics.recordTimer("component.render.duration", duration, {
       component: componentName,
     });
 
     if (props) {
-      metrics.setGauge('component.props.count', Object.keys(props).length, {
+      metrics.setGauge("component.props.count", Object.keys(props).length, {
         component: componentName,
       });
     }
   },
 
   // Track user interactions
-  trackUserAction: (action: string, metadata: Record<string, string> = {}): void => {
-    metrics.incrementCounter('user.actions.total', {
+  trackUserAction: (
+    action: string,
+    metadata: Record<string, string> = {},
+  ): void => {
+    metrics.incrementCounter("user.actions.total", {
       action,
       ...metadata,
     });
   },
 
   // Track errors
-  trackError: (errorType: string, component?: string, severity: 'low' | 'medium' | 'high' = 'medium'): void => {
-    metrics.incrementCounter('errors.total', {
+  trackError: (
+    errorType: string,
+    component?: string,
+    severity: "low" | "medium" | "high" = "medium",
+  ): void => {
+    metrics.incrementCounter("errors.total", {
       type: errorType,
       ...(component ? { component } : {}),
       severity,
@@ -510,40 +584,60 @@ export const metricsUtils = {
   },
 
   // Track business metrics
-  trackBusinessMetric: (name: string, value: number, tags: Record<string, string> = {}): void => {
+  trackBusinessMetric: (
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+  ): void => {
     metrics.setGauge(`business.${name}`, value, tags);
   },
 
   // Track performance vitals
   trackWebVitals: (): void => {
     // Track Core Web Vitals if available
-    if ('web-vitals' in window) {
+    if ("web-vitals" in window) {
       // This would integrate with web-vitals library
       // For now, we'll track basic performance metrics
     }
 
     // Track basic performance metrics using Performance API
     try {
-      const navigationEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigationEntry = performance.getEntriesByType(
+        "navigation",
+      )[0] as PerformanceNavigationTiming;
       if (navigationEntry) {
-        metrics.recordTimer('page.load.total', navigationEntry.loadEventEnd - navigationEntry.startTime);
-        metrics.recordTimer('page.load.dom', navigationEntry.domContentLoadedEventEnd - navigationEntry.startTime);
-        metrics.recordTimer('page.load.first_paint', navigationEntry.domContentLoadedEventStart - navigationEntry.startTime);
+        metrics.recordTimer(
+          "page.load.total",
+          navigationEntry.loadEventEnd - navigationEntry.startTime,
+        );
+        metrics.recordTimer(
+          "page.load.dom",
+          navigationEntry.domContentLoadedEventEnd - navigationEntry.startTime,
+        );
+        metrics.recordTimer(
+          "page.load.first_paint",
+          navigationEntry.domContentLoadedEventStart -
+            navigationEntry.startTime,
+        );
       }
     } catch (error) {
-      logger.debug('Performance navigation timing not available', { 
-        error: error instanceof Error ? error.message : String(error) 
-      }, 'Metrics');
+      logger.debug(
+        "Performance navigation timing not available",
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+        "Metrics",
+      );
     }
   },
 
   // Track memory usage
   trackMemoryUsage: (): void => {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memory = (performance as any).memory;
-      metrics.setGauge('memory.used', memory.usedJSHeapSize, {}, 'bytes');
-      metrics.setGauge('memory.total', memory.totalJSHeapSize, {}, 'bytes');
-      metrics.setGauge('memory.limit', memory.jsHeapSizeLimit, {}, 'bytes');
+      metrics.setGauge("memory.used", memory.usedJSHeapSize, {}, "bytes");
+      metrics.setGauge("memory.total", memory.totalJSHeapSize, {}, "bytes");
+      metrics.setGauge("memory.limit", memory.jsHeapSizeLimit, {}, "bytes");
     }
   },
 

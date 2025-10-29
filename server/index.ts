@@ -19,20 +19,25 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         styleSrc: [
-          "'self'", 
+          "'self'",
           "'unsafe-inline'", // Required for Tailwind and inline styles
-          "https://fonts.googleapis.com" // Google Fonts CSS
+          "https://fonts.googleapis.com", // Google Fonts CSS
         ],
         scriptSrc: [
-          "'self'", 
-          ...(env.NODE_ENV === "development" ? ["'unsafe-inline'", "'unsafe-eval'"] : [])
+          "'self'",
+          ...(env.NODE_ENV === "development"
+            ? ["'unsafe-inline'", "'unsafe-eval'"]
+            : []),
         ], // unsafe-inline and unsafe-eval needed for Vite HMR and React Fast Refresh in dev
         imgSrc: ["'self'", "data:", "https:", "blob:"],
-        connectSrc: ["'self'", ...(env.NODE_ENV === "development" ? ["ws:", "wss:"] : [])],
+        connectSrc: [
+          "'self'",
+          ...(env.NODE_ENV === "development" ? ["ws:", "wss:"] : []),
+        ],
         fontSrc: [
-          "'self'", 
-          "data:", 
-          "https://fonts.gstatic.com" // Google Fonts files
+          "'self'",
+          "data:",
+          "https://fonts.gstatic.com", // Google Fonts files
         ],
         objectSrc: ["'none'"],
         mediaSrc: ["'self'"],
@@ -49,7 +54,7 @@ app.use(
     noSniff: true,
     referrerPolicy: { policy: "strict-origin-when-cross-origin" },
     xssFilter: true,
-  })
+  }),
 );
 
 // Security: CORS configuration
@@ -73,7 +78,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
     exposedHeaders: ["X-RateLimit-Limit", "X-RateLimit-Remaining"],
     maxAge: 86400, // 24 hours
-  })
+  }),
 );
 
 // Security: Rate limiting for API endpoints
@@ -135,8 +140,8 @@ app.use(express.json({ limit: "10mb" })); // Add size limit for security
 app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
 // Security: Block access to data directory
-app.use('/data/*', (req, res) => {
-  res.status(404).json({ message: 'Not found' });
+app.use("/data/*", (req, res) => {
+  res.status(404).json({ message: "Not found" });
 });
 
 app.use((req, res, next) => {
@@ -173,18 +178,18 @@ app.use((req, res, next) => {
   // Ensure storage is ready before starting server
   const { storage } = await import("./storage");
   await storage.ready();
-  
+
   const server = await registerRoutes(app);
 
   // Enhanced error handling middleware
   app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-    
+
     // Log error details with Winston
     logger.error(`Error ${status} on ${req.method} ${req.path}`, {
       message: err.message,
-      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+      stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
       body: req.body,
       statusCode: status,
       method: req.method,
@@ -192,12 +197,12 @@ app.use((req, res, next) => {
     });
 
     // Send structured error response
-    res.status(status).json({ 
+    res.status(status).json({
       message,
-      ...(process.env.NODE_ENV === 'development' && { 
+      ...(process.env.NODE_ENV === "development" && {
         stack: err.stack,
-        details: err.details 
-      })
+        details: err.details,
+      }),
     });
   });
 
@@ -214,10 +219,10 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = Number.parseInt(process.env.PORT || '5000', 10);
+  const port = Number.parseInt(process.env.PORT || "5000", 10);
   // Use 127.0.0.1 (IPv4) to avoid ENOTSUP error on macOS and Windows
-  const host = '127.0.0.1';
-  
+  const host = "127.0.0.1";
+
   server.listen(port, host, () => {
     log(`serving on port ${port}`);
   });

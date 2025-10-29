@@ -1,5 +1,9 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { errorLogger, createNetworkError, createAppError } from "./error-logger";
+import {
+  errorLogger,
+  createNetworkError,
+  createAppError,
+} from "./error-logger";
 import { logger } from "./logger";
 
 async function throwIfResNotOk(res: Response) {
@@ -18,15 +22,15 @@ async function throwIfResNotOk(res: Response) {
         }
       }
     } catch (parseError) {
-      errorLogger.logError(parseError as Error, { 
-        context: 'Failed to parse error response',
+      errorLogger.logError(parseError as Error, {
+        context: "Failed to parse error response",
         url: res.url,
-        status: res.status 
+        status: res.status,
       });
     }
 
     const networkError = createNetworkError(res.url, res.status, errorMessage);
-    errorLogger.logApiError(res.url, 'UNKNOWN', res.status, networkError);
+    errorLogger.logApiError(res.url, "UNKNOWN", res.status, networkError);
     throw networkError;
   }
 }
@@ -38,16 +42,18 @@ export async function apiRequest(
 ): Promise<Response> {
   const startTime = performance.now();
   const requestId = logger.generateRequestId();
-  
+
   // Log the API request
-  logger.logApiRequest(method, url, { 
-    requestId, 
+  logger.logApiRequest(method, url, {
+    requestId,
     hasData: !!data,
-    dataSize: data ? JSON.stringify(data).length : 0 
+    dataSize: data ? JSON.stringify(data).length : 0,
   });
 
   // Import auth utils dynamically to avoid circular dependencies
-  const { getAuthHeaders } = await import("@/features/auth/utils/jwt-auth-utils");
+  const { getAuthHeaders } = await import(
+    "@/features/auth/utils/jwt-auth-utils"
+  );
   const authHeaders = getAuthHeaders();
 
   try {
@@ -62,34 +68,35 @@ export async function apiRequest(
     });
 
     const duration = Math.round(performance.now() - startTime);
-    
+
     // Log successful response
-    logger.logApiResponse(method, url, res.status, duration, { 
+    logger.logApiResponse(method, url, res.status, duration, {
       requestId,
-      responseSize: res.headers.get('content-length') || 'unknown'
+      responseSize: res.headers.get("content-length") || "unknown",
     });
 
     await throwIfResNotOk(res);
     return res;
   } catch (error) {
     const duration = Math.round(performance.now() - startTime);
-    
+
     // Log the API error with both systems
     errorLogger.logApiError(url, method, 0, error as Error);
-    logger.logApiError(method, url, error as Error, { 
-      requestId, 
+    logger.logApiError(method, url, error as Error, {
+      requestId,
       duration,
-      hasData: !!data 
+      hasData: !!data,
     });
-    
+
     // Re-throw with enhanced error information
     if (error instanceof Error) {
-      throw createAppError(
-        error.message,
-        'API_REQUEST_FAILED',
-        undefined,
-        { url, method, requestId, duration, originalError: error.message }
-      );
+      throw createAppError(error.message, "API_REQUEST_FAILED", undefined, {
+        url,
+        method,
+        requestId,
+        duration,
+        originalError: error.message,
+      });
     }
     throw error;
   }
@@ -132,7 +139,7 @@ export const queryClient = new QueryClient({
     mutations: {
       retry: false,
       onError: (error: Error) => {
-        errorLogger.logError(error, { context: 'Mutation failed' });
+        errorLogger.logError(error, { context: "Mutation failed" });
       },
     },
   },

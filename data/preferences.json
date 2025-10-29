@@ -7,5 +7,14 @@
     "twoFactorEnabled": true,
     "autoLogout": true,
     "theme": "system"
+  },
+  {
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": false,
+    "theme": "system"
   }
 ]

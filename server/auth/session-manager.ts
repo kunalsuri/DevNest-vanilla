@@ -1,10 +1,14 @@
 // server/auth/session-manager.ts
-import { Session } from '@shared/schema';
-import { generateSecureToken, hashToken, getTokenExpirationDate } from './jwt-utils';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { SERVER_START_TIME } from '../index';
-import logger from '../logger';
+import { Session } from "@shared/schema";
+import {
+  generateSecureToken,
+  hashToken,
+  getTokenExpirationDate,
+} from "./jwt-utils";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { SERVER_START_TIME } from "../index";
+import logger from "../logger";
 
 export class SessionManager {
   private readonly sessions: Map<string, Session>;
@@ -13,7 +17,7 @@ export class SessionManager {
 
   constructor() {
     this.sessions = new Map();
-    this.sessionsFile = path.join(process.cwd(), 'data', 'sessions.json');
+    this.sessionsFile = path.join(process.cwd(), "data", "sessions.json");
   }
 
   /**
@@ -35,35 +39,37 @@ export class SessionManager {
 
       // Try to load existing sessions
       try {
-        const data = await fs.readFile(this.sessionsFile, 'utf-8');
+        const data = await fs.readFile(this.sessionsFile, "utf-8");
         const sessions: Session[] = JSON.parse(data);
-        
+
         // Convert date strings back to Date objects and filter expired sessions
         const now = new Date();
         const validSessions = sessions
-          .map(session => ({
+          .map((session) => ({
             ...session,
             createdAt: new Date(session.createdAt),
             expiresAt: new Date(session.expiresAt),
-            revokedAt: session.revokedAt ? new Date(session.revokedAt) : undefined,
+            revokedAt: session.revokedAt
+              ? new Date(session.revokedAt)
+              : undefined,
           }))
-          .filter(session => session.expiresAt > now && !session.revokedAt);
+          .filter((session) => session.expiresAt > now && !session.revokedAt);
 
-        validSessions.forEach(session => {
+        validSessions.forEach((session) => {
           this.sessions.set(session.sessionId, session);
         });
 
         logger.info(`Loaded ${validSessions.length} valid sessions`);
       } catch (error) {
         // File doesn't exist or is invalid, start with empty sessions
-        logger.info('No existing sessions file found, starting fresh', { 
-          error: error instanceof Error ? error.message : String(error) 
+        logger.info("No existing sessions file found, starting fresh", {
+          error: error instanceof Error ? error.message : String(error),
         });
         await this.saveSessions();
       }
     } catch (error) {
-      logger.error('Error loading sessions', { 
-        error: error instanceof Error ? error.message : String(error) 
+      logger.error("Error loading sessions", {
+        error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }
@@ -77,8 +83,8 @@ export class SessionManager {
       const sessions = Array.from(this.sessions.values());
       await fs.writeFile(this.sessionsFile, JSON.stringify(sessions, null, 2));
     } catch (error) {
-      logger.error('Error saving sessions', { 
-        error: error instanceof Error ? error.message : String(error) 
+      logger.error("Error saving sessions", {
+        error: error instanceof Error ? error.message : String(error),
       });
       throw error;
     }
@@ -91,7 +97,7 @@ export class SessionManager {
     userId: string,
     refreshToken: string,
     userAgent?: string,
-    ip?: string
+    ip?: string,
   ): Promise<Session> {
     await this.ready();
 
@@ -100,7 +106,7 @@ export class SessionManager {
     const refreshTokenHash = hashToken(refreshToken);
     const csrfTokenHash = hashToken(csrfToken);
     const createdAt = new Date();
-    const expiresAt = getTokenExpirationDate('7d'); // Match refresh token expiration
+    const expiresAt = getTokenExpirationDate("7d"); // Match refresh token expiration
 
     const session: Session = {
       sessionId,
@@ -124,7 +130,7 @@ export class SessionManager {
    */
   async getSession(sessionId: string): Promise<Session | null> {
     await this.ready();
-    
+
     const session = this.sessions.get(sessionId);
     if (!session) {
       return null;
@@ -135,7 +141,7 @@ export class SessionManager {
     const isExpired = session.expiresAt <= now;
     const isRevoked = !!session.revokedAt;
     const isStale = session.createdAt < SERVER_START_TIME;
-    
+
     if (isExpired || isRevoked || isStale) {
       await this.revokeSession(sessionId);
       return null;
@@ -147,7 +153,10 @@ export class SessionManager {
   /**
    * Validate refresh token against session
    */
-  async validateRefreshToken(sessionId: string, refreshToken: string): Promise<boolean> {
+  async validateRefreshToken(
+    sessionId: string,
+    refreshToken: string,
+  ): Promise<boolean> {
     const session = await this.getSession(sessionId);
     if (!session) {
       return false;
@@ -160,7 +169,10 @@ export class SessionManager {
   /**
    * Validate CSRF token against session
    */
-  async validateCSRFToken(sessionId: string, csrfToken: string): Promise<boolean> {
+  async validateCSRFToken(
+    sessionId: string,
+    csrfToken: string,
+  ): Promise<boolean> {
     const session = await this.getSession(sessionId);
     if (!session) {
       return false;
@@ -176,7 +188,7 @@ export class SessionManager {
   async updateSessionTokens(
     sessionId: string,
     newRefreshToken: string,
-    newCSRFToken?: string
+    newCSRFToken?: string,
   ): Promise<Session | null> {
     await this.ready();
 

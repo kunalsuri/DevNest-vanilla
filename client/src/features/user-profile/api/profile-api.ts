@@ -16,19 +16,21 @@ export const profileApi = {
   },
 
   // Upload profile picture
-  uploadProfilePicture: async (file: File): Promise<{ profilePicture: string }> => {
+  uploadProfilePicture: async (
+    file: File,
+  ): Promise<{ profilePicture: string }> => {
     try {
       const formData = new FormData();
-      formData.append('profilePicture', file);
-      
-      const response = await fetch('/api/profile/upload-picture', {
-        method: 'POST',
+      formData.append("profilePicture", file);
+
+      const response = await fetch("/api/profile/upload-picture", {
+        method: "POST",
         body: formData,
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!response.ok) {
-        let errorMessage = 'Failed to upload profile picture';
+        let errorMessage = "Failed to upload profile picture";
         try {
           const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
@@ -37,13 +39,13 @@ export const profileApi = {
         }
         throw new Error(errorMessage);
       }
-      
+
       return await response.json();
     } catch (error) {
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Upload failed due to an unexpected error');
+      throw new Error("Upload failed due to an unexpected error");
     }
   },
 
@@ -54,8 +56,14 @@ export const profileApi = {
   },
 
   // Update preferences
-  updatePreferences: async (preferences: AccountPreferences): Promise<AccountPreferences> => {
-    const response = await apiRequest("PUT", "/api/profile/preferences", preferences);
+  updatePreferences: async (
+    preferences: AccountPreferences,
+  ): Promise<AccountPreferences> => {
+    const response = await apiRequest(
+      "PUT",
+      "/api/profile/preferences",
+      preferences,
+    );
     return response.json();
   },
 

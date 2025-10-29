@@ -1,5 +1,12 @@
 // client/src/features/auth/hooks/use-jwt-auth.tsx
-import { createContext, ReactNode, useContext, useEffect, useState, useMemo } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   useQuery,
   useMutation,
@@ -40,7 +47,11 @@ interface AuthContextType {
 
 export const JWTAuthContext = createContext<AuthContextType | null>(null);
 
-export function JWTAuthProvider({ children }: { readonly children: ReactNode }) {
+export function JWTAuthProvider({
+  children,
+}: {
+  readonly children: ReactNode;
+}) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isAuthChecked, setIsAuthChecked] = useState(false);
@@ -55,9 +66,9 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
       }
       setIsAuthChecked(true);
     };
-    
+
     checkAuth();
-    
+
     // Start automatic token refresh
     startTokenRefreshTimer();
   }, []);
@@ -73,7 +84,7 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
       if (!isAuthenticated()) {
         return null;
       }
-      
+
       // First try to get user from token
       const tokenUser = getUserFromToken();
       if (tokenUser) {
@@ -83,14 +94,14 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
           return handleApiResponse<PublicUser>(response);
         } catch (error) {
           // If API call fails, fall back to token data
-          console.warn('API call failed, using token data:', error);
+          console.warn("API call failed, using token data:", error);
           const user: PublicUser = {
             id: tokenUser.userId,
             username: tokenUser.username,
             email: tokenUser.email,
             role: tokenUser.role,
-            firstName: tokenUser.firstName || '',
-            lastName: tokenUser.lastName || '',
+            firstName: tokenUser.firstName || "",
+            lastName: tokenUser.lastName || "",
             profilePicture: null,
             createdAt: null,
           };
@@ -104,7 +115,7 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
         return handleApiResponse<PublicUser>(response);
       } catch (error) {
         // If API call fails, clear auth state
-        console.error('Failed to fetch user from API:', error);
+        console.error("Failed to fetch user from API:", error);
         clearAccessToken();
         return null;
       }
@@ -134,16 +145,20 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
     onSuccess: (data: AuthResponse) => {
       setAccessToken(data.accessToken);
       queryClient.setQueryData(["/api/auth/user"], data.user);
-      
+
       // Set user context for logging
       logger.setUserId(data.user.id);
-      
+
       // Log successful login
-      logger.info("User login successful", {
-        userId: data.user.id,
-        username: data.user.username,
-      }, 'auth');
-      
+      logger.info(
+        "User login successful",
+        {
+          userId: data.user.id,
+          username: data.user.username,
+        },
+        "auth",
+      );
+
       toast({
         title: "Welcome back!",
         description: `Successfully logged in as ${data.user.firstName}`,
@@ -179,16 +194,20 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
     onSuccess: (data: AuthResponse) => {
       setAccessToken(data.accessToken);
       queryClient.setQueryData(["/api/auth/user"], data.user);
-      
+
       // Set user context for logging
       logger.setUserId(data.user.id);
-      
+
       // Log successful registration
-      logger.info("User registration successful", {
-        userId: data.user.id,
-        username: data.user.username,
-      }, 'auth');
-      
+      logger.info(
+        "User registration successful",
+        {
+          userId: data.user.id,
+          username: data.user.username,
+        },
+        "auth",
+      );
+
       toast({
         title: "Account created!",
         description: `Welcome to DevNest, ${data.user.firstName}!`,
@@ -213,11 +232,11 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
       clearAccessToken();
       queryClient.setQueryData(["/api/auth/user"], null);
       queryClient.clear(); // Clear all cached data
-      
+
       // Log successful logout and clear user context
-      logger.info("User logout successful", {}, 'auth');
+      logger.info("User logout successful", {}, "auth");
       logger.clearContext();
-      
+
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
@@ -229,7 +248,7 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
       queryClient.setQueryData(["/api/auth/user"], null);
       queryClient.clear();
       logger.clearContext();
-      
+
       toast({
         title: "Logged out",
         description: "You have been logged out",
@@ -262,21 +281,35 @@ export function JWTAuthProvider({ children }: { readonly children: ReactNode }) 
   });
 
   const hasRole = (role: string): boolean => {
-    if (!user) return false;
+    if (!user) {
+      return false;
+    }
     return user.role === role;
   };
 
-  const contextValue = useMemo(() => ({
-    user: user ?? null,
-    isLoading: !isAuthChecked || isLoading,
-    error,
-    isAuthenticated: isAuthenticated() && !!user,
-    loginMutation,
-    registerMutation,
-    logoutMutation,
-    refreshTokenMutation,
-    hasRole,
-  }), [user, isAuthChecked, isLoading, error, loginMutation, registerMutation, logoutMutation, refreshTokenMutation]);
+  const contextValue = useMemo(
+    () => ({
+      user: user ?? null,
+      isLoading: !isAuthChecked || isLoading,
+      error,
+      isAuthenticated: isAuthenticated() && !!user,
+      loginMutation,
+      registerMutation,
+      logoutMutation,
+      refreshTokenMutation,
+      hasRole,
+    }),
+    [
+      user,
+      isAuthChecked,
+      isLoading,
+      error,
+      loginMutation,
+      registerMutation,
+      logoutMutation,
+      refreshTokenMutation,
+    ],
+  );
 
   return (
     <JWTAuthContext.Provider value={contextValue}>

@@ -93,7 +93,10 @@ export function usePreferences() {
   const updatePreferences = useMutation({
     mutationFn: profileApi.updatePreferences,
     onSuccess: (updatedPreferences) => {
-      queryClient.setQueryData(["/api/profile/preferences"], updatedPreferences);
+      queryClient.setQueryData(
+        ["/api/profile/preferences"],
+        updatedPreferences,
+      );
       toast({
         title: "Preferences updated",
         description: "Your preferences have been saved.",
@@ -107,8 +110,6 @@ export function usePreferences() {
       });
     },
   });
-
-
 
   return {
     preferences: preferences.data,

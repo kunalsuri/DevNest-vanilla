@@ -1,4 +1,11 @@
-import { type User, type InsertUser, type PasswordResetToken, type InsertPasswordResetToken, type AccountPreferences, accountPreferences } from "@shared/schema";
+import {
+  type User,
+  type InsertUser,
+  type PasswordResetToken,
+  type InsertPasswordResetToken,
+  type AccountPreferences,
+  accountPreferences,
+} from "@shared/schema";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -12,12 +19,17 @@ export interface IStorage {
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
   deleteUser(id: string): Promise<void>;
   updateUserPassword(id: string, password: string): Promise<void>;
-  createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken>;
+  createPasswordResetToken(
+    token: InsertPasswordResetToken,
+  ): Promise<PasswordResetToken>;
   getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined>;
   deletePasswordResetToken(token: string): Promise<void>;
   cleanupExpiredTokens(): Promise<void>;
   getUserPreferences(userId: string): Promise<AccountPreferences>;
-  updateUserPreferences(userId: string, preferences: AccountPreferences): Promise<AccountPreferences>;
+  updateUserPreferences(
+    userId: string,
+    preferences: AccountPreferences,
+  ): Promise<AccountPreferences>;
 }
 
 export class FileStorage implements IStorage {
@@ -50,7 +62,7 @@ export class FileStorage implements IStorage {
       await fs.mkdir(this.dataDir, { recursive: true });
     } catch (error: any) {
       // Directory might already exist, only throw if it's not EEXIST
-      if (error.code !== 'EEXIST') {
+      if (error.code !== "EEXIST") {
         throw error;
       }
     }
@@ -59,24 +71,24 @@ export class FileStorage implements IStorage {
   private async loadData(): Promise<void> {
     try {
       await this.ensureDataDir();
-      
+
       // Load users
       try {
         const userData = await fs.readFile(this.usersFile, "utf-8");
         const usersArray: User[] = JSON.parse(userData);
         this.users.clear();
-        usersArray.forEach(user => {
+        usersArray.forEach((user) => {
           // Convert date strings back to Date objects
           const hydratedUser = {
             ...user,
-            createdAt: user.createdAt ? new Date(user.createdAt) : null
+            createdAt: user.createdAt ? new Date(user.createdAt) : null,
           };
           this.users.set(user.id, hydratedUser);
         });
       } catch (error: any) {
         // File doesn't exist yet or parse error, start with empty users
-        if (error.code !== 'ENOENT') {
-          logger.warn('Error loading users', { error: error.message });
+        if (error.code !== "ENOENT") {
+          logger.warn("Error loading users", { error: error.message });
         }
         this.users.clear();
       }
@@ -86,42 +98,48 @@ export class FileStorage implements IStorage {
         const tokenData = await fs.readFile(this.tokensFile, "utf-8");
         const tokensArray: PasswordResetToken[] = JSON.parse(tokenData);
         this.passwordResetTokens.clear();
-        tokensArray.forEach(token => {
+        tokensArray.forEach((token) => {
           // Convert date strings back to Date objects
           const hydratedToken = {
             ...token,
             expiresAt: new Date(token.expiresAt),
-            createdAt: token.createdAt ? new Date(token.createdAt) : null
+            createdAt: token.createdAt ? new Date(token.createdAt) : null,
           };
           this.passwordResetTokens.set(token.token, hydratedToken);
         });
       } catch (error: any) {
         // File doesn't exist yet or parse error, start with empty tokens
-        if (error.code !== 'ENOENT') {
-          logger.warn('Error loading password reset tokens', { error: error.message });
+        if (error.code !== "ENOENT") {
+          logger.warn("Error loading password reset tokens", {
+            error: error.message,
+          });
         }
         this.passwordResetTokens.clear();
       }
 
       // Load user preferences
       try {
-        const preferencesData = await fs.readFile(this.preferencesFile, "utf-8");
-        const preferencesArray: Array<{userId: string} & AccountPreferences> = JSON.parse(preferencesData);
+        const preferencesData = await fs.readFile(
+          this.preferencesFile,
+          "utf-8",
+        );
+        const preferencesArray: Array<{ userId: string } & AccountPreferences> =
+          JSON.parse(preferencesData);
         this.userPreferences.clear();
-        preferencesArray.forEach(pref => {
+        preferencesArray.forEach((pref) => {
           const { userId, ...preferences } = pref;
           this.userPreferences.set(userId, preferences);
         });
       } catch (error: any) {
         // File doesn't exist yet or parse error, start with empty preferences
-        if (error.code !== 'ENOENT') {
-          logger.warn('Error loading preferences', { error: error.message });
+        if (error.code !== "ENOENT") {
+          logger.warn("Error loading preferences", { error: error.message });
         }
         this.userPreferences.clear();
       }
     } catch (error) {
-      logger.error('Error loading data', { 
-        error: error instanceof Error ? error.message : String(error) 
+      logger.error("Error loading data", {
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
@@ -140,11 +158,16 @@ export class FileStorage implements IStorage {
 
   private async savePreferences(): Promise<void> {
     await this.ensureDataDir();
-    const preferencesArray = Array.from(this.userPreferences.entries()).map(([userId, preferences]) => ({
-      userId,
-      ...preferences
-    }));
-    await fs.writeFile(this.preferencesFile, JSON.stringify(preferencesArray, null, 2));
+    const preferencesArray = Array.from(this.userPreferences.entries()).map(
+      ([userId, preferences]) => ({
+        userId,
+        ...preferences,
+      }),
+    );
+    await fs.writeFile(
+      this.preferencesFile,
+      JSON.stringify(preferencesArray, null, 2),
+    );
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -158,19 +181,17 @@ export class FileStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.email === email,
-    );
+    return Array.from(this.users.values()).find((user) => user.email === email);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { 
-      ...insertUser, 
+    const user: User = {
+      ...insertUser,
       id,
-      role: 'user', // Default role
+      role: "user", // Default role
       profilePicture: null,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     this.users.set(id, user);
     await this.saveUsers();
@@ -185,7 +206,10 @@ export class FileStorage implements IStorage {
     }
   }
 
-  async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
+  async updateUser(
+    id: string,
+    updates: Partial<User>,
+  ): Promise<User | undefined> {
     const user = this.users.get(id);
     if (user) {
       const updatedUser = { ...user, ...updates };
@@ -201,19 +225,23 @@ export class FileStorage implements IStorage {
     await this.saveUsers();
   }
 
-  async createPasswordResetToken(insertToken: InsertPasswordResetToken): Promise<PasswordResetToken> {
+  async createPasswordResetToken(
+    insertToken: InsertPasswordResetToken,
+  ): Promise<PasswordResetToken> {
     const id = randomUUID();
     const token: PasswordResetToken = {
       ...insertToken,
       id,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
     this.passwordResetTokens.set(token.token, token);
     await this.saveTokens();
     return token;
   }
 
-  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
+  async getPasswordResetToken(
+    token: string,
+  ): Promise<PasswordResetToken | undefined> {
     const resetToken = this.passwordResetTokens.get(token);
     if (resetToken && resetToken.expiresAt > new Date()) {
       return resetToken;
@@ -234,14 +262,16 @@ export class FileStorage implements IStorage {
   async cleanupExpiredTokens(): Promise<void> {
     const now = new Date();
     let hasExpired = false;
-    
-    for (const [token, resetToken] of Array.from(this.passwordResetTokens.entries())) {
+
+    for (const [token, resetToken] of Array.from(
+      this.passwordResetTokens.entries(),
+    )) {
       if (resetToken.expiresAt <= now) {
         this.passwordResetTokens.delete(token);
         hasExpired = true;
       }
     }
-    
+
     if (hasExpired) {
       await this.saveTokens();
     }
@@ -257,7 +287,10 @@ export class FileStorage implements IStorage {
     return defaultPreferences;
   }
 
-  async updateUserPreferences(userId: string, preferences: AccountPreferences): Promise<AccountPreferences> {
+  async updateUserPreferences(
+    userId: string,
+    preferences: AccountPreferences,
+  ): Promise<AccountPreferences> {
     const validatedPreferences = accountPreferences.parse(preferences);
     this.userPreferences.set(userId, validatedPreferences);
     await this.savePreferences();

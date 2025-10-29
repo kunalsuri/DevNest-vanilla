@@ -19,7 +19,9 @@ export function PreferencesSection() {
 
   return (
     <Tabs defaultValue="general" className="space-y-4">
-      <TabsList className={`grid w-full ${hasObservabilityAccess ? 'grid-cols-3' : 'grid-cols-2'}`}>
+      <TabsList
+        className={`grid w-full ${hasObservabilityAccess ? "grid-cols-3" : "grid-cols-2"}`}
+      >
         <TabsTrigger value="general" className="flex items-center gap-2">
           <Settings className="h-4 w-4" />
           General
@@ -29,7 +31,10 @@ export function PreferencesSection() {
           Security
         </TabsTrigger>
         {hasObservabilityAccess && (
-          <TabsTrigger value="observability" className="flex items-center gap-2">
+          <TabsTrigger
+            value="observability"
+            className="flex items-center gap-2"
+          >
             <BarChart3 className="h-4 w-4" />
             Observability
           </TabsTrigger>
@@ -45,8 +50,12 @@ export function PreferencesSection() {
                 <Palette className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <CardTitle className="text-lg font-semibold text-primary">Appearance</CardTitle>
-                <p className="text-sm text-muted-foreground">Customize your visual experience</p>
+                <CardTitle className="text-lg font-semibold text-primary">
+                  Appearance
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Customize your visual experience
+                </p>
               </div>
             </div>
           </CardHeader>
@@ -54,7 +63,9 @@ export function PreferencesSection() {
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-base font-medium">Theme</Label>
-                <p className="text-sm text-muted-foreground">Switch between light and dark themes</p>
+                <p className="text-sm text-muted-foreground">
+                  Switch between light and dark themes
+                </p>
               </div>
               <ThemeToggle />
             </div>
@@ -69,8 +80,12 @@ export function PreferencesSection() {
                 <Bell className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <CardTitle className="text-lg font-semibold text-primary">Notifications</CardTitle>
-                <p className="text-sm text-muted-foreground">Manage how you receive notifications</p>
+                <CardTitle className="text-lg font-semibold text-primary">
+                  Notifications
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Manage how you receive notifications
+                </p>
               </div>
             </div>
           </CardHeader>
@@ -78,50 +93,80 @@ export function PreferencesSection() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base font-medium" data-testid="label-email-notifications">Email notifications</Label>
-                  <p className="text-sm text-muted-foreground">Receive notifications via email</p>
+                  <Label
+                    className="text-base font-medium"
+                    data-testid="label-email-notifications"
+                  >
+                    Email notifications
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive notifications via email
+                  </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={preferences?.emailNotifications ?? true}
                   onCheckedChange={(checked) => {
                     if (preferences) {
-                      updatePreferences.mutate({ ...preferences, emailNotifications: checked });
+                      updatePreferences.mutate({
+                        ...preferences,
+                        emailNotifications: checked,
+                      });
                     }
                   }}
                   data-testid="switch-email-notifications"
                 />
               </div>
-              
+
               <Separator />
-              
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base font-medium" data-testid="label-push-notifications">Push notifications</Label>
-                  <p className="text-sm text-muted-foreground">Receive push notifications in your browser</p>
+                  <Label
+                    className="text-base font-medium"
+                    data-testid="label-push-notifications"
+                  >
+                    Push notifications
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive push notifications in your browser
+                  </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={preferences?.pushNotifications ?? true}
                   onCheckedChange={(checked) => {
                     if (preferences) {
-                      updatePreferences.mutate({ ...preferences, pushNotifications: checked });
+                      updatePreferences.mutate({
+                        ...preferences,
+                        pushNotifications: checked,
+                      });
                     }
                   }}
                   data-testid="switch-push-notifications"
                 />
               </div>
-              
+
               <Separator />
-              
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base font-medium" data-testid="label-marketing-emails">Marketing emails</Label>
-                  <p className="text-sm text-muted-foreground">Receive updates about new features and promotions</p>
+                  <Label
+                    className="text-base font-medium"
+                    data-testid="label-marketing-emails"
+                  >
+                    Marketing emails
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Receive updates about new features and promotions
+                  </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={preferences?.marketingEmails ?? false}
                   onCheckedChange={(checked) => {
                     if (preferences) {
-                      updatePreferences.mutate({ ...preferences, marketingEmails: checked });
+                      updatePreferences.mutate({
+                        ...preferences,
+                        marketingEmails: checked,
+                      });
                     }
                   }}
                   data-testid="switch-marketing-emails"
@@ -141,8 +186,12 @@ export function PreferencesSection() {
                 <Shield className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <CardTitle className="text-lg font-semibold text-primary">Privacy & Security</CardTitle>
-                <p className="text-sm text-muted-foreground">Manage your privacy and security settings</p>
+                <CardTitle className="text-lg font-semibold text-primary">
+                  Privacy & Security
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Manage your privacy and security settings
+                </p>
               </div>
             </div>
           </CardHeader>
@@ -150,32 +199,52 @@ export function PreferencesSection() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base font-medium" data-testid="label-two-factor">Two-factor authentication</Label>
-                  <p className="text-sm text-muted-foreground">Add an extra layer of security to your account</p>
+                  <Label
+                    className="text-base font-medium"
+                    data-testid="label-two-factor"
+                  >
+                    Two-factor authentication
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Add an extra layer of security to your account
+                  </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={preferences?.twoFactorEnabled ?? false}
                   onCheckedChange={(checked) => {
                     if (preferences) {
-                      updatePreferences.mutate({ ...preferences, twoFactorEnabled: checked });
+                      updatePreferences.mutate({
+                        ...preferences,
+                        twoFactorEnabled: checked,
+                      });
                     }
                   }}
                   data-testid="switch-two-factor"
                 />
               </div>
-              
+
               <Separator />
-              
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-base font-medium" data-testid="label-session-timeout">Auto logout</Label>
-                  <p className="text-sm text-muted-foreground">Automatically log out after 30 minutes of inactivity</p>
+                  <Label
+                    className="text-base font-medium"
+                    data-testid="label-session-timeout"
+                  >
+                    Auto logout
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Automatically log out after 30 minutes of inactivity
+                  </p>
                 </div>
-                <Switch 
+                <Switch
                   checked={preferences?.autoLogout ?? true}
                   onCheckedChange={(checked) => {
                     if (preferences) {
-                      updatePreferences.mutate({ ...preferences, autoLogout: checked });
+                      updatePreferences.mutate({
+                        ...preferences,
+                        autoLogout: checked,
+                      });
                     }
                   }}
                   data-testid="switch-session-timeout"

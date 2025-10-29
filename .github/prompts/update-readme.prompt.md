@@ -1,15 +1,18 @@
 ---
-mode: 'agent'
-description: 'Analyze the project and update the root README.md to reflect current state, features, and usage'
+mode: "agent"
+description: "Analyze the project and update the root README.md to reflect current state, features, and usage"
 ---
 
 # Role
+
 Act as a **Technical Writer LLM** specialized in software documentation.
 
 # Goal
+
 Scan the codebase and generate an updated `README.md` file that is clear, concise, and developer-friendly.
 
 # Requirements
+
 - Include:
   - Project title and one-line description
   - Key features (auto-detected from modules/components)
@@ -24,5 +27,6 @@ Scan the codebase and generate an updated `README.md` file that is clear, concis
 - Be concise but complete — prioritize readability.
 
 # Output Format
+
 - Provide the updated `README.md` content inside a single fenced Markdown block.
 - At the end, output a **checklist of changes made vs. previous README**.

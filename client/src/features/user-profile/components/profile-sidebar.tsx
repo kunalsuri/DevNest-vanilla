@@ -3,14 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useJWTAuth } from "@/features/auth";
-import {
-  User,
-  Settings,
-  Folder,
-  Trash2,
-  LogOut,
-  Search,
-} from "lucide-react";
+import { User, Settings, Folder, Trash2, LogOut, Search } from "lucide-react";
 
 interface ProfileSidebarProps {
   className?: string;
@@ -56,7 +49,12 @@ export function ProfileSidebar({ className }: ProfileSidebarProps) {
   ];
 
   return (
-    <div className={cn("flex h-full w-64 flex-col bg-background border-r", className)}>
+    <div
+      className={cn(
+        "flex h-full w-64 flex-col bg-background border-r",
+        className,
+      )}
+    >
       {/* Search Bar */}
       <div className="p-4">
         <div className="relative">
@@ -88,7 +86,7 @@ export function ProfileSidebar({ className }: ProfileSidebarProps) {
                       "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors",
                       item.active
                         ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted",
                     )}
                     data-testid={`nav-${item.title.toLowerCase().replace(/\s+/g, "-")}`}
                   >

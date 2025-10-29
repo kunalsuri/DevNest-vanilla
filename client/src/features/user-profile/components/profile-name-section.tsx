@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useProfile } from "../hooks/use-profile";
 import { useJWTAuth } from "@/features/auth";
@@ -12,8 +19,14 @@ import { Edit3, Check, X, User } from "lucide-react";
 import { useErrorHandler } from "@/hooks/use-error-handler";
 
 const profileNameSchema = z.object({
-  firstName: z.string().min(1, "First name is required").max(50, "First name must be less than 50 characters"),
-  lastName: z.string().min(1, "Last name is required").max(50, "Last name must be less than 50 characters"),
+  firstName: z
+    .string()
+    .min(1, "First name is required")
+    .max(50, "First name must be less than 50 characters"),
+  lastName: z
+    .string()
+    .min(1, "Last name is required")
+    .max(50, "Last name must be less than 50 characters"),
 });
 
 type ProfileNameFormData = z.infer<typeof profileNameSchema>;
@@ -26,7 +39,7 @@ export function ProfileNameSection() {
 
   const form = useForm<ProfileNameFormData>({
     resolver: zodResolver(profileNameSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
       firstName: user?.firstName || "",
       lastName: user?.lastName || "",
@@ -57,26 +70,33 @@ export function ProfileNameSection() {
       });
       setIsEditing(false);
     } catch (error) {
-      handleError(error as Error, 'Profile name update failed');
+      handleError(error as Error, "Profile name update failed");
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-primary">Profile Name</CardTitle>
-        <p className="text-sm text-muted-foreground">Change your profile name.</p>
+        <CardTitle className="text-lg font-semibold text-primary">
+          Profile Name
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Change your profile name.
+        </p>
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted">
             <User className="h-5 w-5 text-muted-foreground" />
           </div>
-          
+
           <div className="flex-1">
             {isEditing ? (
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-3"
+                >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <FormField
                       control={form.control}
@@ -117,7 +137,9 @@ export function ProfileNameSection() {
                     <Button
                       type="submit"
                       size="sm"
-                      disabled={updateProfile.isPending || !form.formState.isValid}
+                      disabled={
+                        updateProfile.isPending || !form.formState.isValid
+                      }
                       data-testid="button-save-name"
                     >
                       <Check className="h-4 w-4 mr-1" />

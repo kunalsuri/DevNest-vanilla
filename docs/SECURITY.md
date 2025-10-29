@@ -20,6 +20,7 @@ Helmet adds the following security headers:
 - **Referrer Policy:** Controls referrer information
 
 **Configuration:**
+
 ```typescript
 helmet({
   contentSecurityPolicy: {
@@ -32,7 +33,7 @@ helmet({
     },
   },
   hsts: { maxAge: 31536000, includeSubDomains: true },
-})
+});
 ```
 
 ### 2. Cross-Origin Resource Sharing (CORS)
@@ -40,12 +41,14 @@ helmet({
 **Implementation:** `server/index.ts`
 
 Configured CORS to:
+
 - Validate request origins against allowlist
 - Support credentials (cookies)
 - Log unauthorized access attempts
 - Set appropriate headers for preflight requests
 
 **Environment Variable:**
+
 ```env
 ALLOWED_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
 ```
@@ -57,17 +60,20 @@ ALLOWED_ORIGINS="https://yourdomain.com,https://www.yourdomain.com"
 Two-tier rate limiting system:
 
 **General API Rate Limiter:**
+
 - Window: 15 minutes (configurable via `RATE_LIMIT_WINDOW_MS`)
 - Max requests: 100 per window (configurable via `RATE_LIMIT_MAX_REQUESTS`)
 - Applied to: All `/api/*` routes
 
 **Authentication Rate Limiter (Stricter):**
+
 - Window: 15 minutes
 - Max requests: 5 per window
 - Skip successful requests (only count failures)
 - Applied to: `/api/auth/login`, `/api/auth/register`, `/api/auth/refresh`
 
 **Benefits:**
+
 - Prevents brute force attacks
 - Protects against DDoS
 - Logs rate limit violations
@@ -79,21 +85,25 @@ Two-tier rate limiting system:
 Using `express-validator` for:
 
 #### Registration Validation:
+
 - Username: 3-50 chars, alphanumeric + underscore/hyphen only
 - Email: Valid email format, normalized
 - Password: 6-128 chars, requires uppercase, lowercase, and number
 - Names: 1-50 chars, letters/spaces/hyphens/apostrophes only
 
 #### Login Validation:
+
 - Username: 1-50 chars, required
 - Password: 1-128 chars, required
 
 #### Profile Update Validation:
+
 - Optional fields (firstName, lastName, email)
 - Profile picture URL validation
 - Input trimming and sanitization
 
 #### Password Update Validation:
+
 - Current password verification
 - New password strength requirements
 - Confirmation matching
@@ -104,6 +114,7 @@ Using `express-validator` for:
 **Implementation:** `server/env.ts`
 
 Using Zod schema for:
+
 - Type-safe environment variables
 - Required vs optional configuration
 - Default values for development
@@ -111,6 +122,7 @@ Using Zod schema for:
 - Production safety warnings
 
 **Validated Variables:**
+
 ```typescript
 - NODE_ENV: 'development' | 'production' | 'test'
 - PORT: number (1-65535)
@@ -174,6 +186,7 @@ openssl rand -base64 64
 ### Environment Configuration
 
 **Development (.env):**
+
 ```env
 NODE_ENV=development
 JWT_ACCESS_SECRET="dev-secret-change-in-prod"
@@ -181,6 +194,7 @@ ALLOWED_ORIGINS="http://localhost:5173,http://localhost:5000"
 ```
 
 **Production (.env):**
+
 ```env
 NODE_ENV=production
 JWT_ACCESS_SECRET="[64+ character random string]"
@@ -191,6 +205,7 @@ DATABASE_URL="postgresql://user:pass@prod-db:5432/db"
 ### Password Requirements
 
 Enforced by validation middleware:
+
 - Minimum 6 characters (recommend 12+ in production)
 - At least one uppercase letter
 - At least one lowercase letter
@@ -202,12 +217,14 @@ Enforced by validation middleware:
 Adjust based on your application needs:
 
 **Low-traffic API:**
+
 ```env
 RATE_LIMIT_WINDOW_MS=900000  # 15 min
 RATE_LIMIT_MAX_REQUESTS=50
 ```
 
 **High-traffic API:**
+
 ```env
 RATE_LIMIT_WINDOW_MS=60000   # 1 min
 RATE_LIMIT_MAX_REQUESTS=1000
@@ -218,6 +235,7 @@ RATE_LIMIT_MAX_REQUESTS=1000
 ### 1. HTTPS/TLS
 
 Always use HTTPS in production:
+
 - Use Let's Encrypt for free SSL certificates
 - Configure HSTS header (already enabled)
 - Redirect HTTP to HTTPS at the reverse proxy level
@@ -232,6 +250,7 @@ Always use HTTPS in production:
 ### 3. Secrets Management
 
 For production, use a secrets manager:
+
 - AWS Secrets Manager
 - HashiCorp Vault
 - Azure Key Vault
@@ -240,6 +259,7 @@ For production, use a secrets manager:
 ### 4. Monitoring & Alerts
 
 Set up alerts for:
+
 - Multiple failed login attempts
 - Rate limit violations
 - CORS violations
@@ -249,6 +269,7 @@ Set up alerts for:
 ### 5. Security Auditing
 
 Regular security checks:
+
 ```bash
 # Check for vulnerable dependencies
 npm audit
@@ -276,6 +297,7 @@ contentSecurityPolicy: {
 ### 7. API Security
 
 Additional recommendations:
+
 - Implement API versioning
 - Use API keys for programmatic access
 - Implement OAuth2 for third-party integrations

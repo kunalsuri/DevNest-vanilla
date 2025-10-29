@@ -1,11 +1,11 @@
-import { 
-  LayoutDashboard, 
-  User, 
-  Settings, 
-  Folder, 
+import {
+  LayoutDashboard,
+  User,
+  Settings,
+  Folder,
   Bell,
   HelpCircle,
-  LogOut 
+  LogOut,
 } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 

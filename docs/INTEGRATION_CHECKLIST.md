@@ -9,11 +9,13 @@ This checklist helps you verify and integrate the Week 1 security enhancements.
 ## ✅ Pre-Deployment Verification
 
 ### 1. Dependencies Installed ✅
+
 ```bash
 npm install
 ```
 
 **Verify packages:**
+
 - [x] helmet
 - [x] cors
 - [x] express-rate-limit
@@ -21,6 +23,7 @@ npm install
 - [x] @types/cors (dev)
 
 ### 2. TypeScript Compilation ✅
+
 ```bash
 npm run check
 ```
@@ -30,6 +33,7 @@ npm run check
 ### 3. Environment Configuration
 
 **Copy and configure environment file:**
+
 ```bash
 cp .env.local.example .env
 ```
@@ -47,6 +51,7 @@ ALLOWED_ORIGINS="http://localhost:5173,http://localhost:5000"
 ```
 
 **Generate secure secrets:**
+
 ```bash
 echo "JWT_ACCESS_SECRET=\"$(openssl rand -base64 32)\""
 echo "JWT_REFRESH_SECRET=\"$(openssl rand -base64 32)\""
@@ -58,11 +63,13 @@ echo "SESSION_SECRET=\"$(openssl rand -base64 32)\""
 ## 🧪 Local Testing
 
 ### 1. Start Development Server
+
 ```bash
 npm run dev
 ```
 
 **Verify startup logs show:**
+
 - ✅ Environment variables validated successfully
 - ✅ No security warnings (if using custom secrets)
 - ✅ Server listening on port 5000
@@ -70,6 +77,7 @@ npm run dev
 ### 2. Test Rate Limiting
 
 **Test general API rate limit:**
+
 ```bash
 # Should succeed 100 times, then fail with 429
 for i in {1..101}; do
@@ -78,6 +86,7 @@ done
 ```
 
 **Test auth rate limit:**
+
 ```bash
 # Should fail after 5 attempts with 429
 for i in {1..6}; do
@@ -91,6 +100,7 @@ done
 ### 3. Test Input Validation
 
 **Test weak password (should return 400):**
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -104,6 +114,7 @@ curl -X POST http://localhost:5000/api/auth/register \
 ```
 
 **Expected response:**
+
 ```json
 {
   "message": "Validation error",
@@ -118,6 +129,7 @@ curl -X POST http://localhost:5000/api/auth/register \
 ```
 
 **Test invalid email (should return 400):**
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -133,6 +145,7 @@ curl -X POST http://localhost:5000/api/auth/register \
 ### 4. Test CORS
 
 **Test unauthorized origin (should fail):**
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Origin: https://malicious-site.com" \
@@ -142,6 +155,7 @@ curl -X POST http://localhost:5000/api/auth/login \
 ```
 
 **Test allowed origin (should succeed):**
+
 ```bash
 curl -X POST http://localhost:5000/api/auth/login \
   -H "Origin: http://localhost:5173" \
@@ -153,11 +167,13 @@ curl -X POST http://localhost:5000/api/auth/login \
 ### 5. Test Security Headers
 
 **Check Helmet headers:**
+
 ```bash
 curl -I http://localhost:5000 | grep -E "(X-|Content-Security|Strict-Transport)"
 ```
 
 **Expected headers:**
+
 - `X-Content-Type-Options: nosniff`
 - `X-XSS-Protection: 1; mode=block`
 - `Strict-Transport-Security: max-age=31536000; includeSubDomains`
@@ -170,6 +186,7 @@ curl -I http://localhost:5000 | grep -E "(X-|Content-Security|Strict-Transport)"
 ### 1. Environment Configuration
 
 **Create production `.env` file:**
+
 ```env
 NODE_ENV=production
 PORT=5000
@@ -202,11 +219,13 @@ RATE_LIMIT_MAX_REQUESTS=50
 ### 3. Security Scan
 
 **Run dependency audit:**
+
 ```bash
 npm audit
 ```
 
 **Run Trivy scan (if available):**
+
 ```bash
 # Via Codacy MCP Server
 # Results will show in your security dashboard
@@ -225,16 +244,19 @@ npm start
 ### 5. Post-Deployment Verification
 
 **Test production endpoint:**
+
 ```bash
 curl -I https://yourdomain.com/api/health
 ```
 
 **Verify security headers:**
+
 ```bash
 curl -I https://yourdomain.com | grep -E "(X-|Content-Security|Strict-Transport)"
 ```
 
 **Test rate limiting in production:**
+
 ```bash
 # Should get 429 after configured limit
 for i in {1..60}; do
@@ -250,12 +272,14 @@ done
 ### 1. Security Event Monitoring
 
 Watch logs for these security events:
+
 - Rate limit violations
 - CORS violations
 - Validation failures
 - Failed authentication attempts
 
 **View logs:**
+
 ```bash
 tail -f logs/application-*.log | grep -E "(RATE_LIMIT|CORS|VALIDATION|AUTH)"
 ```
@@ -263,6 +287,7 @@ tail -f logs/application-*.log | grep -E "(RATE_LIMIT|CORS|VALIDATION|AUTH)"
 ### 2. Performance Monitoring
 
 Monitor these metrics:
+
 - Request rate vs rate limit threshold
 - Failed authentication attempts
 - Average response time
@@ -271,6 +296,7 @@ Monitor these metrics:
 ### 3. Alerting (Recommended)
 
 Set up alerts for:
+
 - High rate of 429 responses (potential DDoS)
 - Spike in failed logins (potential brute force)
 - High rate of validation errors
@@ -285,6 +311,7 @@ Set up alerts for:
 **Error:** "Environment variable validation failed"
 
 **Solution:**
+
 1. Check `.env` file exists
 2. Verify all required variables are set
 3. Ensure secrets are at least 32 characters
@@ -295,6 +322,7 @@ Set up alerts for:
 **Error:** Getting rate limited on first request
 
 **Solution:**
+
 1. Check rate limiting configuration in `.env`
 2. Increase `RATE_LIMIT_MAX_REQUESTS` for testing
 3. Clear any cached rate limit data
@@ -305,6 +333,7 @@ Set up alerts for:
 **Error:** "Not allowed by CORS"
 
 **Solution:**
+
 1. Check `ALLOWED_ORIGINS` includes your frontend URL
 2. Verify origin header matches exactly (including protocol)
 3. Check for trailing slashes
@@ -315,6 +344,7 @@ Set up alerts for:
 **Error:** All inputs return validation errors
 
 **Solution:**
+
 1. Check request Content-Type is `application/json`
 2. Verify JSON is properly formatted
 3. Review validation rules in `server/middleware/validation.ts`
@@ -325,17 +355,20 @@ Set up alerts for:
 ## 📚 Additional Resources
 
 ### Documentation
+
 - [SECURITY.md](./SECURITY.md) - Complete security guide
 - [IMPLEMENTATION_WEEK1.md](./IMPLEMENTATION_WEEK1.md) - Implementation details
 - [WEEK1_FINAL_REPORT.md](./WEEK1_FINAL_REPORT.md) - Final report
 
 ### Code References
+
 - `server/env.ts` - Environment validation
 - `server/middleware/validation.ts` - Input validation
 - `server/index.ts` - Security middleware setup
 - `server/auth/jwt-auth-routes.ts` - Auth routes with validation
 
 ### External Resources
+
 - [Helmet Documentation](https://helmetjs.github.io/)
 - [express-validator Guide](https://express-validator.github.io/)
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)

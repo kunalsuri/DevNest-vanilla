@@ -7,13 +7,26 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Code2, Rocket, Github, Mail, Key, Zap } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -46,16 +59,18 @@ export default function AuthPage() {
   const [, setLocation] = useLocation();
   const { user, loginMutation, registerMutation } = useJWTAuth();
   const [activeTab, setActiveTab] = useState("login");
-  const [resetView, setResetView] = useState<'request' | 'confirm' | null>(null);
+  const [resetView, setResetView] = useState<"request" | "confirm" | null>(
+    null,
+  );
   const { toast } = useToast();
 
   // Check for reset token in URL
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const resetToken = urlParams.get('reset-token');
+    const resetToken = urlParams.get("reset-token");
     if (resetToken) {
-      setResetView('confirm');
-      passwordResetConfirmForm.setValue('token', resetToken);
+      setResetView("confirm");
+      passwordResetConfirmForm.setValue("token", resetToken);
     }
   }, []);
 
@@ -103,13 +118,18 @@ export default function AuthPage() {
   // Password reset mutations
   const passwordResetRequestMutation = useMutation({
     mutationFn: async (data: PasswordResetRequestData) => {
-      const res = await apiRequest("POST", "/api/auth/password-reset/request", data);
+      const res = await apiRequest(
+        "POST",
+        "/api/auth/password-reset/request",
+        data,
+      );
       return res.json();
     },
     onSuccess: () => {
       toast({
         title: "Reset email sent",
-        description: "If your email is registered, you will receive reset instructions.",
+        description:
+          "If your email is registered, you will receive reset instructions.",
       });
       setResetView(null);
     },
@@ -124,7 +144,11 @@ export default function AuthPage() {
 
   const passwordResetConfirmMutation = useMutation({
     mutationFn: async (data: PasswordResetConfirmData) => {
-      const res = await apiRequest("POST", "/api/auth/password-reset/confirm", data);
+      const res = await apiRequest(
+        "POST",
+        "/api/auth/password-reset/confirm",
+        data,
+      );
       return res.json();
     },
     onSuccess: () => {
@@ -183,11 +207,11 @@ export default function AuthPage() {
       // Fill the form with demo credentials
       loginForm.setValue("username", "admin");
       loginForm.setValue("password", "admin123");
-      
+
       // Trigger login with demo credentials
       await loginMutation.mutateAsync({
         username: "admin",
-        password: "admin123"
+        password: "admin123",
       });
       setLocation("/");
     } catch (error) {
@@ -203,7 +227,11 @@ export default function AuthPage() {
           {/* Header */}
           <div className="text-center">
             <Link href="/">
-              <Button variant="ghost" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8" data-testid="button-back-home">
+              <Button
+                variant="ghost"
+                className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8"
+                data-testid="button-back-home"
+              >
                 <ArrowLeft className="w-4 h-4" />
                 Back to home
               </Button>
@@ -215,16 +243,23 @@ export default function AuthPage() {
           </div>
 
           {/* Password Reset Forms */}
-          {resetView === 'request' && (
+          {resetView === "request" && (
             <Card>
               <CardHeader className="text-center">
                 <Mail className="w-8 h-8 mx-auto text-primary mb-2" />
                 <CardTitle className="text-2xl">Reset your password</CardTitle>
-                <CardDescription>Enter your email to receive reset instructions</CardDescription>
+                <CardDescription>
+                  Enter your email to receive reset instructions
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...passwordResetRequestForm}>
-                  <form onSubmit={passwordResetRequestForm.handleSubmit(onPasswordResetRequest)} className="space-y-4">
+                  <form
+                    onSubmit={passwordResetRequestForm.handleSubmit(
+                      onPasswordResetRequest,
+                    )}
+                    className="space-y-4"
+                  >
                     <FormField
                       control={passwordResetRequestForm.control}
                       name="email"
@@ -232,26 +267,33 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input type="email" placeholder="Enter your email" {...field} data-testid="input-reset-email" />
+                            <Input
+                              type="email"
+                              placeholder="Enter your email"
+                              {...field}
+                              data-testid="input-reset-email"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
+                    <Button
+                      type="submit"
+                      className="w-full"
                       disabled={passwordResetRequestMutation.isPending}
                       data-testid="button-send-reset"
                     >
-                      {passwordResetRequestMutation.isPending ? "Sending..." : "Send reset email"}
+                      {passwordResetRequestMutation.isPending
+                        ? "Sending..."
+                        : "Send reset email"}
                     </Button>
                   </form>
                 </Form>
                 <div className="mt-4 text-center">
-                  <Button 
+                  <Button
                     type="button"
-                    variant="link" 
+                    variant="link"
                     className="text-sm"
                     onClick={() => setResetView(null)}
                     data-testid="link-back-to-login"
@@ -263,7 +305,7 @@ export default function AuthPage() {
             </Card>
           )}
 
-          {resetView === 'confirm' && (
+          {resetView === "confirm" && (
             <Card>
               <CardHeader className="text-center">
                 <Key className="w-8 h-8 mx-auto text-primary mb-2" />
@@ -272,7 +314,12 @@ export default function AuthPage() {
               </CardHeader>
               <CardContent>
                 <Form {...passwordResetConfirmForm}>
-                  <form onSubmit={passwordResetConfirmForm.handleSubmit(onPasswordResetConfirm)} className="space-y-4">
+                  <form
+                    onSubmit={passwordResetConfirmForm.handleSubmit(
+                      onPasswordResetConfirm,
+                    )}
+                    className="space-y-4"
+                  >
                     <FormField
                       control={passwordResetConfirmForm.control}
                       name="token"
@@ -291,26 +338,33 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>New Password</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="Enter your new password" {...field} data-testid="input-new-password" />
+                            <Input
+                              type="password"
+                              placeholder="Enter your new password"
+                              {...field}
+                              data-testid="input-new-password"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
+                    <Button
+                      type="submit"
+                      className="w-full"
                       disabled={passwordResetConfirmMutation.isPending}
                       data-testid="button-reset-password"
                     >
-                      {passwordResetConfirmMutation.isPending ? "Resetting..." : "Reset password"}
+                      {passwordResetConfirmMutation.isPending
+                        ? "Resetting..."
+                        : "Reset password"}
                     </Button>
                   </form>
                 </Form>
                 <div className="mt-4 text-center">
-                  <Button 
+                  <Button
                     type="button"
-                    variant="link" 
+                    variant="link"
                     className="text-sm"
                     onClick={() => setResetView(null)}
                     data-testid="link-back-from-confirm"
@@ -323,205 +377,272 @@ export default function AuthPage() {
           )}
 
           {!resetView && (
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login" data-testid="tab-login">Sign In</TabsTrigger>
-                <TabsTrigger value="register" data-testid="tab-register">Sign Up</TabsTrigger>
+                <TabsTrigger value="login" data-testid="tab-login">
+                  Sign In
+                </TabsTrigger>
+                <TabsTrigger value="register" data-testid="tab-register">
+                  Sign Up
+                </TabsTrigger>
               </TabsList>
 
-            <TabsContent value="login">
-              <Card>
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">Welcome back</CardTitle>
-                  <CardDescription>Sign in to your account</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...loginForm}>
-                    <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
-                      <FormField
-                        control={loginForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter your username" {...field} data-testid="input-username" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={loginForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <div className="flex items-center justify-between">
-                              <FormLabel>Password</FormLabel>
-                              <Button 
-                                type="button"
-                                variant="link" 
-                                className="p-0 h-auto text-sm text-muted-foreground hover:text-primary"
-                                onClick={() => setResetView('request')}
-                                data-testid="link-forgot-password"
-                              >
-                                Forgot password?
-                              </Button>
-                            </div>
-                            <FormControl>
-                              <Input type="password" placeholder="Enter your password" {...field} data-testid="input-password" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
+              <TabsContent value="login">
+                <Card>
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-2xl">Welcome back</CardTitle>
+                    <CardDescription>Sign in to your account</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Form {...loginForm}>
+                      <form
+                        onSubmit={loginForm.handleSubmit(onLogin)}
+                        className="space-y-4"
+                      >
+                        <FormField
+                          control={loginForm.control}
+                          name="username"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Username</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter your username"
+                                  {...field}
+                                  data-testid="input-username"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={loginForm.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <div className="flex items-center justify-between">
+                                <FormLabel>Password</FormLabel>
+                                <Button
+                                  type="button"
+                                  variant="link"
+                                  className="p-0 h-auto text-sm text-muted-foreground hover:text-primary"
+                                  onClick={() => setResetView("request")}
+                                  data-testid="link-forgot-password"
+                                >
+                                  Forgot password?
+                                </Button>
+                              </div>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Enter your password"
+                                  {...field}
+                                  data-testid="input-password"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="submit"
+                          className="w-full"
+                          disabled={loginMutation.isPending}
+                          data-testid="button-login"
+                        >
+                          {loginMutation.isPending
+                            ? "Signing in..."
+                            : "Sign in"}
+                        </Button>
+                      </form>
+                    </Form>
+
+                    {/* Demo Login Button */}
+                    <div className="mt-4">
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="w-full"
+                        onClick={onDemoLogin}
                         disabled={loginMutation.isPending}
-                        data-testid="button-login"
+                        data-testid="button-demo-login"
                       >
-                        {loginMutation.isPending ? "Signing in..." : "Sign in"}
+                        <Zap className="w-4 h-4 mr-2" />
+                        {loginMutation.isPending
+                          ? "Signing in..."
+                          : "Demo Login (One Click)"}
                       </Button>
-                    </form>
-                  </Form>
-
-                  {/* Demo Login Button */}
-                  <div className="mt-4">
-                    <Button 
-                      type="button"
-                      variant="secondary" 
-                      className="w-full" 
-                      onClick={onDemoLogin}
-                      disabled={loginMutation.isPending}
-                      data-testid="button-demo-login"
-                    >
-                      <Zap className="w-4 h-4 mr-2" />
-                      {loginMutation.isPending ? "Signing in..." : "Demo Login (One Click)"}
-                    </Button>
-                  </div>
-
-                  <div className="relative my-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border"></div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-background text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
 
-                  <Button variant="outline" className="w-full" data-testid="button-github-login">
-                    <Github className="w-4 h-4 mr-2" />
-                    GitHub
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="register">
-              <Card>
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">Create your account</CardTitle>
-                  <CardDescription>Start building amazing applications today</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...registerForm}>
-                    <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={registerForm.control}
-                          name="firstName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>First name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="John" {...field} data-testid="input-first-name" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={registerForm.control}
-                          name="lastName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Last name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Doe" {...field} data-testid="input-last-name" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border"></div>
                       </div>
-                      <FormField
-                        control={registerForm.control}
-                        name="username"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Username</FormLabel>
-                            <FormControl>
-                              <Input placeholder="johndoe" {...field} data-testid="input-signup-username" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email address</FormLabel>
-                            <FormControl>
-                              <Input type="email" placeholder="john@example.com" {...field} data-testid="input-email" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={registerForm.control}
-                        name="password"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Password</FormLabel>
-                            <FormControl>
-                              <Input type="password" placeholder="Create a strong password" {...field} data-testid="input-signup-password" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={registerMutation.isPending}
-                        data-testid="button-register"
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-background text-muted-foreground">
+                          Or continue with
+                        </span>
+                      </div>
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      data-testid="button-github-login"
+                    >
+                      <Github className="w-4 h-4 mr-2" />
+                      GitHub
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="register">
+                <Card>
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-2xl">
+                      Create your account
+                    </CardTitle>
+                    <CardDescription>
+                      Start building amazing applications today
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Form {...registerForm}>
+                      <form
+                        onSubmit={registerForm.handleSubmit(onRegister)}
+                        className="space-y-4"
                       >
-                        {registerMutation.isPending ? "Creating account..." : "Create account"}
-                      </Button>
-                    </form>
-                  </Form>
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={registerForm.control}
+                            name="firstName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>First name</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="John"
+                                    {...field}
+                                    data-testid="input-first-name"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={registerForm.control}
+                            name="lastName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Last name</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Doe"
+                                    {...field}
+                                    data-testid="input-last-name"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={registerForm.control}
+                          name="username"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Username</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="johndoe"
+                                  {...field}
+                                  data-testid="input-signup-username"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={registerForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email address</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="email"
+                                  placeholder="john@example.com"
+                                  {...field}
+                                  data-testid="input-email"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={registerForm.control}
+                          name="password"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Password</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="password"
+                                  placeholder="Create a strong password"
+                                  {...field}
+                                  data-testid="input-signup-password"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          type="submit"
+                          className="w-full"
+                          disabled={registerMutation.isPending}
+                          data-testid="button-register"
+                        >
+                          {registerMutation.isPending
+                            ? "Creating account..."
+                            : "Create account"}
+                        </Button>
+                      </form>
+                    </Form>
 
-                  <div className="relative my-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-border"></div>
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-background text-muted-foreground">
+                          Or continue with
+                        </span>
+                      </div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-background text-muted-foreground">Or continue with</span>
-                    </div>
-                  </div>
 
-                  <Button variant="outline" className="w-full" data-testid="button-github-register">
-                    <Github className="w-4 h-4 mr-2" />
-                    GitHub
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      data-testid="button-github-register"
+                    >
+                      <Github className="w-4 h-4 mr-2" />
+                      GitHub
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           )}
         </div>
       </div>
@@ -533,17 +654,23 @@ export default function AuthPage() {
             {activeTab === "login" ? (
               <>
                 <Code2 className="w-16 h-16 mx-auto opacity-90" />
-                <h3 className="text-2xl font-bold">Start Building Amazing Apps</h3>
+                <h3 className="text-2xl font-bold">
+                  Start Building Amazing Apps
+                </h3>
                 <p className="text-white/90">
-                  Access your dashboard to manage projects, configure settings, and collaborate with your team.
+                  Access your dashboard to manage projects, configure settings,
+                  and collaborate with your team.
                 </p>
               </>
             ) : (
               <>
                 <Rocket className="w-16 h-16 mx-auto opacity-90" />
-                <h3 className="text-2xl font-bold">Join the Developer Community</h3>
+                <h3 className="text-2xl font-bold">
+                  Join the Developer Community
+                </h3>
                 <p className="text-white/90">
-                  Get started with DevNest and build your next project with our powerful monorepo template.
+                  Get started with DevNest and build your next project with our
+                  powerful monorepo template.
                 </p>
                 <div className="grid grid-cols-3 gap-4 pt-4">
                   <div className="text-center">

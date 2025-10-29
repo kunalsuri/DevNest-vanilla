@@ -49,16 +49,28 @@ export default function LandingPage() {
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="#features"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Features
               </a>
-              <a href="#architecture" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="#architecture"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Architecture
               </a>
-              <a href="#docs" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="#docs"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 Docs
               </a>
-              <a href="https://github.com/devnest" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="https://github.com/devnest"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 GitHub
               </a>
             </div>
@@ -74,7 +86,11 @@ export default function LandingPage() {
               ) : (
                 <>
                   <Link href="/auth">
-                    <Button variant="ghost" size="sm" data-testid="button-sign-in">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      data-testid="button-sign-in"
+                    >
                       Sign In
                     </Button>
                   </Link>
@@ -102,19 +118,29 @@ export default function LandingPage() {
                 </span>
               </h1>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                A production-ready React + TypeScript + Express template with authentication,
-                dark mode, and modular architecture. Perfect for rapid prototyping and team collaboration.
+                A production-ready React + TypeScript + Express template with
+                authentication, dark mode, and modular architecture. Perfect for
+                rapid prototyping and team collaboration.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/auth">
-                <Button size="lg" className="inline-flex items-center gap-2" data-testid="button-start-building">
+                <Button
+                  size="lg"
+                  className="inline-flex items-center gap-2"
+                  data-testid="button-start-building"
+                >
                   <Rocket className="w-5 h-5" />
                   Start Building
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="inline-flex items-center gap-2" data-testid="button-github">
+              <Button
+                variant="outline"
+                size="lg"
+                className="inline-flex items-center gap-2"
+                data-testid="button-github"
+              >
                 <Github className="w-5 h-5" />
                 View on GitHub
               </Button>
@@ -122,11 +148,21 @@ export default function LandingPage() {
 
             {/* Tech Stack Badges */}
             <div className="flex flex-wrap justify-center gap-3 pt-8">
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">React</span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">TypeScript</span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">Express</span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">Tailwind CSS</span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">JSON Storage</span>
+              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+                React
+              </span>
+              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+                TypeScript
+              </span>
+              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+                Express
+              </span>
+              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+                Tailwind CSS
+              </span>
+              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
+                JSON Storage
+              </span>
             </div>
           </div>
         </div>
@@ -136,9 +172,12 @@ export default function LandingPage() {
       <div id="features" className="py-24 bg-muted/50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold">Everything You Need to Start</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Everything You Need to Start
+            </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
-              Pre-configured with modern tooling and best practices for rapid development
+              Pre-configured with modern tooling and best practices for rapid
+              development
             </p>
           </div>
 
@@ -150,7 +189,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold">Monorepo Structure</h3>
                 <p className="text-muted-foreground">
-                  Organized with apps/ and packages/ directories for scalable team development and code sharing.
+                  Organized with apps/ and packages/ directories for scalable
+                  team development and code sharing.
                 </p>
               </CardContent>
             </Card>
@@ -160,9 +200,12 @@ export default function LandingPage() {
                 <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
                   <ShieldCheck className="w-6 h-6 text-secondary" />
                 </div>
-                <h3 className="text-xl font-semibold">Built-in Authentication</h3>
+                <h3 className="text-xl font-semibold">
+                  Built-in Authentication
+                </h3>
                 <p className="text-muted-foreground">
-                  Complete auth flow with login, signup, and protected routes using secure session management.
+                  Complete auth flow with login, signup, and protected routes
+                  using secure session management.
                 </p>
               </CardContent>
             </Card>
@@ -174,7 +217,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold">Dark/Light Theme</h3>
                 <p className="text-muted-foreground">
-                  Smooth theme switching with proper contrast ratios and accessibility considerations.
+                  Smooth theme switching with proper contrast ratios and
+                  accessibility considerations.
                 </p>
               </CardContent>
             </Card>
@@ -186,7 +230,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold">JSON File Storage</h3>
                 <p className="text-muted-foreground">
-                  No database required - user data stored in structured JSON files for rapid prototyping.
+                  No database required - user data stored in structured JSON
+                  files for rapid prototyping.
                 </p>
               </CardContent>
             </Card>
@@ -198,7 +243,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold">Responsive Design</h3>
                 <p className="text-muted-foreground">
-                  Mobile-first approach with Tailwind CSS for consistent UI across all devices.
+                  Mobile-first approach with Tailwind CSS for consistent UI
+                  across all devices.
                 </p>
               </CardContent>
             </Card>
@@ -210,7 +256,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold">TypeScript Ready</h3>
                 <p className="text-muted-foreground">
-                  Full TypeScript configuration across frontend and backend with strict type safety.
+                  Full TypeScript configuration across frontend and backend with
+                  strict type safety.
                 </p>
               </CardContent>
             </Card>
@@ -222,7 +269,9 @@ export default function LandingPage() {
       <div id="architecture" className="py-24">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold">Project Structure</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold">
+              Project Structure
+            </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted-foreground">
               Clean, scalable architecture designed for team collaboration
             </p>
@@ -249,11 +298,21 @@ export default function LandingPage() {
                       <div className="ml-6 space-y-1">
                         <div className="flex items-center gap-2">
                           <Globe className="w-4 h-4 text-secondary" />
-                          <span>web/ <span className="text-muted-foreground">(React frontend)</span></span>
+                          <span>
+                            web/{" "}
+                            <span className="text-muted-foreground">
+                              (React frontend)
+                            </span>
+                          </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Server className="w-4 h-4 text-accent" />
-                          <span>api/ <span className="text-muted-foreground">(Express backend)</span></span>
+                          <span>
+                            api/{" "}
+                            <span className="text-muted-foreground">
+                              (Express backend)
+                            </span>
+                          </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -272,7 +331,12 @@ export default function LandingPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Database className="w-4 h-4 text-primary" />
-                        <span>data/ <span className="text-muted-foreground">(JSON storage)</span></span>
+                        <span>
+                          data/{" "}
+                          <span className="text-muted-foreground">
+                            (JSON storage)
+                          </span>
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -282,7 +346,9 @@ export default function LandingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Card>
                   <CardContent className="p-4">
-                    <h4 className="font-semibold text-sm mb-2 text-primary">Frontend</h4>
+                    <h4 className="font-semibold text-sm mb-2 text-primary">
+                      Frontend
+                    </h4>
                     <ul className="text-sm text-muted-foreground space-y-1">
                       <li>• React 18 + TypeScript</li>
                       <li>• Tailwind CSS</li>
@@ -293,7 +359,9 @@ export default function LandingPage() {
                 </Card>
                 <Card>
                   <CardContent className="p-4">
-                    <h4 className="font-semibold text-sm mb-2 text-secondary">Backend</h4>
+                    <h4 className="font-semibold text-sm mb-2 text-secondary">
+                      Backend
+                    </h4>
                     <ul className="text-sm text-muted-foreground space-y-1">
                       <li>• Express + TypeScript</li>
                       <li>• JSON File Storage</li>
@@ -310,16 +378,22 @@ export default function LandingPage() {
                 <h3 className="text-lg font-semibold mb-4">Quick Start</h3>
                 <div className="space-y-3">
                   <div className="bg-muted rounded-md p-3 font-mono text-sm">
-                    <div className="text-muted-foreground mb-2"># Clone and install</div>
+                    <div className="text-muted-foreground mb-2">
+                      # Clone and install
+                    </div>
                     <div>git clone devnest-template</div>
                     <div>cd devnest && npm install</div>
                   </div>
                   <div className="bg-muted rounded-md p-3 font-mono text-sm">
-                    <div className="text-muted-foreground mb-2"># Start development servers</div>
+                    <div className="text-muted-foreground mb-2">
+                      # Start development servers
+                    </div>
                     <div>npm run dev</div>
                   </div>
                   <div className="bg-muted rounded-md p-3 font-mono text-sm">
-                    <div className="text-muted-foreground mb-2"># Build for production</div>
+                    <div className="text-muted-foreground mb-2">
+                      # Build for production
+                    </div>
                     <div>npm run build</div>
                   </div>
                 </div>
@@ -336,16 +410,27 @@ export default function LandingPage() {
             <div className="flex items-center space-x-2">
               <Code className="w-6 h-6 text-primary" />
               <span className="font-semibold">DevNest</span>
-              <span className="text-muted-foreground">- Full-Stack Monorepo Template</span>
+              <span className="text-muted-foreground">
+                - Full-Stack Monorepo Template
+              </span>
             </div>
             <div className="flex items-center space-x-6">
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="#"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 <Github className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="#"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <a
+                href="#"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
                 <BookOpen className="w-5 h-5" />
               </a>
             </div>

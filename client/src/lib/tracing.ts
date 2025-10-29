@@ -1,6 +1,6 @@
 /**
  * Comprehensive Tracing System for React + TypeScript Applications
- * 
+ *
  * Features:
  * - OpenTelemetry-compatible tracing
  * - Component lifecycle instrumentation
@@ -10,8 +10,8 @@
  * - Integration with logging and metrics systems
  */
 
-import { nanoid } from 'nanoid';
-import { logger } from './logger';
+import { nanoid } from "nanoid";
+import { logger } from "./logger";
 
 // Trace and span interfaces
 export interface TraceContext {
@@ -41,22 +41,22 @@ export interface SpanLog {
 }
 
 export enum SpanStatus {
-  OK = 'ok',
-  ERROR = 'error',
-  TIMEOUT = 'timeout',
-  CANCELLED = 'cancelled',
+  OK = "ok",
+  ERROR = "error",
+  TIMEOUT = "timeout",
+  CANCELLED = "cancelled",
 }
 
 export enum SpanKind {
-  CLIENT = 'client',
-  SERVER = 'server',
-  PRODUCER = 'producer',
-  CONSUMER = 'consumer',
-  INTERNAL = 'internal',
+  CLIENT = "client",
+  SERVER = "server",
+  PRODUCER = "producer",
+  CONSUMER = "consumer",
+  INTERNAL = "internal",
 }
 
 // Active trace context (similar to OpenTelemetry's context)
-let activeTraceContext: TraceContext | null = null;
+const activeTraceContext: TraceContext | null = null;
 const spanStack: Span[] = [];
 
 // Span class for managing individual traces
@@ -68,10 +68,12 @@ export class Span {
   constructor(
     operationName: string,
     traceContext?: TraceContext,
-    kind: SpanKind = SpanKind.INTERNAL
+    kind: SpanKind = SpanKind.INTERNAL,
   ) {
     const traceId = traceContext?.traceId || nanoid();
-    const parentSpanId = traceContext?.parentSpanId || spanStack[spanStack.length - 1]?.getSpanId();
+    const parentSpanId =
+      traceContext?.parentSpanId ||
+      spanStack[spanStack.length - 1]?.getSpanId();
 
     this.data = {
       spanId: nanoid(),
@@ -91,13 +93,17 @@ export class Span {
     }
 
     spanStack.push(this);
-    
-    logger.debug('Span started', {
-      spanId: this.data.spanId,
-      traceId: this.data.traceId,
-      operationName,
-      parentSpanId,
-    }, 'Tracing');
+
+    logger.debug(
+      "Span started",
+      {
+        spanId: this.data.spanId,
+        traceId: this.data.traceId,
+        operationName,
+        parentSpanId,
+      },
+      "Tracing",
+    );
   }
 
   // Get span ID
@@ -151,12 +157,12 @@ export class Span {
     this.data.status = SpanStatus.ERROR;
     if (error) {
       this.setTags({
-        'error.name': error.name,
-        'error.message': error.message,
-        'error.stack': error.stack,
+        "error.name": error.name,
+        "error.message": error.message,
+        "error.stack": error.stack,
       });
       this.log({
-        level: 'error',
+        level: "error",
         message: error.message,
         stack: error.stack,
       });
@@ -167,7 +173,7 @@ export class Span {
   // Set component information
   setComponent(component: string): Span {
     this.data.component = component;
-    this.setTag('component', component);
+    this.setTag("component", component);
     return this;
   }
 
@@ -190,12 +196,16 @@ export class Span {
     // Send to tracing transports
     tracer.reportSpan(this.data);
 
-    logger.debug('Span finished', {
-      spanId: this.data.spanId,
-      traceId: this.data.traceId,
-      duration: this.data.duration,
-      status: this.data.status,
-    }, 'Tracing');
+    logger.debug(
+      "Span finished",
+      {
+        spanId: this.data.spanId,
+        traceId: this.data.traceId,
+        duration: this.data.duration,
+        status: this.data.status,
+      },
+      "Tracing",
+    );
   }
 
   // Get span data (for reporting)
@@ -212,18 +222,18 @@ export interface TracingTransport {
 
 // Console tracing transport for development
 export class ConsoleTracingTransport implements TracingTransport {
-  name = 'console-tracing';
+  name = "console-tracing";
 
   async reportSpan(span: SpanData): Promise<void> {
     if (import.meta.env.DEV) {
       console.group(`🔍 Trace: ${span.operationName}`);
-      console.log('Span ID:', span.spanId);
-      console.log('Trace ID:', span.traceId);
-      console.log('Duration:', `${span.duration?.toFixed(2)}ms`);
-      console.log('Status:', span.status);
-      console.log('Tags:', span.tags);
+      console.log("Span ID:", span.spanId);
+      console.log("Trace ID:", span.traceId);
+      console.log("Duration:", `${span.duration?.toFixed(2)}ms`);
+      console.log("Status:", span.status);
+      console.log("Tags:", span.tags);
       if (span.logs.length > 0) {
-        console.log('Logs:', span.logs);
+        console.log("Logs:", span.logs);
       }
       console.groupEnd();
     }
@@ -240,33 +250,44 @@ export class ExternalTracingTransport implements TracingTransport {
     environment?: string;
   };
 
-  constructor(name: string, config: typeof ExternalTracingTransport.prototype.config) {
+  constructor(
+    name: string,
+    config: typeof ExternalTracingTransport.prototype.config,
+  ) {
     this.name = name;
     this.config = config;
   }
 
   async reportSpan(span: SpanData): Promise<void> {
     try {
-      if (!this.config.endpoint) return;
+      if (!this.config.endpoint) {
+        return;
+      }
 
       const payload = {
         ...span,
-        serviceName: this.config.serviceName || 'devnest-frontend',
+        serviceName: this.config.serviceName || "devnest-frontend",
         environment: this.config.environment || import.meta.env.MODE,
       };
 
       await fetch(this.config.endpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          ...(this.config.apiKey ? { 'Authorization': `Bearer ${this.config.apiKey}` } : {}),
+          "Content-Type": "application/json",
+          ...(this.config.apiKey
+            ? { Authorization: `Bearer ${this.config.apiKey}` }
+            : {}),
         },
         body: JSON.stringify(payload),
       });
     } catch (error) {
-      logger.warn('Failed to send trace to external service', { 
-        error: error instanceof Error ? error.message : String(error) 
-      }, 'Tracing');
+      logger.warn(
+        "Failed to send trace to external service",
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+        "Tracing",
+      );
     }
   }
 }
@@ -275,8 +296,8 @@ export class ExternalTracingTransport implements TracingTransport {
 export class Tracer {
   private transports: Map<string, TracingTransport> = new Map();
   private enabled = true;
-  private serviceName = 'devnest-frontend';
-  private environment = import.meta.env.MODE || 'development';
+  private serviceName = "devnest-frontend";
+  private environment = import.meta.env.MODE || "development";
 
   constructor() {
     // Add default console transport in development
@@ -317,7 +338,7 @@ export class Tracer {
       kind?: SpanKind;
       component?: string;
       tags?: Record<string, any>;
-    } = {}
+    } = {},
   ): Span {
     if (!this.enabled) {
       return new NoOpSpan();
@@ -350,12 +371,21 @@ export class Tracer {
 
   // Report span to all transports
   async reportSpan(span: SpanData): Promise<void> {
-    if (!this.enabled) return;
+    if (!this.enabled) {
+      return;
+    }
 
-    const promises = Array.from(this.transports.values()).map(transport =>
-      transport.reportSpan(span).catch(error =>
-        logger.error('Tracing transport error', error, { transport: transport.name }, 'Tracing')
-      )
+    const promises = Array.from(this.transports.values()).map((transport) =>
+      transport
+        .reportSpan(span)
+        .catch((error) =>
+          logger.error(
+            "Tracing transport error",
+            error,
+            { transport: transport.name },
+            "Tracing",
+          ),
+        ),
     );
 
     await Promise.allSettled(promises);
@@ -369,29 +399,29 @@ export class Tracer {
       component?: string;
       tags?: Record<string, any>;
       kind?: SpanKind;
-    } = {}
+    } = {},
   ): T {
     const span = this.startSpan(operationName, options);
-    
+
     try {
       const result = fn(span);
-      
+
       // Handle promises
       if (result instanceof Promise) {
         return result
-          .then(value => {
-            span.setTag('result.success', true);
+          .then((value) => {
+            span.setTag("result.success", true);
             span.finish();
             return value;
           })
-          .catch(error => {
+          .catch((error) => {
             span.setError(error);
             span.finish();
             throw error;
           }) as T;
       }
-      
-      span.setTag('result.success', true);
+
+      span.setTag("result.success", true);
       span.finish();
       return result;
     } catch (error) {
@@ -409,13 +439,13 @@ export class Tracer {
       component?: string;
       tags?: Record<string, any>;
       kind?: SpanKind;
-    } = {}
+    } = {},
   ): Promise<T> {
     const span = this.startSpan(operationName, options);
-    
+
     try {
       const result = await fn(span);
-      span.setTag('result.success', true);
+      span.setTag("result.success", true);
       span.finish();
       return result;
     } catch (error) {
@@ -429,15 +459,27 @@ export class Tracer {
 // No-op span for when tracing is disabled
 class NoOpSpan extends Span {
   constructor() {
-    super('noop');
+    super("noop");
   }
 
-  setTag(): Span { return this; }
-  setTags(): Span { return this; }
-  log(): Span { return this; }
-  setStatus(): Span { return this; }
-  setError(): Span { return this; }
-  setComponent(): Span { return this; }
+  setTag(): Span {
+    return this;
+  }
+  setTags(): Span {
+    return this;
+  }
+  log(): Span {
+    return this;
+  }
+  setStatus(): Span {
+    return this;
+  }
+  setError(): Span {
+    return this;
+  }
+  setComponent(): Span {
+    return this;
+  }
   finish(): void {
     // Override to prevent actual finishing logic
   }
@@ -453,60 +495,66 @@ export const tracingUtils = {
     method: string,
     url: string,
     fn: () => Promise<T>,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<T> => {
     return tracer.traceAsync(
       `HTTP ${method} ${url}`,
       async (span) => {
         span.setTags({
-          'http.method': method,
-          'http.url': url,
-          'http.user_agent': navigator.userAgent,
+          "http.method": method,
+          "http.url": url,
+          "http.user_agent": navigator.userAgent,
           ...metadata,
         });
-        span.setComponent('http-client');
+        span.setComponent("http-client");
 
         const startTime = Date.now();
-        
+
         try {
           const result = await fn();
           const duration = Date.now() - startTime;
-          
+
           span.setTags({
-            'http.status_code': 200, // Assume success if no error
-            'http.response_time_ms': duration,
+            "http.status_code": 200, // Assume success if no error
+            "http.response_time_ms": duration,
           });
-          
+
           return result;
         } catch (error) {
           span.setTags({
-            'http.status_code': (error as any).status || 500,
+            "http.status_code": (error as any).status || 500,
           });
           throw error;
         }
       },
-      { kind: SpanKind.CLIENT }
+      { kind: SpanKind.CLIENT },
     );
   },
 
   // Trace component lifecycle
-  traceComponent: (componentName: string, phase: 'mount' | 'update' | 'unmount'): Span => {
+  traceComponent: (
+    componentName: string,
+    phase: "mount" | "update" | "unmount",
+  ): Span => {
     return tracer.startSpan(`${componentName}.${phase}`, {
       component: componentName,
       tags: {
-        'component.name': componentName,
-        'component.phase': phase,
+        "component.name": componentName,
+        "component.phase": phase,
       },
     });
   },
 
   // Trace user interactions
-  traceUserAction: (action: string, metadata: Record<string, any> = {}): Span => {
+  traceUserAction: (
+    action: string,
+    metadata: Record<string, any> = {},
+  ): Span => {
     return tracer.startSpan(`user.${action}`, {
-      component: 'user-interaction',
+      component: "user-interaction",
       tags: {
-        'user.action': action,
-        'user.timestamp': Date.now(),
+        "user.action": action,
+        "user.timestamp": Date.now(),
         ...metadata,
       },
     });
@@ -516,21 +564,21 @@ export const tracingUtils = {
   traceBusinessLogic: async <T>(
     operation: string,
     fn: () => Promise<T> | T,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): Promise<T> => {
     return tracer.traceAsync(
       `business.${operation}`,
       async (span) => {
         span.setTags({
-          'business.operation': operation,
+          "business.operation": operation,
           ...metadata,
         });
-        span.setComponent('business-logic');
+        span.setComponent("business-logic");
 
         const result = await fn();
         return result;
       },
-      { kind: SpanKind.INTERNAL }
+      { kind: SpanKind.INTERNAL },
     );
   },
 };
@@ -552,7 +600,9 @@ export const traceContext = {
   // Create child context
   createChildContext: (baggage?: Record<string, any>): TraceContext | null => {
     const activeContext = tracer.getActiveContext();
-    if (!activeContext) return null;
+    if (!activeContext) {
+      return null;
+    }
 
     return {
       traceId: activeContext.traceId,
@@ -562,23 +612,31 @@ export const traceContext = {
   },
 
   // Inject trace context into headers
-  injectHeaders: (headers: Record<string, string> = {}): Record<string, string> => {
+  injectHeaders: (
+    headers: Record<string, string> = {},
+  ): Record<string, string> => {
     const context = tracer.getActiveContext();
-    if (!context) return headers;
+    if (!context) {
+      return headers;
+    }
 
     return {
       ...headers,
-      'x-trace-id': context.traceId,
-      'x-span-id': context.parentSpanId || '',
+      "x-trace-id": context.traceId,
+      "x-span-id": context.parentSpanId || "",
     };
   },
 
   // Extract trace context from headers
-  extractFromHeaders: (headers: Record<string, string>): TraceContext | null => {
-    const traceId = headers['x-trace-id'];
-    const parentSpanId = headers['x-span-id'];
+  extractFromHeaders: (
+    headers: Record<string, string>,
+  ): TraceContext | null => {
+    const traceId = headers["x-trace-id"];
+    const parentSpanId = headers["x-span-id"];
 
-    if (!traceId) return null;
+    if (!traceId) {
+      return null;
+    }
 
     return {
       traceId,

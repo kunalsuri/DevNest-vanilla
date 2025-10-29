@@ -1,7 +1,13 @@
 import React, { Component, ReactNode } from "react";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { logger } from "@/lib/logger";
 import { tracer, SpanStatus } from "@/lib/tracing";
 import { metricsUtils } from "@/lib/metrics";
@@ -18,7 +24,10 @@ interface ErrorBoundaryProps {
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
@@ -50,31 +59,36 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   private logError = (error: Error, errorInfo: React.ErrorInfo): void => {
     // Create error span for tracing
-    const errorSpan = tracer.startSpan('error.boundary.caught', {
+    const errorSpan = tracer.startSpan("error.boundary.caught", {
       tags: {
-        'error.name': error.name,
-        'error.message': error.message,
-        'error.stack': error.stack || '',
-        'component.stack': errorInfo.componentStack,
-        'error.boundary': 'true',
+        "error.name": error.name,
+        "error.message": error.message,
+        "error.stack": error.stack || "",
+        "component.stack": errorInfo.componentStack,
+        "error.boundary": "true",
       },
     });
-    
+
     errorSpan.setStatus(SpanStatus.ERROR);
     errorSpan.setError(error);
 
     // Track error metrics
-    metricsUtils.trackError(error.name, 'ErrorBoundary', 'high');
+    metricsUtils.trackError(error.name, "ErrorBoundary", "high");
 
     // Log to comprehensive logging system
-    logger.fatal("React Error Boundary caught error", error, {
-      componentStack: errorInfo.componentStack,
-      errorBoundary: true,
-      url: window.location.href,
-      userAgent: navigator.userAgent,
-      traceId: errorSpan.getTraceId(),
-      spanId: errorSpan.getSpanId(),
-    }, 'ErrorBoundary');
+    logger.fatal(
+      "React Error Boundary caught error",
+      error,
+      {
+        componentStack: errorInfo.componentStack,
+        errorBoundary: true,
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        traceId: errorSpan.getTraceId(),
+        spanId: errorSpan.getSpanId(),
+      },
+      "ErrorBoundary",
+    );
 
     errorSpan.finish();
 
@@ -117,13 +131,16 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </div>
               <CardTitle>Something went wrong</CardTitle>
               <CardDescription>
-                We encountered an unexpected error. This has been logged and we're working to fix it.
+                We encountered an unexpected error. This has been logged and
+                we're working to fix it.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {process.env.NODE_ENV === "development" && this.state.error && (
                 <details className="rounded-md bg-muted p-3 text-sm">
-                  <summary className="cursor-pointer font-medium">Error Details (Development)</summary>
+                  <summary className="cursor-pointer font-medium">
+                    Error Details (Development)
+                  </summary>
                   <pre className="mt-2 whitespace-pre-wrap text-xs">
                     {this.state.error.message}
                     {this.state.errorInfo?.componentStack}
@@ -131,7 +148,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
                 </details>
               )}
               <div className="flex gap-2">
-                <Button onClick={this.handleRetry} variant="outline" className="flex-1">
+                <Button
+                  onClick={this.handleRetry}
+                  variant="outline"
+                  className="flex-1"
+                >
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Try Again
                 </Button>
@@ -151,16 +172,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 }
 
 // Functional wrapper for easier use with hooks
-interface AsyncErrorBoundaryProps extends Omit<ErrorBoundaryProps, 'children'> {
+interface AsyncErrorBoundaryProps extends Omit<ErrorBoundaryProps, "children"> {
   children: ReactNode;
 }
 
-export function AsyncErrorBoundary({ children, ...props }: AsyncErrorBoundaryProps) {
-  return (
-    <ErrorBoundary {...props}>
-      {children}
-    </ErrorBoundary>
-  );
+export function AsyncErrorBoundary({
+  children,
+  ...props
+}: AsyncErrorBoundaryProps) {
+  return <ErrorBoundary {...props}>{children}</ErrorBoundary>;
 }
 
 // Specialized error boundaries for different sections
@@ -176,11 +196,15 @@ export function RouteErrorBoundary({ children }: { children: ReactNode }) {
             <CardHeader>
               <CardTitle>Page Error</CardTitle>
               <CardDescription>
-                This page encountered an error. Please try refreshing or go back home.
+                This page encountered an error. Please try refreshing or go back
+                home.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button onClick={() => window.location.reload()} className="w-full">
+              <Button
+                onClick={() => window.location.reload()}
+                className="w-full"
+              >
                 Refresh Page
               </Button>
             </CardContent>

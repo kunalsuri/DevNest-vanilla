@@ -44,7 +44,10 @@ function Router() {
         <Route path="/auth" component={AuthPage} />
         <ProtectedRoute path="/dashboard" component={DashboardPage} />
         <ProtectedRoute path="/profile" component={ProfilePage} />
-        <ProtectedRoute path="/profile/preferences" component={PreferencesPage} />
+        <ProtectedRoute
+          path="/profile/preferences"
+          component={PreferencesPage}
+        />
         <ProtectedRoute path="/workspaces" component={WorkspacesPage} />
         <ProtectedRoute path="/help" component={HelpPage} />
         <Route component={NotFound} />
@@ -54,12 +57,12 @@ function Router() {
 }
 
 function App() {
-  const pageObservability = usePageObservability('App');
+  const pageObservability = usePageObservability("App");
 
   useEffect(() => {
     // Initialize observability system with file logging enabled for testing
     initializeObservability({
-      logLevel: 'debug',
+      logLevel: "debug",
       enableConsoleLogging: true,
       features: {
         enableFileLogging: true, // 🔥 Force enable file logging
@@ -69,19 +72,19 @@ function App() {
         enableMetrics: true,
       },
       fileLogging: {
-        logDirectory: '/Users/ks248120/Documents/GitHub/DevNest/logs',
+        logDirectory: "/Users/ks248120/Documents/GitHub/DevNest/logs",
         maxFileSize: 10 * 1024 * 1024, // 10MB
         maxFiles: 5,
       },
     });
-    
+
     // Track app initialization
-    pageObservability.trackPageInteraction('app_initialization');
+    pageObservability.trackPageInteraction("app_initialization");
   }, [pageObservability]);
 
   return (
     <ErrorBoundary>
-            <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <TooltipProvider>
             <JWTAuthProvider>

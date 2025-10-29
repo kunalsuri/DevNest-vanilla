@@ -1,6 +1,6 @@
 /**
  * Comprehensive Logging System for React + TypeScript Applications
- * 
+ *
  * Features:
  * - Structured logging with JSON output
  * - Multiple log levels (debug, info, warn, error, fatal)
@@ -11,7 +11,7 @@
  * - Integration with error boundaries and React Query
  */
 
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 
 // Log levels with numeric values for filtering
 export enum LogLevel {
@@ -54,13 +54,21 @@ export interface LogTransport {
 
 // Console transport for development
 class ConsoleTransport implements LogTransport {
-  name = 'console';
+  name = "console";
 
   log(entry: LogEntry): void {
-    const { timestamp, levelName, message, component, module, metadata, error } = entry;
-    
+    const {
+      timestamp,
+      levelName,
+      message,
+      component,
+      module,
+      metadata,
+      error,
+    } = entry;
+
     const prefix = `[${timestamp}] ${levelName.toUpperCase()}`;
-    const context = component || module ? ` (${component || module})` : '';
+    const context = component || module ? ` (${component || module})` : "";
     const logMessage = `${prefix}${context}: ${message}`;
 
     // Use appropriate console method based on level
@@ -88,7 +96,7 @@ class ConsoleTransport implements LogTransport {
 
   shouldLog(level: LogLevel): boolean {
     // In development, log everything
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       return true;
     }
     // In production, only log warnings and above
@@ -98,12 +106,15 @@ class ConsoleTransport implements LogTransport {
 
 // External service transport (Sentry, LogRocket, Datadog, etc.)
 class ExternalTransport implements LogTransport {
-  name = 'external';
+  name = "external";
   private serviceName: string;
   private apiEndpoint?: string;
   private apiKey?: string;
 
-  constructor(serviceName: string, config?: { apiEndpoint?: string; apiKey?: string }) {
+  constructor(
+    serviceName: string,
+    config?: { apiEndpoint?: string; apiKey?: string },
+  ) {
     this.serviceName = serviceName;
     this.apiEndpoint = config?.apiEndpoint;
     this.apiKey = config?.apiKey;
@@ -113,13 +124,13 @@ class ExternalTransport implements LogTransport {
     try {
       // Example integration patterns for different services
       switch (this.serviceName) {
-        case 'sentry':
+        case "sentry":
           this.logToSentry(entry);
           break;
-        case 'datadog':
+        case "datadog":
           await this.logToDatadog(entry);
           break;
-        case 'custom':
+        case "custom":
           await this.logToCustomEndpoint(entry);
           break;
         default:
@@ -133,9 +144,9 @@ class ExternalTransport implements LogTransport {
 
   private logToSentry(entry: LogEntry): void {
     // Example Sentry integration
-    if (typeof window !== 'undefined' && (window as any).Sentry) {
+    if (typeof window !== "undefined" && (window as any).Sentry) {
       const Sentry = (window as any).Sentry;
-      
+
       if (entry.error) {
         Sentry.captureException(new Error(entry.error.message), {
           level: this.mapLevelToSentry(entry.level),
@@ -166,51 +177,61 @@ class ExternalTransport implements LogTransport {
 
   private async logToDatadog(entry: LogEntry): Promise<void> {
     // Example DataDog logs API integration
-    if (!this.apiEndpoint || !this.apiKey) return;
+    if (!this.apiEndpoint || !this.apiKey) {
+      return;
+    }
 
     const payload = {
-      ddsource: 'browser',
-      ddtags: `env:${entry.environment},component:${entry.component || 'unknown'}`,
+      ddsource: "browser",
+      ddtags: `env:${entry.environment},component:${entry.component || "unknown"}`,
       hostname: window.location.hostname,
       message: entry.message,
       level: entry.levelName.toLowerCase(),
       timestamp: entry.timestamp,
-      service: 'devnest-frontend',
+      service: "devnest-frontend",
       ...entry.metadata,
     };
 
     await fetch(this.apiEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'DD-API-KEY': this.apiKey,
+        "Content-Type": "application/json",
+        "DD-API-KEY": this.apiKey,
       },
       body: JSON.stringify(payload),
     });
   }
 
   private async logToCustomEndpoint(entry: LogEntry): Promise<void> {
-    if (!this.apiEndpoint) return;
+    if (!this.apiEndpoint) {
+      return;
+    }
 
     await fetch(this.apiEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...(this.apiKey && { Authorization: `Bearer ${this.apiKey}` }),
       },
       body: JSON.stringify(entry),
-      credentials: 'include',
+      credentials: "include",
     });
   }
 
   private mapLevelToSentry(level: LogLevel): string {
     switch (level) {
-      case LogLevel.DEBUG: return 'debug';
-      case LogLevel.INFO: return 'info';
-      case LogLevel.WARN: return 'warning';
-      case LogLevel.ERROR: return 'error';
-      case LogLevel.FATAL: return 'fatal';
-      default: return 'info';
+      case LogLevel.DEBUG:
+        return "debug";
+      case LogLevel.INFO:
+        return "info";
+      case LogLevel.WARN:
+        return "warning";
+      case LogLevel.ERROR:
+        return "error";
+      case LogLevel.FATAL:
+        return "fatal";
+      default:
+        return "info";
     }
   }
 
@@ -222,7 +243,7 @@ class ExternalTransport implements LogTransport {
 
 // Batch transport for performance optimization
 class BatchTransport implements LogTransport {
-  name = 'batch';
+  name = "batch";
   private transport: LogTransport;
   private batch: LogEntry[] = [];
   private batchSize: number;
@@ -238,7 +259,7 @@ class BatchTransport implements LogTransport {
 
   log(entry: LogEntry): void {
     this.batch.push(entry);
-    
+
     if (this.batch.length >= this.batchSize) {
       this.flush();
     }
@@ -253,17 +274,19 @@ class BatchTransport implements LogTransport {
   }
 
   private async flush(): Promise<void> {
-    if (this.batch.length === 0) return;
+    if (this.batch.length === 0) {
+      return;
+    }
 
     const batchToProcess = [...this.batch];
     this.batch = [];
 
     try {
       await Promise.all(
-        batchToProcess.map(entry => this.transport.log(entry))
+        batchToProcess.map((entry) => this.transport.log(entry)),
       );
     } catch (error) {
-      console.error('Failed to flush log batch:', error);
+      console.error("Failed to flush log batch:", error);
       // Re-add failed entries to batch for retry
       this.batch.unshift(...batchToProcess);
     }
@@ -308,7 +331,7 @@ class LogContext {
   // Generate a unique request ID for tracing
   generateRequestId(): string {
     const requestId = nanoid();
-    this.setContext('requestId', requestId);
+    this.setContext("requestId", requestId);
     return requestId;
   }
 }
@@ -316,9 +339,24 @@ class LogContext {
 // PII sanitization utility
 class DataSanitizer {
   private static sensitiveKeys = [
-    'password', 'token', 'apiKey', 'secret', 'auth', 'authorization',
-    'ssn', 'socialSecurity', 'creditCard', 'cc', 'cvv', 'pin',
-    'email', 'phone', 'phoneNumber', 'address', 'zipCode', 'postalCode'
+    "password",
+    "token",
+    "apiKey",
+    "secret",
+    "auth",
+    "authorization",
+    "ssn",
+    "socialSecurity",
+    "creditCard",
+    "cc",
+    "cvv",
+    "pin",
+    "email",
+    "phone",
+    "phoneNumber",
+    "address",
+    "zipCode",
+    "postalCode",
   ];
 
   static sanitize(data: any): any {
@@ -326,20 +364,22 @@ class DataSanitizer {
       return data;
     }
 
-    if (typeof data === 'string') {
+    if (typeof data === "string") {
       return this.sanitizeString(data);
     }
 
     if (Array.isArray(data)) {
-      return data.map(item => this.sanitize(item));
+      return data.map((item) => this.sanitize(item));
     }
 
-    if (typeof data === 'object') {
+    if (typeof data === "object") {
       const sanitized: any = {};
       for (const [key, value] of Object.entries(data)) {
         const lowerKey = key.toLowerCase();
-        if (this.sensitiveKeys.some(sensitive => lowerKey.includes(sensitive))) {
-          sanitized[key] = '[REDACTED]';
+        if (
+          this.sensitiveKeys.some((sensitive) => lowerKey.includes(sensitive))
+        ) {
+          sanitized[key] = "[REDACTED]";
         } else {
           sanitized[key] = this.sanitize(value);
         }
@@ -353,9 +393,15 @@ class DataSanitizer {
   private static sanitizeString(str: string): string {
     // Redact common patterns (emails, phone numbers, etc.)
     return str
-      .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]')
-      .replace(/\b\d{3}-\d{3}-\d{4}\b/g, '[PHONE_REDACTED]')
-      .replace(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, '[CARD_REDACTED]');
+      .replace(
+        /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+        "[EMAIL_REDACTED]",
+      )
+      .replace(/\b\d{3}-\d{3}-\d{4}\b/g, "[PHONE_REDACTED]")
+      .replace(
+        /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,
+        "[CARD_REDACTED]",
+      );
   }
 }
 
@@ -380,7 +426,7 @@ class Logger {
   }
 
   removeTransport(transportName: string): void {
-    this.transports = this.transports.filter(t => t.name !== transportName);
+    this.transports = this.transports.filter((t) => t.name !== transportName);
   }
 
   setMinLevel(level: LogLevel): void {
@@ -393,10 +439,10 @@ class Logger {
     metadata?: Record<string, any>,
     error?: Error,
     component?: string,
-    module?: string
+    module?: string,
   ): LogEntry {
     const context = this.context.getContext();
-    
+
     return {
       timestamp: new Date().toISOString(),
       level,
@@ -407,16 +453,19 @@ class Logger {
       userId: context.userId,
       sessionId: context.sessionId,
       requestId: context.requestId,
-      environment: process.env.NODE_ENV || 'development',
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-      url: typeof window !== 'undefined' ? window.location.href : undefined,
+      environment: process.env.NODE_ENV || "development",
+      userAgent:
+        typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+      url: typeof window !== "undefined" ? window.location.href : undefined,
       metadata: metadata ? DataSanitizer.sanitize(metadata) : undefined,
-      error: error ? {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-        code: (error as any).code,
-      } : undefined,
+      error: error
+        ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack,
+            code: (error as any).code,
+          }
+        : undefined,
     };
   }
 
@@ -426,23 +475,30 @@ class Logger {
     metadata?: Record<string, any>,
     error?: Error,
     component?: string,
-    module?: string
+    module?: string,
   ): void {
     // Check if we should log this level
     if (level < this.minLevel) {
       return;
     }
 
-    const entry = this.createEntry(level, message, metadata, error, component, module);
+    const entry = this.createEntry(
+      level,
+      message,
+      metadata,
+      error,
+      component,
+      module,
+    );
 
     // Send to all transports asynchronously
-    this.transports.forEach(transport => {
+    this.transports.forEach((transport) => {
       try {
         if (!transport.shouldLog || transport.shouldLog(level)) {
           const result = transport.log(entry);
           // Handle async transports
           if (result instanceof Promise) {
-            result.catch(err => {
+            result.catch((err) => {
               console.error(`Transport ${transport.name} failed:`, err);
             });
           }
@@ -454,33 +510,55 @@ class Logger {
   }
 
   // Public logging methods
-  debug(message: string, metadata?: Record<string, any>, component?: string): void {
+  debug(
+    message: string,
+    metadata?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log(LogLevel.DEBUG, message, metadata, undefined, component);
   }
 
-  info(message: string, metadata?: Record<string, any>, component?: string): void {
+  info(
+    message: string,
+    metadata?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log(LogLevel.INFO, message, metadata, undefined, component);
   }
 
-  warn(message: string, metadata?: Record<string, any>, component?: string): void {
+  warn(
+    message: string,
+    metadata?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log(LogLevel.WARN, message, metadata, undefined, component);
   }
 
-  error(message: string, error?: Error, metadata?: Record<string, any>, component?: string): void {
+  error(
+    message: string,
+    error?: Error,
+    metadata?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log(LogLevel.ERROR, message, metadata, error, component);
   }
 
-  fatal(message: string, error?: Error, metadata?: Record<string, any>, component?: string): void {
+  fatal(
+    message: string,
+    error?: Error,
+    metadata?: Record<string, any>,
+    component?: string,
+  ): void {
     this.log(LogLevel.FATAL, message, metadata, error, component);
   }
 
   // Context management
   setUserId(userId: string): void {
-    this.context.setContext('userId', userId);
+    this.context.setContext("userId", userId);
   }
 
   setSessionId(sessionId: string): void {
-    this.context.setContext('sessionId', sessionId);
+    this.context.setContext("sessionId", sessionId);
   }
 
   generateRequestId(): string {
@@ -492,70 +570,126 @@ class Logger {
   }
 
   // API logging helpers
-  logApiRequest(method: string, url: string, metadata?: Record<string, any>): void {
-    this.info(`API Request: ${method} ${url}`, {
-      type: 'api_request',
-      method,
-      url,
-      ...metadata,
-    }, 'api');
+  logApiRequest(
+    method: string,
+    url: string,
+    metadata?: Record<string, any>,
+  ): void {
+    this.info(
+      `API Request: ${method} ${url}`,
+      {
+        type: "api_request",
+        method,
+        url,
+        ...metadata,
+      },
+      "api",
+    );
   }
 
-  logApiResponse(method: string, url: string, status: number, duration: number, metadata?: Record<string, any>): void {
+  logApiResponse(
+    method: string,
+    url: string,
+    status: number,
+    duration: number,
+    metadata?: Record<string, any>,
+  ): void {
     const level = status >= 400 ? LogLevel.ERROR : LogLevel.INFO;
-    this.log(level, `API Response: ${method} ${url} ${status} (${duration}ms)`, {
-      type: 'api_response',
-      method,
-      url,
-      status,
-      duration,
-      ...metadata,
-    }, undefined, 'api');
+    this.log(
+      level,
+      `API Response: ${method} ${url} ${status} (${duration}ms)`,
+      {
+        type: "api_response",
+        method,
+        url,
+        status,
+        duration,
+        ...metadata,
+      },
+      undefined,
+      "api",
+    );
   }
 
-  logApiError(method: string, url: string, error: Error, metadata?: Record<string, any>): void {
-    this.error(`API Error: ${method} ${url}`, error, {
-      type: 'api_error',
-      method,
-      url,
-      ...metadata,
-    }, 'api');
+  logApiError(
+    method: string,
+    url: string,
+    error: Error,
+    metadata?: Record<string, any>,
+  ): void {
+    this.error(
+      `API Error: ${method} ${url}`,
+      error,
+      {
+        type: "api_error",
+        method,
+        url,
+        ...metadata,
+      },
+      "api",
+    );
   }
 
   // Performance logging
-  logPerformance(name: string, duration: number, metadata?: Record<string, any>): void {
-    this.info(`Performance: ${name} completed in ${duration}ms`, {
-      type: 'performance',
-      name,
-      duration,
-      ...metadata,
-    }, 'performance');
+  logPerformance(
+    name: string,
+    duration: number,
+    metadata?: Record<string, any>,
+  ): void {
+    this.info(
+      `Performance: ${name} completed in ${duration}ms`,
+      {
+        type: "performance",
+        name,
+        duration,
+        ...metadata,
+      },
+      "performance",
+    );
   }
 
   // User action logging
   logUserAction(action: string, metadata?: Record<string, any>): void {
-    this.info(`User Action: ${action}`, {
-      type: 'user_action',
-      action,
-      ...metadata,
-    }, 'user');
+    this.info(
+      `User Action: ${action}`,
+      {
+        type: "user_action",
+        action,
+        ...metadata,
+      },
+      "user",
+    );
   }
 
   // Component lifecycle logging
-  logComponentMount(componentName: string, metadata?: Record<string, any>): void {
-    this.debug(`Component mounted: ${componentName}`, {
-      type: 'component_lifecycle',
-      event: 'mount',
-      ...metadata,
-    }, componentName);
+  logComponentMount(
+    componentName: string,
+    metadata?: Record<string, any>,
+  ): void {
+    this.debug(
+      `Component mounted: ${componentName}`,
+      {
+        type: "component_lifecycle",
+        event: "mount",
+        ...metadata,
+      },
+      componentName,
+    );
   }
 
-  logComponentUnmount(componentName: string, metadata?: Record<string, any>): void {
-    this.debug(`Component unmounted: ${componentName}`, {
-      type: 'component_lifecycle',
-      event: 'unmount',
-      ...metadata,
-    }, componentName);
+  logComponentUnmount(
+    componentName: string,
+    metadata?: Record<string, any>,
+  ): void {
+    this.debug(
+      `Component unmounted: ${componentName}`,
+      {
+        type: "component_lifecycle",
+        event: "unmount",
+        ...metadata,
+      },
+      componentName,
+    );
   }
 }
 
@@ -564,21 +698,32 @@ export const logger = Logger.getInstance();
 
 // Convenience functions for common use cases
 export const log = {
-  debug: (message: string, metadata?: Record<string, any>, component?: string) => 
-    logger.debug(message, metadata, component),
-  info: (message: string, metadata?: Record<string, any>, component?: string) => 
+  debug: (
+    message: string,
+    metadata?: Record<string, any>,
+    component?: string,
+  ) => logger.debug(message, metadata, component),
+  info: (message: string, metadata?: Record<string, any>, component?: string) =>
     logger.info(message, metadata, component),
-  warn: (message: string, metadata?: Record<string, any>, component?: string) => 
+  warn: (message: string, metadata?: Record<string, any>, component?: string) =>
     logger.warn(message, metadata, component),
-  error: (message: string, error?: Error, metadata?: Record<string, any>, component?: string) => 
-    logger.error(message, error, metadata, component),
-  fatal: (message: string, error?: Error, metadata?: Record<string, any>, component?: string) => 
-    logger.fatal(message, error, metadata, component),
+  error: (
+    message: string,
+    error?: Error,
+    metadata?: Record<string, any>,
+    component?: string,
+  ) => logger.error(message, error, metadata, component),
+  fatal: (
+    message: string,
+    error?: Error,
+    metadata?: Record<string, any>,
+    component?: string,
+  ) => logger.fatal(message, error, metadata, component),
 };
 
 // Types already exported above with interface declarations
 export { ConsoleTransport, ExternalTransport, BatchTransport, DataSanitizer };
 
 // File transport for local log persistence
-export { FileTransport } from './file-transport';
-export { ServerTransport } from './server-transport';
+export { FileTransport } from "./file-transport";
+export { ServerTransport } from "./server-transport";

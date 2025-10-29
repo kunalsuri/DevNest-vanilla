@@ -18,12 +18,16 @@ export function ProfilePictureSection() {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       return;
     }
 
@@ -36,25 +40,29 @@ export function ProfilePictureSection() {
     try {
       await uploadProfilePicture.mutateAsync(file);
     } catch (error) {
-      handleError(error as Error, 'Profile picture upload failed');
+      handleError(error as Error, "Profile picture upload failed");
     } finally {
       setIsUploading(false);
       // Clear the input
-      event.target.value = '';
+      event.target.value = "";
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold text-primary">Profile Picture</CardTitle>
-        <p className="text-sm text-muted-foreground">Upload a profile picture.</p>
+        <CardTitle className="text-lg font-semibold text-primary">
+          Profile Picture
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Upload a profile picture.
+        </p>
       </CardHeader>
       <CardContent className="flex items-center gap-6">
         <div className="relative">
           <Avatar className="h-24 w-24">
-            <AvatarImage 
-              src={user?.profilePicture || undefined} 
+            <AvatarImage
+              src={user?.profilePicture || undefined}
               alt={`${user?.firstName} ${user?.lastName}`}
             />
             <AvatarFallback className="text-xl bg-primary text-primary-foreground">
@@ -66,7 +74,9 @@ export function ProfilePictureSection() {
               size="icon"
               variant="secondary"
               className="h-8 w-8 rounded-full"
-              onClick={() => document.getElementById('profile-picture-input')?.click()}
+              onClick={() =>
+                document.getElementById("profile-picture-input")?.click()
+              }
               disabled={isUploading}
               data-testid="button-edit-picture"
             >
@@ -80,7 +90,9 @@ export function ProfilePictureSection() {
             <Button
               variant="outline"
               className="w-fit"
-              onClick={() => document.getElementById('profile-picture-input')?.click()}
+              onClick={() =>
+                document.getElementById("profile-picture-input")?.click()
+              }
               disabled={isUploading}
               data-testid="button-upload-picture"
             >

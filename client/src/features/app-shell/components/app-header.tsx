@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -27,7 +27,9 @@ export function AppHeader() {
   }, [location]);
 
   const getInitials = (firstName?: string, lastName?: string) => {
-    if (!firstName || !lastName) return "U";
+    if (!firstName || !lastName) {
+      return "U";
+    }
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
@@ -38,12 +40,15 @@ export function AppHeader() {
   return (
     <header className="h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4">
-        
         {/* Mobile Menu */}
         <div className="flex items-center gap-2 md:hidden">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" data-testid="button-mobile-menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                data-testid="button-mobile-menu"
+              >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -51,11 +56,13 @@ export function AppHeader() {
               <AppSidebar />
             </SheetContent>
           </Sheet>
-          
+
           <Link href="/dashboard">
             <div className="flex items-center gap-2 cursor-pointer">
               <div className="h-7 w-7 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xs">DN</span>
+                <span className="text-primary-foreground font-bold text-xs">
+                  DN
+                </span>
               </div>
               <span className="font-semibold">DevNest</span>
             </div>
@@ -70,7 +77,11 @@ export function AppHeader() {
         {/* Right side actions */}
         <div className="flex items-center gap-2">
           {/* Notifications */}
-          <Button variant="ghost" size="icon" data-testid="button-notifications">
+          <Button
+            variant="ghost"
+            size="icon"
+            data-testid="button-notifications"
+          >
             <Bell className="h-4 w-4" />
           </Button>
 
@@ -80,10 +91,14 @@ export function AppHeader() {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full" data-testid="button-user-menu">
+              <Button
+                variant="ghost"
+                className="relative h-8 w-8 rounded-full"
+                data-testid="button-user-menu"
+              >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage 
-                    src={user?.profilePicture || undefined} 
+                  <AvatarImage
+                    src={user?.profilePicture || undefined}
                     alt={user ? `${user.firstName} ${user.lastName}` : "User"}
                   />
                   <AvatarFallback className="text-xs">
@@ -100,7 +115,10 @@ export function AppHeader() {
                       <p className="font-medium" data-testid="text-user-name">
                         {user.firstName} {user.lastName}
                       </p>
-                      <p className="w-[200px] truncate text-sm text-muted-foreground" data-testid="text-user-email">
+                      <p
+                        className="w-[200px] truncate text-sm text-muted-foreground"
+                        data-testid="text-user-email"
+                      >
                         {user.email}
                       </p>
                     </>
@@ -121,13 +139,15 @@ export function AppHeader() {
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={handleLogout}
                 disabled={logoutMutation.isPending}
                 data-testid="button-logout-header"
               >
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>{logoutMutation.isPending ? "Signing out..." : "Sign out"}</span>
+                <span>
+                  {logoutMutation.isPending ? "Signing out..." : "Sign out"}
+                </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

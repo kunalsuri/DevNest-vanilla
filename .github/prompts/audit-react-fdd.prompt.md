@@ -1,19 +1,24 @@
 ---
-mode: 'agent'
-description: 'Audit React + TypeScript project for compliance with industry best practices and Feature-Driven Development (FDD)'
+mode: "agent"
+description: "Audit React + TypeScript project for compliance with industry best practices and Feature-Driven Development (FDD)"
 ---
 
 # Role
+
 Act as a **Coder LLM-as-a-Judge**. You are tasked with auditing and analyzing every file in a React + TypeScript project.
 
 # Goal
+
 Evaluate the codebase for compliance with:
+
 - Modern React + TypeScript best practices
 - Feature-Driven Development (FDD) architecture
 - Maintainability, readability, and reusability standards
 
 # Scope of Audit
+
 For each file:
+
 1. **Architecture & Modularity**
    - Verify Feature-Driven Development structure (feature modules, reusable shared components).
    - Confirm clean folder hierarchy and consistent naming.
@@ -49,6 +54,7 @@ For each file:
    - Coverage for critical components and hooks.
 
 # Output Requirements
+
 - Provide a **per-file audit report**:
   - Strengths
   - Violations
