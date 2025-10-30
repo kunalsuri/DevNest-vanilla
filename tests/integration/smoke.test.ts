@@ -43,7 +43,7 @@ describe("Smoke Tests - Critical Path Validation", () => {
 
   describe("Configuration Files", () => {
     it("should validate package.json structure", async () => {
-      const pkg = await import("../package.json");
+      const pkg = await import("../../package.json");
       expect(pkg.name).toBeDefined();
       expect(pkg.version).toBeDefined();
       expect(pkg.dependencies).toBeDefined();
@@ -51,7 +51,7 @@ describe("Smoke Tests - Critical Path Validation", () => {
     });
 
     it("should have required scripts", async () => {
-      const pkg = await import("../package.json");
+      const pkg = await import("../../package.json");
       expect(pkg.scripts).toBeDefined();
       expect(pkg.scripts.dev).toBeDefined();
       expect(pkg.scripts.build).toBeDefined();

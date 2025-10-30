@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { storage } from "../storage";
+import { storage } from "@server/storage";
 
 describe("Storage Service", () => {
   beforeEach(async () => {

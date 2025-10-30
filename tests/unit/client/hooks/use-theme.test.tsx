@@ -1,7 +1,7 @@
-// client/src/hooks/__tests__/use-theme.test.tsx
+// tests/unit/client/hooks/use-theme.test.tsx
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useTheme, ThemeProvider } from "../use-theme";
+import { useTheme, ThemeProvider } from "@/hooks/use-theme";
 import { ReactNode } from "react";
 
 describe("useTheme hook", () => {

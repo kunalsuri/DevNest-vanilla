@@ -1,6 +1,6 @@
-// client/src/lib/__tests__/utils.test.ts
+// tests/unit/client/lib/utils.test.ts
 import { describe, it, expect } from "vitest";
-import { cn } from "../utils";
+import { cn } from "@/lib/utils";
 
 describe("Utils", () => {
   describe("cn function", () => {

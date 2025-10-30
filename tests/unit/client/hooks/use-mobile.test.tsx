@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useIsMobile } from "../use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 describe("useIsMobile hook", () => {
   it("should return mobile state based on window size", () => {

@@ -12,7 +12,7 @@ describe("Health Check Endpoints", () => {
   beforeAll(async () => {
     // Dynamically import to avoid esbuild issues in test environment
     const { handleHealthCheck, handleReadinessCheck } = await import(
-      "../health"
+      "@server/health"
     );
 
     app = express();

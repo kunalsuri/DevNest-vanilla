@@ -1,7 +1,7 @@
-// client/src/components/__tests__/theme-provider.test.tsx
+// tests/unit/client/components/theme-provider.test.tsx
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@/test/test-utils";
-import { ThemeToggle } from "../theme-provider";
+import { ThemeToggle } from "@/components/theme-provider";
 import userEvent from "@testing-library/user-event";
 
 describe("ThemeToggle Component", () => {

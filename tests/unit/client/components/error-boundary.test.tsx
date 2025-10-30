@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ErrorBoundary } from "../error-boundary";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 // Test component that throws an error
 function ThrowError({ shouldThrow }: Readonly<{ shouldThrow: boolean }>) {

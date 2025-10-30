@@ -210,6 +210,52 @@ function ThemeToggle() {
 }
 ```
 
+## Testing
+
+DevNest has a comprehensive test suite organized in a centralized `tests/` directory.
+
+### Test Structure
+
+```
+tests/
+├── unit/              # Unit tests
+│   ├── client/       # React component & hook tests
+│   └── server/       # Server-side logic tests
+├── integration/      # Integration tests
+├── e2e/             # End-to-end tests (Playwright)
+└── setup/           # Test configuration
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage
+npm run test:coverage
+
+# Run specific test type
+npm test tests/unit          # Unit tests only
+npm test tests/integration   # Integration tests only
+```
+
+### Test Coverage
+
+Current test coverage: **102 passing tests** across 12 test files
+
+- Client-side unit tests: 6 files
+- Server-side unit tests: 4 files
+- Integration tests: 2 files
+
+For detailed testing documentation, see [`tests/README.md`](tests/README.md).
+
 ## API Endpoints
 
 ### Auth Endpoints

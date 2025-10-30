@@ -43,6 +43,15 @@ coverage/
 # nyc test coverage
 .nyc_output
 
+# Test results and reports (timestamped files in tests/ folder)
+tests/*-test-results-*.json
+tests/*-test-results-*.md
+tests/*-coverage/
+
+# Old test results directories (deprecated)
+test-results/
+playwright-report/
+
 # Dependency directories
 jspm_packages/
 

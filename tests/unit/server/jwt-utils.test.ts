@@ -6,7 +6,7 @@ import {
   hashPassword,
   comparePassword,
   generateCSRFToken,
-} from "../auth/jwt-utils";
+} from "@server/auth/jwt-utils";
 
 describe("JWT Utilities", () => {
   const testPayload = {

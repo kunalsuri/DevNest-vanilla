@@ -48,7 +48,12 @@ export async function comparePassword(
   hash: string,
 ): Promise<boolean> {
   try {
-    // Check if it's a legacy scrypt hash (contains a dot separator)
+    // Check if it's a bcrypt hash (starts with $2a$, $2b$, $2y$, etc.)
+    if (hash.startsWith("$2")) {
+      return await bcrypt.compare(password, hash);
+    }
+
+    // Check if it's a legacy scrypt hash (hex.hex format)
     if (hash.includes(".")) {
       const [hashed, salt] = hash.split(".");
       const hashedBuf = Buffer.from(hashed, "hex");
@@ -56,8 +61,11 @@ export async function comparePassword(
       return timingSafeEqual(hashedBuf, suppliedBuf);
     }
 
-    // Otherwise it's a bcrypt hash
-    return await bcrypt.compare(password, hash);
+    // Unknown hash format
+    logger.error("Unknown password hash format", {
+      hashPrefix: hash.substring(0, 10),
+    });
+    return false;
   } catch (error) {
     logger.error("Password comparison error", {
       error: error instanceof Error ? error.message : String(error),

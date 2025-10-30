@@ -1,7 +1,7 @@
-// client/src/components/ui/__tests__/button.test.tsx
+// tests/unit/client/components/ui/button.test.tsx
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@/test/test-utils";
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 import userEvent from "@testing-library/user-event";
 
 describe("Button Component", () => {
