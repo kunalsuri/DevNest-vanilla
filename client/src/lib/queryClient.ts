@@ -7,16 +7,21 @@ import {
 } from "@shared/error-codes";
 import { logger } from "./logger";
 
+interface ErrorResponse {
+  message?: string;
+  error?: string;
+}
+
 async function throwIfResNotOk(res: Response, traceId?: string) {
   if (!res.ok) {
     let errorMessage = res.statusText;
-    let errorData: any = null;
+    let errorData: ErrorResponse | null = null;
 
     try {
       const text = await res.text();
       if (text) {
         try {
-          errorData = JSON.parse(text);
+          errorData = JSON.parse(text) as ErrorResponse;
           errorMessage = errorData.message || errorData.error || text;
         } catch {
           errorMessage = text;
@@ -161,9 +166,13 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      retry: (failureCount, error: any) => {
+      retry: (failureCount, error: Error & { statusCode?: number }) => {
         // Don't retry on 4xx errors (client errors)
-        if (error?.statusCode >= 400 && error?.statusCode < 500) {
+        if (
+          error?.statusCode &&
+          error.statusCode >= 400 &&
+          error.statusCode < 500
+        ) {
           return false;
         }
         // Retry up to 3 times for other errors

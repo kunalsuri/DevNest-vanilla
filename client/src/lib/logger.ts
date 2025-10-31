@@ -74,7 +74,7 @@ export interface LogEntry {
   environment: string;
   userAgent?: string;
   url?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   error?: {
     name: string;
     message: string;
@@ -179,8 +179,14 @@ class ExternalTransport implements LogTransport {
 
   private logToSentry(entry: LogEntry): void {
     // Example Sentry integration
-    if (typeof window !== "undefined" && (window as any).Sentry) {
-      const Sentry = (window as any).Sentry;
+    if (
+      typeof window !== "undefined" &&
+      (window as Window & { Sentry?: unknown }).Sentry
+    ) {
+      const Sentry = (window as Window & { Sentry?: unknown }).Sentry as {
+        captureException: (error: Error, options?: unknown) => void;
+        captureMessage: (message: string, options?: unknown) => void;
+      };
 
       if (entry.error) {
         Sentry.captureException(new Error(entry.error.message), {
@@ -340,9 +346,17 @@ class BatchTransport implements LogTransport {
 }
 
 // Context manager for maintaining request/session context
+interface LogContextData {
+  userId?: string;
+  sessionId?: string;
+  requestId?: string;
+  traceId?: string;
+  [key: string]: unknown;
+}
+
 class LogContext {
   private static instance: LogContext;
-  private context: Record<string, any> = {};
+  private context: LogContextData = {};
 
   static getInstance(): LogContext {
     if (!LogContext.instance) {
@@ -351,11 +365,11 @@ class LogContext {
     return LogContext.instance;
   }
 
-  setContext(key: string, value: any): void {
+  setContext(key: string, value: unknown): void {
     this.context[key] = value;
   }
 
-  getContext(): Record<string, any> {
+  getContext(): LogContextData {
     return { ...this.context };
   }
 
@@ -406,21 +420,21 @@ class DataSanitizer {
     "postalCode",
   ];
 
-  static sanitize(data: any): any {
+  static sanitize<T = unknown>(data: T): T {
     if (data === null || data === undefined) {
       return data;
     }
 
     if (typeof data === "string") {
-      return this.sanitizeString(data);
+      return this.sanitizeString(data) as T;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.sanitize(item));
+      return data.map((item) => this.sanitize(item)) as T;
     }
 
     if (typeof data === "object") {
-      const sanitized: any = {};
+      const sanitized: Record<string, unknown> = {};
       for (const [key, value] of Object.entries(data)) {
         const lowerKey = key.toLowerCase();
         if (
@@ -431,7 +445,7 @@ class DataSanitizer {
           sanitized[key] = this.sanitize(value);
         }
       }
-      return sanitized;
+      return sanitized as T;
     }
 
     return data;
@@ -488,7 +502,7 @@ class Logger {
   private createEntry(
     level: LogLevel,
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     error?: Error,
     component?: string,
     module?: string,
@@ -519,7 +533,7 @@ class Logger {
             name: error.name,
             message: error.message,
             stack: error.stack,
-            code: (error as any).code,
+            code: (error as Error & { code?: string }).code,
           }
         : undefined,
     };
@@ -528,7 +542,7 @@ class Logger {
   private log(
     level: LogLevel,
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     error?: Error,
     component?: string,
     module?: string,
@@ -568,7 +582,7 @@ class Logger {
   // Public logging methods
   debug(
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ): void {
     this.log(LogLevel.DEBUG, message, metadata, undefined, component);
@@ -576,7 +590,7 @@ class Logger {
 
   info(
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ): void {
     this.log(LogLevel.INFO, message, metadata, undefined, component);
@@ -584,7 +598,7 @@ class Logger {
 
   warn(
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ): void {
     this.log(LogLevel.WARN, message, metadata, undefined, component);
@@ -593,7 +607,7 @@ class Logger {
   error(
     message: string,
     error?: Error,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ): void {
     this.log(LogLevel.ERROR, message, metadata, error, component);
@@ -602,7 +616,7 @@ class Logger {
   fatal(
     message: string,
     error?: Error,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ): void {
     this.log(LogLevel.FATAL, message, metadata, error, component);
@@ -641,7 +655,7 @@ class Logger {
   logApiRequest(
     method: string,
     url: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     this.info(
       `API Request: ${method} ${url}`,
@@ -660,7 +674,7 @@ class Logger {
     url: string,
     status: number,
     duration: number,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     const level = status >= 400 ? LogLevel.ERROR : LogLevel.INFO;
     this.log(
@@ -683,7 +697,7 @@ class Logger {
     method: string,
     url: string,
     error: Error,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     this.error(
       `API Error: ${method} ${url}`,
@@ -702,7 +716,7 @@ class Logger {
   logPerformance(
     name: string,
     duration: number,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     this.info(
       `Performance: ${name} completed in ${duration}ms`,
@@ -717,7 +731,7 @@ class Logger {
   }
 
   // User action logging
-  logUserAction(action: string, metadata?: Record<string, any>): void {
+  logUserAction(action: string, metadata?: Record<string, unknown>): void {
     this.info(
       `User Action: ${action}`,
       {
@@ -732,7 +746,7 @@ class Logger {
   // Component lifecycle logging
   logComponentMount(
     componentName: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     this.debug(
       `Component mounted: ${componentName}`,
@@ -747,7 +761,7 @@ class Logger {
 
   logComponentUnmount(
     componentName: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     this.debug(
       `Component unmounted: ${componentName}`,
@@ -768,23 +782,29 @@ export const logger = Logger.getInstance();
 export const log = {
   debug: (
     message: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ) => logger.debug(message, metadata, component),
-  info: (message: string, metadata?: Record<string, any>, component?: string) =>
-    logger.info(message, metadata, component),
-  warn: (message: string, metadata?: Record<string, any>, component?: string) =>
-    logger.warn(message, metadata, component),
+  info: (
+    message: string,
+    metadata?: Record<string, unknown>,
+    component?: string,
+  ) => logger.info(message, metadata, component),
+  warn: (
+    message: string,
+    metadata?: Record<string, unknown>,
+    component?: string,
+  ) => logger.warn(message, metadata, component),
   error: (
     message: string,
     error?: Error,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ) => logger.error(message, error, metadata, component),
   fatal: (
     message: string,
     error?: Error,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
     component?: string,
   ) => logger.fatal(message, error, metadata, component),
 };

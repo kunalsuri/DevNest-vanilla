@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useMemo,
+  useCallback,
 } from "react";
 import {
   useQuery,
@@ -280,12 +281,15 @@ export function JWTAuthProvider({
     },
   });
 
-  const hasRole = (role: string): boolean => {
-    if (!user) {
-      return false;
-    }
-    return user.role === role;
-  };
+  const hasRole = useCallback(
+    (role: string): boolean => {
+      if (!user) {
+        return false;
+      }
+      return user.role === role;
+    },
+    [user],
+  );
 
   const contextValue = useMemo(
     () => ({
@@ -308,6 +312,7 @@ export function JWTAuthProvider({
       registerMutation,
       logoutMutation,
       refreshTokenMutation,
+      hasRole,
     ],
   );
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, startTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
@@ -20,10 +20,16 @@ export function AppHeader() {
   const { user, logoutMutation } = useJWTAuth();
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [location] = useLocation();
+  const prevLocation = useRef(location);
 
   // Close mobile sheet when location changes
   useEffect(() => {
-    setIsSheetOpen(false);
+    if (prevLocation.current !== location) {
+      startTransition(() => {
+        setIsSheetOpen(false);
+      });
+      prevLocation.current = location;
+    }
   }, [location]);
 
   const getInitials = (firstName?: string, lastName?: string) => {

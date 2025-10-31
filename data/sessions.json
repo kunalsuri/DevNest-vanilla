@@ -1,0 +1,12 @@
+[
+  {
+    "sessionId": "3480eaf8901162ea66f4fd6e81ddd0cf111dab30fd7773be28bb966650be0012",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "7d0eb32215992cfb4695f8f7d351114adade5290d24cf38e74ad7e098968d173",
+    "csrfTokenHash": "89606ebb5f2857db84bbbd8fd34cdcfbeeff0b244032008e46b01442a4ddd440",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2025-10-31T07:21:45.683Z",
+    "expiresAt": "2025-11-07T07:21:45.683Z"
+  }
+]

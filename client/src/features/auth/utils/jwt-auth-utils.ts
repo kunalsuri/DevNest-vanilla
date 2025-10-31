@@ -5,6 +5,19 @@
  * Handles token storage, CSRF token management, and API request authentication
  */
 
+/**
+ * JWT Token Payload Interface
+ */
+export interface TokenPayload {
+  userId: string;
+  username: string;
+  email: string;
+  role: string;
+  sessionId: string;
+  iat: number;
+  exp: number;
+}
+
 let accessToken: string | null = null;
 
 /**
@@ -174,7 +187,7 @@ export function startTokenRefreshTimer(): void {
 /**
  * Extract token payload (without verification - for client-side use only)
  */
-export function decodeTokenPayload(token: string): any {
+export function decodeTokenPayload(token: string): TokenPayload | null {
   try {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
@@ -184,7 +197,7 @@ export function decodeTokenPayload(token: string): any {
         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
         .join(""),
     );
-    return JSON.parse(jsonPayload);
+    return JSON.parse(jsonPayload) as TokenPayload;
   } catch (error) {
     console.error("Failed to decode token:", error);
     return null;
@@ -207,7 +220,7 @@ export function isTokenExpired(token: string): boolean {
 /**
  * Get user info from access token (client-side only)
  */
-export function getUserFromToken(): any {
+export function getUserFromToken(): TokenPayload | null {
   if (!accessToken) {
     return null;
   }
