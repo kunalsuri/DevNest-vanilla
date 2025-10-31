@@ -14,6 +14,8 @@ export interface TokenPayload {
   email: string;
   role: string;
   sessionId: string;
+  firstName?: string;
+  lastName?: string;
   iat: number;
   exp: number;
 }

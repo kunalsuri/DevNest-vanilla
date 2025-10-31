@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import { type Express, static as expressStatic } from "express";
 import { createServer, type Server } from "node:http";
 import { setupProfile } from "./profile";
 import { setupJWTAuthRoutes } from "./auth/jwt-auth-routes";
@@ -15,18 +15,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/health", handleHealthCheck);
   app.get("/health/ready", handleReadinessCheck);
 
-  // Setup JWT-based authentication routes
+  // Setup API routes
   setupJWTAuthRoutes(app);
-
-  // Setup profile routes
   setupProfile(app);
 
   // Setup logging endpoints for browser log persistence
   app.post("/api/logs", handleLogSubmission);
   app.get("/api/logs", handleLogRetrieval);
 
-  // Additional API routes can be added here
-  // prefix all routes with /api
+  // Serve uploaded profile pictures
+  app.use("/uploads", expressStatic("uploads"));
 
   // Start session cleanup interval
   startSessionCleanup();

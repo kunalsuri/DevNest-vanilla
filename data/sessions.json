@@ -1,23 +1,23 @@
 [
   {
-    "sessionId": "3480eaf8901162ea66f4fd6e81ddd0cf111dab30fd7773be28bb966650be0012",
+    "sessionId": "b87057f6166337f3721d454c3eb3610029f922128b090cdafeca47a169dcc6d1",
     "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "7d0eb32215992cfb4695f8f7d351114adade5290d24cf38e74ad7e098968d173",
-    "csrfTokenHash": "89606ebb5f2857db84bbbd8fd34cdcfbeeff0b244032008e46b01442a4ddd440",
+    "refreshTokenHash": "8c10a9bfefe54aa76418419e9495f1d2ad337f5a8087f23559a3e8ddefec1e78",
+    "csrfTokenHash": "9c35ba2e999d8d0934c089a961d89788ec6bdca1eb9805ad6630f61120feab4b",
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
     "ip": "127.0.0.1",
-    "createdAt": "2025-10-31T07:21:45.683Z",
-    "expiresAt": "2025-11-07T07:21:45.683Z",
-    "revokedAt": "2025-10-31T13:27:18.420Z"
+    "createdAt": "2025-10-31T14:36:21.554Z",
+    "expiresAt": "2025-11-07T14:36:21.554Z",
+    "revokedAt": "2025-10-31T15:04:27.595Z"
   },
   {
-    "sessionId": "d0cd42ae4bd063dc96ea3cf9e57f1e992601ebc1195807f505ccb2bc8ff8645e",
+    "sessionId": "e9d1683ffbc1b7ebbdd7e34d32e89d7329277b9a90d840a24ae5c6879a4ec229",
     "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "52e4c8d211422eaca0c6cab12a6c417415ca5c1466a1fd12ca835d499669b483",
-    "csrfTokenHash": "5397f860133d0bad356d46aba014c83038be5965960241621140c8bc78f4ccf3",
+    "refreshTokenHash": "15f5285c47e08d7eae82d5d63f194940efb2f2865bab43037d526515d4136b47",
+    "csrfTokenHash": "40c26fe41bd18f91249f0e1d1a0aaef3cee6b113bf28932aa1e7e3c905774f44",
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
     "ip": "127.0.0.1",
-    "createdAt": "2025-10-31T13:27:25.002Z",
-    "expiresAt": "2025-11-07T13:27:25.002Z"
+    "createdAt": "2025-10-31T15:04:35.858Z",
+    "expiresAt": "2025-11-07T15:04:35.858Z"
   }
 ]

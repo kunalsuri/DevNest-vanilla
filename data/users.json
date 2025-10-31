@@ -3138,5 +3138,509 @@
     "role": "user",
     "profilePicture": null,
     "createdAt": "2025-10-31T13:22:30.411Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "1995c792-0234-43e8-a7b8-d685c2de1b94",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.376Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "ea8c569c-5ddc-4e6f-badd-e2608ead4f2d",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.395Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "326f6bb3-4d1a-45d2-a0be-334f45ac0a26",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.416Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "8c67ce40-a800-45d8-b8f4-999413e1392b",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.421Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "c2974dfc-f2f4-4e08-b2a8-f64e74db2829",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.425Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "abf683b3-5ca1-4f13-b9e6-2adeca1fb24f",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.428Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "1f865063-fd00-47a4-a237-30efaf4e37f6",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.431Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "9a7f91f5-02f2-4f7f-a214-56dbbb6e24b4",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:23.439Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "dd95da91-c6d3-4d05-ac63-305c8a97e748",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.574Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "9758ef8d-7f5f-4044-a99a-b8a9e2caf729",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.579Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "6789cd89-46e7-4e41-bc16-18733ad7542d",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.586Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "21f43d43-a031-4b3a-b539-b8e2b5aaea77",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.589Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "4a77e813-7b2c-4e66-b14d-ff19003086af",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.593Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "288f796c-37d3-4bea-953f-7ea2abaf82c1",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.600Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "7e9d32ec-3c95-4dda-8f40-d9f8a682402c",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.602Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "88f86207-0418-4a2c-be62-6e5554f9f246",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:56:52.605Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "49399fb1-2a3c-40ac-b90c-710e5512498b",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.334Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "ef29fb8a-25ac-48b6-ba87-20e08d08c6d8",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.341Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "19b16114-1faf-48b0-aa75-0f7e084a2e97",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.350Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "915448bf-bc99-4e4b-ae44-4a3df7e67411",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.363Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "65c0fecb-dd45-4b24-ac4e-7f7bc2af2df5",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.368Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "fab3f74d-4c41-4345-98ad-3a33669a7a9e",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.372Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "43e53feb-5383-4c69-bf50-37f13d7d5fa6",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.375Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "ad2bfbd2-d8c4-493d-94b3-4d5b22cea4c4",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:24.379Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "f6c964c2-e4e8-404a-8602-a29ad732ae15",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:57.952Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "3dc098ab-ff30-460a-ac17-1fc3de5bc680",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:57.960Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "27e200c0-eb8f-4d53-80ee-73c02fb58740",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:57.970Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "8ef2622a-937b-481c-847c-f7427f012291",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:57.978Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "fe94b636-7f12-44c5-a422-c200450564f9",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:57.987Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "3a6bbeb9-8ab4-4a8a-83f2-53373d59de50",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:58.002Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "a683d303-1226-4dee-80e9-562ba62f03d7",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:58.007Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "b676c054-1c75-4d81-8eba-f76c5fda3890",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T14:57:58.020Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "2e460eaf-7f47-4e66-bb08-5aa35bef51f9",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.359Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "fc6bdd01-2626-4056-b863-1d396a86a390",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.366Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "bc9fc53f-5457-4283-9440-41237e53a195",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.385Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "236e2982-d0bd-4141-9f97-acfb4afba862",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.391Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "6031c6aa-3e87-4b52-b552-0af189a92c53",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.398Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "757d6f68-2469-43b2-bc32-76f684e37503",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.431Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "c6827353-2472-42be-b222-bc32edded02b",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.451Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "0bc6e26d-2ff2-4fa9-8af5-595b4b8ef7d4",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:01:02.462Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "22274307-5a3a-416d-8b46-061e1df5ed5f",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.556Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "48493819-c40a-4e54-9261-09b103907bf4",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.559Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "417ee0d8-85e8-43ba-b864-284164177c78",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.563Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "10439997-8a36-46f7-909f-18b43ae10fb4",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.566Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "5778870a-ce79-4561-b2a9-65c44ed2797e",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.570Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "8deee651-aa66-49ce-9f8a-32496b1391d2",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.575Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "0e99ceed-06d3-4e53-8709-53e1b053c6b6",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.578Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "d8cd8939-8a7d-481f-85ea-0141c63a1bbc",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:03:52.583Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "64e9b455-0a5e-4c09-9729-83c9cc2a64ae",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.580Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "db2c244a-180c-46ed-bb83-347748307286",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.587Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "bd9c9974-2a14-46cb-933a-83cf2c767a27",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.591Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "855ab92d-1191-441c-b132-678bad2ebb82",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.594Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "94b4d38d-29be-4229-8d6e-f876e17f90f6",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.599Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "eb69deba-8666-402b-9297-cc0958524c41",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.616Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "f198f008-cc86-4d16-b425-485e1f391f72",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.619Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "1df4b545-1849-44db-821a-361063ff7e54",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T15:12:01.620Z"
   }
 ]
