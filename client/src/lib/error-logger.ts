@@ -11,6 +11,8 @@
  * - createValidationError() -> import from @/shared/error-codes
  */
 
+import { logger } from "./logger";
+
 // Re-export new types and functions for backward compatibility
 export type { AppError, ErrorMetadata } from "@shared/error-codes";
 
@@ -66,12 +68,7 @@ class ErrorLogger {
 
     // Console logging for development
     if (this.isDevelopment) {
-      console.group(`🚨 Error: ${error.message}`);
-      console.error("Error:", error);
-      if (context) {
-        console.log("Context:", context);
-      }
-      console.groupEnd();
+      logger.error(`🚨 Error: ${error.message}`, error, context);
     }
 
     // Send to external logging service in production
@@ -124,7 +121,7 @@ class ErrorLogger {
    */
   logUserAction(action: string, context?: Record<string, any>): void {
     if (this.isDevelopment) {
-      console.log(`👤 User Action: ${action}`, context);
+      logger.debug(`👤 User Action: ${action}`, context);
     }
   }
 

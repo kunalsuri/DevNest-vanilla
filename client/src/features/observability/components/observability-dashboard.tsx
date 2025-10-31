@@ -5,7 +5,12 @@
  * and user behavior using shadcn/ui components and real-time data.
  */
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  startTransition,
+} from "react";
 import {
   Card,
   CardContent,
@@ -67,7 +72,7 @@ function useRealTimeMetrics() {
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const refreshMetrics = async () => {
+  const refreshMetrics = useCallback(async () => {
     setIsRefreshing(true);
 
     // Simulate fetching real metrics - in real app, this would call your metrics API
@@ -82,13 +87,20 @@ function useRealTimeMetrics() {
       });
       setIsRefreshing(false);
     }, 1000);
-  };
+  }, []);
 
   useEffect(() => {
-    refreshMetrics();
-    const interval = setInterval(refreshMetrics, 30000); // Refresh every 30s
+    // Use startTransition to avoid cascading renders
+    startTransition(() => {
+      refreshMetrics();
+    });
+    const interval = setInterval(() => {
+      startTransition(() => {
+        refreshMetrics();
+      });
+    }, 30000); // Refresh every 30s
     return () => clearInterval(interval);
-  }, []);
+  }, [refreshMetrics]);
 
   return { metricsData, isRefreshing, refreshMetrics };
 }
@@ -836,9 +848,14 @@ export function ObservabilityDashboard() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Refresh Interval</label>
+                <label
+                  htmlFor="refresh-interval"
+                  className="text-sm font-medium"
+                >
+                  Refresh Interval
+                </label>
                 <Select defaultValue="30">
-                  <SelectTrigger>
+                  <SelectTrigger id="refresh-interval">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -851,9 +868,14 @@ export function ObservabilityDashboard() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Alert Threshold</label>
+                <label
+                  htmlFor="alert-threshold"
+                  className="text-sm font-medium"
+                >
+                  Alert Threshold
+                </label>
                 <Select defaultValue="medium">
-                  <SelectTrigger>
+                  <SelectTrigger id="alert-threshold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

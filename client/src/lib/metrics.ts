@@ -63,7 +63,7 @@ export class ConsoleMetricsTransport implements MetricsTransport {
 
   async reportMetric(metric: MetricData): Promise<void> {
     if (import.meta.env.DEV) {
-      console.log(`📊 ${metric.type.toUpperCase()}: ${metric.name}`, {
+      logger.debug(`📊 ${metric.type.toUpperCase()}: ${metric.name}`, {
         value: metric.value,
         tags: metric.tags,
         unit: metric.unit,
@@ -73,11 +73,10 @@ export class ConsoleMetricsTransport implements MetricsTransport {
 
   async reportBatch(metrics: MetricData[]): Promise<void> {
     if (import.meta.env.DEV && metrics.length > 0) {
-      console.group("📊 Metrics Batch");
+      logger.debug("📊 Metrics Batch", { count: metrics.length });
       for (const metric of metrics) {
         await this.reportMetric(metric);
       }
-      console.groupEnd();
     }
   }
 }

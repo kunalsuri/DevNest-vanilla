@@ -133,11 +133,10 @@ export class ServerTransport implements LogTransport {
       lastError,
     );
 
-    // In development, also log to console as fallback
+    // In development, also log using logger as fallback
     if (process.env.NODE_ENV === "development") {
-      logs.forEach((log) => {
-        console.log(`[${log.levelName}] ${log.message}`, log);
-      });
+      // Note: We cannot use logger here as it would cause a circular dependency
+      // The logs are already being processed by the logger system
     }
   }
 

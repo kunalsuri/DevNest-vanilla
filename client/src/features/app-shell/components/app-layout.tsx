@@ -1,3 +1,4 @@
+import React from "react";
 import { AppSidebar } from "./app-sidebar";
 import { AppHeader } from "./app-header";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";

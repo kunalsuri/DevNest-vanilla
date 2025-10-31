@@ -226,16 +226,14 @@ export class ConsoleTracingTransport implements TracingTransport {
 
   async reportSpan(span: SpanData): Promise<void> {
     if (import.meta.env.DEV) {
-      console.group(`🔍 Trace: ${span.operationName}`);
-      console.log("Span ID:", span.spanId);
-      console.log("Trace ID:", span.traceId);
-      console.log("Duration:", `${span.duration?.toFixed(2)}ms`);
-      console.log("Status:", span.status);
-      console.log("Tags:", span.tags);
-      if (span.logs.length > 0) {
-        console.log("Logs:", span.logs);
-      }
-      console.groupEnd();
+      logger.debug(`🔍 Trace: ${span.operationName}`, {
+        spanId: span.spanId,
+        traceId: span.traceId,
+        duration: `${span.duration?.toFixed(2)}ms`,
+        status: span.status,
+        tags: span.tags,
+        logs: span.logs.length > 0 ? span.logs : undefined,
+      });
     }
   }
 }
