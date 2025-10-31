@@ -3066,5 +3066,77 @@
     "role": "user",
     "profilePicture": null,
     "createdAt": "2025-10-31T13:21:19.196Z"
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "hashedpassword123",
+    "id": "c676673e-87c7-46a3-8a17-4de5f9023bc3",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.367Z"
+  },
+  {
+    "username": "findme",
+    "email": "findme@example.com",
+    "password": "password123",
+    "id": "f7326f4f-0715-4350-91e8-b2db99fee8d5",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.377Z"
+  },
+  {
+    "username": "emailtest",
+    "email": "emailtest@example.com",
+    "password": "password123",
+    "id": "98ffba45-eefe-458e-8103-41e4cfb474cd",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.383Z"
+  },
+  {
+    "username": "idtest",
+    "email": "idtest@example.com",
+    "password": "password123",
+    "id": "352a1485-64c9-45f1-a7e1-bc9f466caba4",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.387Z"
+  },
+  {
+    "username": "updatetest",
+    "email": "newemail@example.com",
+    "password": "password123",
+    "id": "010504d7-504e-42dd-bdf7-03d0471e9d3b",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.391Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "5ae5bc38-0040-463e-951e-ac7edd1e8f47",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.402Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "108f369b-1cef-4cc3-97af-ea76d67b3864",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.405Z"
+  },
+  {
+    "username": "prefuser",
+    "email": "prefuser@example.com",
+    "password": "password123",
+    "id": "0f61f85f-79fe-43c7-a289-0cc25fa35202",
+    "role": "user",
+    "profilePicture": null,
+    "createdAt": "2025-10-31T13:22:30.411Z"
   }
 ]

@@ -79,6 +79,14 @@ const envSchema = z.object({
     .transform((val) => Number.parseInt(val, 10))
     .pipe(z.number().positive()),
 
+  // Sentry configuration (optional)
+  SENTRY_DSN: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((val) => val || undefined),
+
   // Optional Replit configuration
   REPL_ID: z.string().optional(),
 });

@@ -7,7 +7,7 @@ import { env } from "../env";
  */
 export function initSentry(_app: Express): void {
   // Only initialize Sentry in production or if DSN is provided
-  const dsn = process.env.SENTRY_DSN;
+  const dsn = env.SENTRY_DSN;
 
   if (!dsn) {
     console.log("Sentry DSN not configured. Skipping Sentry initialization.");
