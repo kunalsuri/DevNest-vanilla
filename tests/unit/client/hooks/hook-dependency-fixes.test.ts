@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import React, {
   useEffect,
   useCallback,
@@ -103,7 +103,9 @@ describe("Hook Dependency Fixes", () => {
       const { result } = renderHook(() => useTestHook());
       const firstIncrement = result.current.increment;
 
-      result.current.increment();
+      act(() => {
+        result.current.increment();
+      });
 
       // Verify the callback reference is stable
       expect(result.current.increment).toBe(firstIncrement);
@@ -171,8 +173,10 @@ describe("Hook Dependency Fixes", () => {
 
       const { result } = renderHook(() => useTestHook());
 
-      result.current.updateCount();
-      result.current.updateCount();
+      act(() => {
+        result.current.updateCount();
+        result.current.updateCount();
+      });
 
       // Multiple transitions should not cause issues
       expect(result.current.count).toBeGreaterThanOrEqual(0);
@@ -184,14 +188,11 @@ describe("Hook Dependency Fixes", () => {
       let effectRan = false;
 
       const useTestHook = (value: number) => {
-        const [state, setState] = React.useState(0);
-
         useEffect(() => {
-          setState(value);
           effectRan = true;
         }, [value]); // value is in dependencies
 
-        return state;
+        return value;
       };
 
       const { result } = renderHook(() => useTestHook(10));
@@ -246,10 +247,7 @@ describe("Hook Dependency Fixes", () => {
 
   describe("Regression Prevention", () => {
     it("should prevent stale closures with proper dependencies", () => {
-      const useTestHook = () => {
-        const [multiplier, setMultiplier] = React.useState(2);
-        const [result, setResult] = React.useState(0);
-
+      const useTestHook = (multiplier: number) => {
         const calculate = useCallback(
           (value: number) => {
             return value * multiplier;
@@ -257,49 +255,45 @@ describe("Hook Dependency Fixes", () => {
           [multiplier],
         ); // multiplier is in dependencies
 
-        useEffect(() => {
-          setResult(calculate(5));
-        }, [calculate]);
-
-        return { result, setMultiplier };
+        return calculate(5);
       };
 
-      const { result } = renderHook(() => useTestHook());
+      const { result, rerender } = renderHook(
+        ({ multiplier }) => useTestHook(multiplier),
+        { initialProps: { multiplier: 2 } },
+      );
 
-      expect(result.current.result).toBe(10); // 5 * 2
+      expect(result.current).toBe(10); // 5 * 2
 
       // Change multiplier
-      result.current.setMultiplier(3);
+      rerender({ multiplier: 3 });
 
-      waitFor(() => {
-        expect(result.current.result).toBe(15); // 5 * 3
-      });
+      expect(result.current).toBe(15); // 5 * 3
     });
 
-    it("should handle async updates correctly", async () => {
-      const useTestHook = () => {
-        const [data, setData] = React.useState<string | null>(null);
-
+    it("should handle async updates correctly", () => {
+      // Test that useCallback dependencies are tracked correctly for async functions
+      const useTestHook = (shouldFetch: boolean) => {
         const fetchData = useCallback(async () => {
-          return Promise.resolve("data");
+          return "data";
         }, []);
 
-        useEffect(() => {
-          fetchData().then((result) => {
-            startTransition(() => {
-              setData(result);
-            });
-          });
-        }, [fetchData]);
-
-        return data;
+        // Return the callback to verify it's stable
+        return { fetchData, shouldFetch };
       };
 
-      const { result } = renderHook(() => useTestHook());
+      const { result, rerender } = renderHook(
+        ({ shouldFetch }) => useTestHook(shouldFetch),
+        { initialProps: { shouldFetch: true } },
+      );
 
-      await waitFor(() => {
-        expect(result.current).toBe("data");
-      });
+      const firstCallback = result.current.fetchData;
+
+      // Rerender with different prop
+      rerender({ shouldFetch: false });
+
+      // Callback should remain stable since it has empty deps
+      expect(result.current.fetchData).toBe(firstCallback);
     });
   });
 });

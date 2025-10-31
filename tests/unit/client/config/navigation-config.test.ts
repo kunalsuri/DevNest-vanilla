@@ -33,7 +33,9 @@ describe("Navigation Config - Unused Imports Removal", () => {
           expect(item).toHaveProperty("title");
           expect(item).toHaveProperty("href");
           expect(item).toHaveProperty("icon");
-          expect(typeof item.icon).toBe("function");
+          // Icon should be a LucideIcon component (object or function)
+          expect(item.icon).toBeDefined();
+          expect(["function", "object"]).toContain(typeof item.icon);
         });
       });
     });
