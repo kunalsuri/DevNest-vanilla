@@ -1,0 +1,1254 @@
+{
+  "version": "1.142.0",
+  "results": [
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/error-logger.ts",
+      "start": { "line": 91, "col": 20, "offset": 2608 },
+      "end": { "line": 91, "col": 46, "offset": 2634 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 154, "col": 52, "offset": 5309 },
+      "end": { "line": 154, "col": 60, "offset": 5317 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 213, "col": 52, "offset": 7140 },
+      "end": { "line": 213, "col": 60, "offset": 7148 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 220, "col": 35, "offset": 7426 },
+      "end": { "line": 220, "col": 42, "offset": 7433 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 220, "col": 44, "offset": 7435 },
+      "end": { "line": 220, "col": 70, "offset": 7461 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 221, "col": 35, "offset": 7500 },
+      "end": { "line": 221, "col": 42, "offset": 7507 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 221, "col": 44, "offset": 7509 },
+      "end": { "line": 221, "col": 74, "offset": 7539 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 232, "col": 37, "offset": 7788 },
+      "end": { "line": 232, "col": 44, "offset": 7795 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 232, "col": 46, "offset": 7797 },
+      "end": { "line": 232, "col": 69, "offset": 7820 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 241, "col": 35, "offset": 8065 },
+      "end": { "line": 241, "col": 42, "offset": 8072 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 241, "col": 44, "offset": 8074 },
+      "end": { "line": 241, "col": 70, "offset": 8100 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 252, "col": 9, "offset": 8322 },
+      "end": { "line": 252, "col": 64, "offset": 8377 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 296, "col": 48, "offset": 9676 },
+      "end": { "line": 296, "col": 52, "offset": 9680 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 342, "col": 62, "offset": 10955 },
+      "end": { "line": 342, "col": 66, "offset": 10959 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 382, "col": 9, "offset": 11921 },
+      "end": { "line": 382, "col": 17, "offset": 11929 },
+      "extra": {
+        "message": "Detected possible user input going into a `path.join` or `path.resolve` function. This could possibly lead to a path traversal vulnerability,  where the attacker can access arbitrary files stored in the file system. Instead, be sure to sanitize or validate user input first.",
+        "metadata": {
+          "owasp": [
+            "A05:2017 - Broken Access Control",
+            "A01:2021 - Broken Access Control"
+          ],
+          "cwe": [
+            "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+          ],
+          "category": "security",
+          "references": [
+            "https://owasp.org/www-community/attacks/Path_Traversal"
+          ],
+          "technology": ["javascript", "node.js"],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["vuln"],
+          "likelihood": "HIGH",
+          "impact": "MEDIUM",
+          "confidence": "LOW",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Path Traversal"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.path-traversal.path-join-resolve-traversal.path-join-resolve-traversal",
+          "shortlink": "https://sg.run/OPqk"
+        },
+        "severity": "WARNING",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/file-transport.ts",
+      "start": { "line": 398, "col": 9, "offset": 12327 },
+      "end": { "line": 398, "col": 62, "offset": 12380 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 115, "col": 23, "offset": 2824 },
+      "end": { "line": 115, "col": 33, "offset": 2834 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 118, "col": 22, "offset": 2920 },
+      "end": { "line": 118, "col": 32, "offset": 2930 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 121, "col": 22, "offset": 3016 },
+      "end": { "line": 121, "col": 32, "offset": 3026 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 125, "col": 23, "offset": 3141 },
+      "end": { "line": 125, "col": 33, "offset": 3151 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 131, "col": 21, "offset": 3301 },
+      "end": { "line": 131, "col": 31, "offset": 3311 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 176, "col": 21, "offset": 4557 },
+      "end": { "line": 176, "col": 59, "offset": 4595 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 572, "col": 29, "offset": 14504 },
+      "end": { "line": 572, "col": 65, "offset": 14540 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "client/src/lib/logger.ts",
+      "start": { "line": 577, "col": 23, "offset": 14631 },
+      "end": { "line": 577, "col": 59, "offset": 14667 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash",
+      "path": "data/users.json",
+      "start": { "line": 16, "col": 18, "offset": 532 },
+      "end": { "line": 16, "col": 78, "offset": 592 },
+      "extra": {
+        "message": "bcrypt hash detected",
+        "metadata": {
+          "cwe": ["CWE-798: Use of Hard-coded Credentials"],
+          "category": "security",
+          "technology": ["secrets", "bcrypt"],
+          "confidence": "LOW",
+          "owasp": ["A07:2021 - Identification and Authentication Failures"],
+          "references": [
+            "https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures"
+          ],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["audit"],
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Hard-coded Secrets"],
+          "source": "https://semgrep.dev/r/generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash",
+          "shortlink": "https://sg.run/3A8G"
+        },
+        "severity": "ERROR",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash",
+      "path": "data/users.json",
+      "start": { "line": 27, "col": 18, "offset": 879 },
+      "end": { "line": 27, "col": 78, "offset": 939 },
+      "extra": {
+        "message": "bcrypt hash detected",
+        "metadata": {
+          "cwe": ["CWE-798: Use of Hard-coded Credentials"],
+          "category": "security",
+          "technology": ["secrets", "bcrypt"],
+          "confidence": "LOW",
+          "owasp": ["A07:2021 - Identification and Authentication Failures"],
+          "references": [
+            "https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures"
+          ],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["audit"],
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Hard-coded Secrets"],
+          "source": "https://semgrep.dev/r/generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash",
+          "shortlink": "https://sg.run/3A8G"
+        },
+        "severity": "ERROR",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash",
+      "path": "data/users.json",
+      "start": { "line": 38, "col": 18, "offset": 1224 },
+      "end": { "line": 38, "col": 78, "offset": 1284 },
+      "extra": {
+        "message": "bcrypt hash detected",
+        "metadata": {
+          "cwe": ["CWE-798: Use of Hard-coded Credentials"],
+          "category": "security",
+          "technology": ["secrets", "bcrypt"],
+          "confidence": "LOW",
+          "owasp": ["A07:2021 - Identification and Authentication Failures"],
+          "references": [
+            "https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures"
+          ],
+          "cwe2022-top25": true,
+          "cwe2021-top25": true,
+          "subcategory": ["audit"],
+          "likelihood": "LOW",
+          "impact": "HIGH",
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Hard-coded Secrets"],
+          "source": "https://semgrep.dev/r/generic.secrets.security.detected-bcrypt-hash.detected-bcrypt-hash",
+          "shortlink": "https://sg.run/3A8G"
+        },
+        "severity": "ERROR",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+      "path": "scripts/add-license-headers.js",
+      "start": { "line": 48, "col": 19, "offset": 1322 },
+      "end": { "line": 48, "col": 49, "offset": 1352 },
+      "extra": {
+        "message": "Detected string concatenation with a non-literal variable in a util.format / console.log function. If an attacker injects a format specifier in the string, it will forge the log message. Try to use constant values for the format string.",
+        "metadata": {
+          "cwe": ["CWE-134: Use of Externally-Controlled Format String"],
+          "owasp": ["A01:2021 - Broken Access Control"],
+          "category": "security",
+          "technology": ["javascript"],
+          "subcategory": ["audit"],
+          "likelihood": "MEDIUM",
+          "impact": "LOW",
+          "confidence": "LOW",
+          "references": ["https://cwe.mitre.org/data/definitions/134.html"],
+          "license": "Semgrep Rules License v1.0. For more details, visit semgrep.dev/legal/rules-license",
+          "vulnerability_class": ["Improper Validation"],
+          "source": "https://semgrep.dev/r/javascript.lang.security.audit.unsafe-formatstring.unsafe-formatstring",
+          "shortlink": "https://sg.run/7Y5R"
+        },
+        "severity": "INFO",
+        "fingerprint": "requires login",
+        "lines": "requires login",
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 3,
+      "level": "warn",
+      "type": [
+        "PartialParsing",
+        [
+          {
+            "path": "client/src/features/user-profile/components/preferences-section.tsx",
+            "start": { "line": 190, "col": 27, "offset": 0 },
+            "end": { "line": 190, "col": 37, "offset": 10 }
+          }
+        ]
+      ],
+      "message": "Syntax error at line client/src/features/user-profile/components/preferences-section.tsx:190:\n `& Security` was unexpected",
+      "path": "client/src/features/user-profile/components/preferences-section.tsx",
+      "spans": [
+        {
+          "file": "client/src/features/user-profile/components/preferences-section.tsx",
+          "start": { "line": 190, "col": 27, "offset": 0 },
+          "end": { "line": 190, "col": 37, "offset": 10 }
+        }
+      ]
+    },
+    {
+      "code": 3,
+      "level": "warn",
+      "type": [
+        "PartialParsing",
+        [
+          {
+            "path": "client/src/pages/help-page.tsx",
+            "start": { "line": 22, "col": 18, "offset": 0 },
+            "end": { "line": 22, "col": 27, "offset": 9 }
+          }
+        ]
+      ],
+      "message": "Syntax error at line client/src/pages/help-page.tsx:22:\n `& Support` was unexpected",
+      "path": "client/src/pages/help-page.tsx",
+      "spans": [
+        {
+          "file": "client/src/pages/help-page.tsx",
+          "start": { "line": 22, "col": 18, "offset": 0 },
+          "end": { "line": 22, "col": 27, "offset": 9 }
+        }
+      ]
+    },
+    {
+      "code": 3,
+      "level": "warn",
+      "type": [
+        "PartialParsing",
+        [
+          {
+            "path": "client/src/pages/landing-page.tsx",
+            "start": { "line": 385, "col": 37, "offset": 0 },
+            "end": { "line": 385, "col": 51, "offset": 14 }
+          }
+        ]
+      ],
+      "message": "Syntax error at line client/src/pages/landing-page.tsx:385:\n `&& npm install` was unexpected",
+      "path": "client/src/pages/landing-page.tsx",
+      "spans": [
+        {
+          "file": "client/src/pages/landing-page.tsx",
+          "start": { "line": 385, "col": 37, "offset": 0 },
+          "end": { "line": 385, "col": 51, "offset": 14 }
+        }
+      ]
+    }
+  ],
+  "paths": {
+    "scanned": [
+      ".codacy/cli.sh",
+      ".codacy/codacy.yaml",
+      ".env.example",
+      ".env.local.example",
+      ".env.production.example",
+      ".github/copilot-instructions.md",
+      ".github/prompts/README.md",
+      ".github/prompts/add-authentication-sys.prompt.md",
+      ".github/prompts/audit-react-fdd.prompt.md",
+      ".github/prompts/autonomous-code-implementation.prompt.md",
+      ".github/prompts/codebase-maturity-audit.prompt.md",
+      ".github/prompts/codebase-migration.prompt.md",
+      ".github/prompts/codebase-refactor.prompt.md",
+      ".github/prompts/cyber-security-audit.prompt.md",
+      ".github/prompts/docs-generator.prompt.md",
+      ".github/prompts/error-handling.prompt.md",
+      ".github/prompts/feature-generator.prompt.md",
+      ".github/prompts/logging-system.prompt.md",
+      ".github/prompts/observability-system.prompt.md",
+      ".github/prompts/update-readme.prompt.md",
+      ".github/prompts/user-prompts.md",
+      ".github/workflows/ci.yml",
+      ".gitignore",
+      ".husky/pre-commit",
+      ".prettierignore",
+      ".prettierrc",
+      ".vscode/extensions.json",
+      "LICENSE",
+      "README.md",
+      "artifacts/audit/20251031-0753/gitleaks.json",
+      "artifacts/audit/20251031-0753/npm-audit.json",
+      "artifacts/audit/20251031-0753/semgrep.json",
+      "client/index.html",
+      "client/src/App.tsx",
+      "client/src/components/async-states.tsx",
+      "client/src/components/error-boundary.tsx",
+      "client/src/components/theme-provider.tsx",
+      "client/src/components/ui/accordion.tsx",
+      "client/src/components/ui/alert-dialog.tsx",
+      "client/src/components/ui/alert.tsx",
+      "client/src/components/ui/aspect-ratio.tsx",
+      "client/src/components/ui/avatar.tsx",
+      "client/src/components/ui/badge.tsx",
+      "client/src/components/ui/breadcrumb.tsx",
+      "client/src/components/ui/button.tsx",
+      "client/src/components/ui/calendar.tsx",
+      "client/src/components/ui/card.tsx",
+      "client/src/components/ui/carousel.tsx",
+      "client/src/components/ui/chart.tsx",
+      "client/src/components/ui/checkbox.tsx",
+      "client/src/components/ui/collapsible.tsx",
+      "client/src/components/ui/command.tsx",
+      "client/src/components/ui/context-menu.tsx",
+      "client/src/components/ui/dialog.tsx",
+      "client/src/components/ui/drawer.tsx",
+      "client/src/components/ui/dropdown-menu.tsx",
+      "client/src/components/ui/form.tsx",
+      "client/src/components/ui/hover-card.tsx",
+      "client/src/components/ui/input-otp.tsx",
+      "client/src/components/ui/input.tsx",
+      "client/src/components/ui/label.tsx",
+      "client/src/components/ui/menubar.tsx",
+      "client/src/components/ui/navigation-menu.tsx",
+      "client/src/components/ui/pagination.tsx",
+      "client/src/components/ui/popover.tsx",
+      "client/src/components/ui/progress.tsx",
+      "client/src/components/ui/radio-group.tsx",
+      "client/src/components/ui/resizable.tsx",
+      "client/src/components/ui/scroll-area.tsx",
+      "client/src/components/ui/select.tsx",
+      "client/src/components/ui/separator.tsx",
+      "client/src/components/ui/sheet.tsx",
+      "client/src/components/ui/sidebar.tsx",
+      "client/src/components/ui/skeleton.tsx",
+      "client/src/components/ui/slider.tsx",
+      "client/src/components/ui/switch.tsx",
+      "client/src/components/ui/table.tsx",
+      "client/src/components/ui/tabs.tsx",
+      "client/src/components/ui/textarea.tsx",
+      "client/src/components/ui/toast.tsx",
+      "client/src/components/ui/toaster.tsx",
+      "client/src/components/ui/toggle-group.tsx",
+      "client/src/components/ui/toggle.tsx",
+      "client/src/components/ui/tooltip.tsx",
+      "client/src/examples/observability-usage.tsx",
+      "client/src/features/app-shell/components/app-header.tsx",
+      "client/src/features/app-shell/components/app-layout.tsx",
+      "client/src/features/app-shell/components/app-sidebar.tsx",
+      "client/src/features/app-shell/components/index.ts",
+      "client/src/features/app-shell/config/navigation.ts",
+      "client/src/features/app-shell/index.ts",
+      "client/src/features/auth/hooks/use-jwt-auth.tsx",
+      "client/src/features/auth/index.ts",
+      "client/src/features/auth/utils/jwt-auth-utils.ts",
+      "client/src/features/dashboard/components/index.ts",
+      "client/src/features/dashboard/components/recent-activity.tsx",
+      "client/src/features/dashboard/components/stats-cards.tsx",
+      "client/src/features/dashboard/components/usage-chart.tsx",
+      "client/src/features/dashboard/index.ts",
+      "client/src/features/observability/components/observability-dashboard.tsx",
+      "client/src/features/observability/components/observability-demo.tsx",
+      "client/src/features/observability/index.ts",
+      "client/src/features/observability/services/observability-init.ts",
+      "client/src/features/user-profile/api/profile-api.ts",
+      "client/src/features/user-profile/components/account-email-section.tsx",
+      "client/src/features/user-profile/components/index.ts",
+      "client/src/features/user-profile/components/linked-accounts-section.tsx",
+      "client/src/features/user-profile/components/preferences-section.tsx",
+      "client/src/features/user-profile/components/profile-layout.tsx",
+      "client/src/features/user-profile/components/profile-name-section.tsx",
+      "client/src/features/user-profile/components/profile-picture-section.tsx",
+      "client/src/features/user-profile/components/profile-sidebar.tsx",
+      "client/src/features/user-profile/hooks/use-profile.ts",
+      "client/src/features/user-profile/types/index.ts",
+      "client/src/hooks/use-admin-access.tsx",
+      "client/src/hooks/use-error-handler.tsx",
+      "client/src/hooks/use-logger.tsx",
+      "client/src/hooks/use-mobile.tsx",
+      "client/src/hooks/use-observability.tsx",
+      "client/src/hooks/use-theme.tsx",
+      "client/src/hooks/use-toast.ts",
+      "client/src/index.css",
+      "client/src/lib/error-logger.ts",
+      "client/src/lib/file-transport.ts",
+      "client/src/lib/logger.ts",
+      "client/src/lib/metrics.ts",
+      "client/src/lib/protected-route.tsx",
+      "client/src/lib/queryClient.ts",
+      "client/src/lib/sentry.ts",
+      "client/src/lib/server-transport.ts",
+      "client/src/lib/tracing.ts",
+      "client/src/lib/utils.ts",
+      "client/src/main.tsx",
+      "client/src/pages/auth-page.tsx",
+      "client/src/pages/dashboard-page.tsx",
+      "client/src/pages/dashboard.tsx",
+      "client/src/pages/help-page.tsx",
+      "client/src/pages/landing-page.tsx",
+      "client/src/pages/not-found.tsx",
+      "client/src/pages/preferences-page.tsx",
+      "client/src/pages/profile-page.tsx",
+      "client/src/pages/workspaces-page.tsx",
+      "client/src/utils/logging-test.ts",
+      "components.json",
+      "cookies.txt",
+      "data/config.json",
+      "data/preferences.json",
+      "data/sessions.json",
+      "data/users.json",
+      "drizzle.config.ts",
+      "eslint.config.js",
+      "package-lock.json",
+      "package.json",
+      "postcss.config.js",
+      "scripts/add-license-headers.js",
+      "scripts/build-server.js",
+      "scripts/generate-test-report.ts",
+      "scripts/setup-local.ps1",
+      "scripts/setup-local.sh",
+      "server/auth/auth-middleware.ts",
+      "server/auth/jwt-auth-routes.ts",
+      "server/auth/jwt-utils.ts",
+      "server/auth/session-manager.ts",
+      "server/env.ts",
+      "server/health.ts",
+      "server/index.ts",
+      "server/logger.ts",
+      "server/logging-endpoint.ts",
+      "server/middleware/trace-middleware.ts",
+      "server/middleware/validation.ts",
+      "server/monitoring/sentry.ts",
+      "server/profile.ts",
+      "server/routes.ts",
+      "server/storage.ts",
+      "server/swagger.ts",
+      "server/vite.ts",
+      "shared/error-codes.ts",
+      "shared/schema.ts",
+      "tailwind.config.ts",
+      "tsconfig.json",
+      "vite.config.ts",
+      "vitest.config.ts"
+    ]
+  },
+  "time": {
+    "rules": [],
+    "rules_parse_time": 0.5727040767669678,
+    "profiling_times": {
+      "config_time": 1.0846998691558838,
+      "core_time": 1.440857172012329,
+      "ignores_time": 0.0005509853363037109,
+      "total_time": 2.5264298915863037
+    },
+    "parsing_time": {
+      "total_time": 0.0,
+      "per_file_time": { "mean": 0.0, "std_dev": 0.0 },
+      "very_slow_stats": { "time_ratio": 0.0, "count_ratio": 0.0 },
+      "very_slow_files": []
+    },
+    "scanning_time": {
+      "total_time": 3.0430877208709717,
+      "per_file_time": {
+        "mean": 0.005874686719828127,
+        "std_dev": 0.00023624881450865642
+      },
+      "very_slow_stats": { "time_ratio": 0.0, "count_ratio": 0.0 },
+      "very_slow_files": []
+    },
+    "matching_time": {
+      "total_time": 0.0,
+      "per_file_and_rule_time": { "mean": 0.0, "std_dev": 0.0 },
+      "very_slow_stats": { "time_ratio": 0.0, "count_ratio": 0.0 },
+      "very_slow_rules_on_files": []
+    },
+    "tainting_time": {
+      "total_time": 0.0,
+      "per_def_and_rule_time": { "mean": 0.0, "std_dev": 0.0 },
+      "very_slow_stats": { "time_ratio": 0.0, "count_ratio": 0.0 },
+      "very_slow_rules_on_defs": []
+    },
+    "fixpoint_timeouts": [],
+    "prefiltering": {
+      "project_level_time": 0.0,
+      "file_level_time": 0.0,
+      "rules_with_project_prefilters_ratio": 0.0,
+      "rules_with_file_prefilters_ratio": 0.98396907869725,
+      "rules_selected_ratio": 0.03050944113547079,
+      "rules_matched_ratio": 0.03050944113547079
+    },
+    "targets": [],
+    "total_bytes": 0,
+    "max_memory_bytes": 1122674240
+  },
+  "engine_requested": "OSS",
+  "skipped_rules": []
+}
