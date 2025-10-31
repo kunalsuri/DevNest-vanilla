@@ -144,6 +144,10 @@ app.use("/api/auth/refresh", authLimiter);
 app.use(express.json({ limit: "10mb" })); // Add size limit for security
 app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
+// Trace middleware for distributed tracing
+import { traceMiddleware } from "./middleware/trace-middleware";
+app.use(traceMiddleware);
+
 // Security: Block access to data directory
 app.use("/data/*", (req, res) => {
   res.status(404).json({ message: "Not found" });

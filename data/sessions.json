@@ -27,6 +27,17 @@
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36",
     "ip": "127.0.0.1",
     "createdAt": "2025-10-29T18:51:24.294Z",
-    "expiresAt": "2025-11-05T18:51:24.294Z"
+    "expiresAt": "2025-11-05T18:51:24.294Z",
+    "revokedAt": "2025-10-31T06:36:18.433Z"
+  },
+  {
+    "sessionId": "df7ddaf549494406502ce772c0111487563f2fb5fe01208ace0b0486be3c5739",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "a953bc9e0910e61fbf1084f7648679e1df84a105863e7d89859716512f24cd8b",
+    "csrfTokenHash": "872151515f19e21abe300939464585b0962743ea137f6bba8e2968c5576e27b8",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2025-10-31T06:36:24.033Z",
+    "expiresAt": "2025-11-07T06:36:24.033Z"
   }
 ]

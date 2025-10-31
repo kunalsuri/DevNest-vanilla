@@ -189,6 +189,22 @@ export function logApiCall(
 }
 
 /**
+ * Create a child logger with trace ID context
+ * Used for distributed tracing across client and server
+ */
+export function createTracedLogger(
+  traceId: string,
+  requestId?: string,
+  additionalContext?: Record<string, any>,
+) {
+  return extendedLogger.child({
+    traceId,
+    requestId,
+    ...additionalContext,
+  });
+}
+
+/**
  * Log an error with full context and stack trace
  */
 export function logError(error: Error | string, context?: Record<string, any>) {

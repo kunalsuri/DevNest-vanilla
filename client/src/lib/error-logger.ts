@@ -1,5 +1,33 @@
-// Error types for better error handling
-export interface AppError extends Error {
+/**
+ * @deprecated This module is deprecated and will be removed in a future version.
+ * Please use the comprehensive logger from @/lib/logger.ts and error codes from @/shared/error-codes.ts instead.
+ *
+ * Migration guide:
+ * - errorLogger.logError() -> logger.error()
+ * - errorLogger.logWarning() -> logger.warn()
+ * - errorLogger.logApiError() -> logger.logApiError()
+ * - createAppError() -> import from @/shared/error-codes
+ * - createNetworkError() -> import from @/shared/error-codes
+ * - createValidationError() -> import from @/shared/error-codes
+ */
+
+// Re-export new types and functions for backward compatibility
+export type { AppError, ErrorMetadata } from "@shared/error-codes";
+
+export {
+  ErrorCode,
+  ErrorSeverity,
+  createAppError,
+  createNetworkError,
+  createValidationError,
+  isAppError,
+  getUserMessage,
+  isRetryableError,
+} from "@shared/error-codes";
+
+// Legacy AppError interface for backward compatibility
+// @deprecated Use AppError from @/shared/error-codes instead
+export interface LegacyAppError extends Error {
   code?: string;
   statusCode?: number;
   context?: Record<string, any>;
@@ -9,25 +37,30 @@ export interface ErrorLogEntry {
   timestamp: string;
   level: "error" | "warn" | "info";
   message: string;
-  error?: AppError;
+  error?: LegacyAppError;
   context?: Record<string, any>;
   userId?: string;
   url?: string;
   userAgent?: string;
 }
 
+/**
+ * @deprecated Use logger from @/lib/logger.ts instead
+ */
 class ErrorLogger {
-  private isDevelopment = process.env.NODE_ENV === "development";
+  private readonly isDevelopment = import.meta.env?.MODE === "development";
 
-  // Log error with context
-  logError(error: AppError | Error, context?: Record<string, any>): void {
+  /**
+   * @deprecated Use logger.error() from @/lib/logger.ts instead
+   */
+  logError(error: LegacyAppError | Error, context?: Record<string, any>): void {
     const logEntry: ErrorLogEntry = {
       timestamp: new Date().toISOString(),
       level: "error",
       message: error.message,
-      error: error as AppError,
+      error: error as LegacyAppError,
       context,
-      url: window?.location?.href,
+      url: globalThis.window?.location?.href,
       userAgent: navigator?.userAgent,
     };
 
@@ -45,14 +78,16 @@ class ErrorLogger {
     this.sendToLoggingService(logEntry);
   }
 
-  // Log warning
+  /**
+   * @deprecated Use logger.warn() from @/lib/logger.ts instead
+   */
   logWarning(message: string, context?: Record<string, any>): void {
     const logEntry: ErrorLogEntry = {
       timestamp: new Date().toISOString(),
       level: "warn",
       message,
       context,
-      url: window?.location?.href,
+      url: globalThis.window?.location?.href,
     };
 
     if (this.isDevelopment) {
@@ -62,7 +97,9 @@ class ErrorLogger {
     this.sendToLoggingService(logEntry);
   }
 
-  // Log API errors specifically
+  /**
+   * @deprecated Use logger.logApiError() from @/lib/logger.ts instead
+   */
   logApiError(url: string, method: string, status: number, error: Error): void {
     this.logError(error, {
       type: "API_ERROR",
@@ -72,7 +109,9 @@ class ErrorLogger {
     });
   }
 
-  // Log React Query errors
+  /**
+   * @deprecated Use logger.error() from @/lib/logger.ts instead
+   */
   logQueryError(queryKey: unknown[], error: Error): void {
     this.logError(error, {
       type: "QUERY_ERROR",
@@ -80,7 +119,9 @@ class ErrorLogger {
     });
   }
 
-  // Log user actions for debugging
+  /**
+   * @deprecated Use logger.logUserAction() from @/lib/logger.ts instead
+   */
   logUserAction(action: string, context?: Record<string, any>): void {
     if (this.isDevelopment) {
       console.log(`👤 User Action: ${action}`, context);
@@ -107,45 +148,7 @@ class ErrorLogger {
 }
 
 // Singleton instance
+/**
+ * @deprecated Use logger from @/lib/logger.ts instead
+ */
 export const errorLogger = new ErrorLogger();
-
-// Helper functions for common error scenarios
-export function createAppError(
-  message: string,
-  code?: string,
-  statusCode?: number,
-  context?: Record<string, any>,
-): AppError {
-  const error = new Error(message) as AppError;
-  error.code = code;
-  error.statusCode = statusCode;
-  error.context = context;
-  return error;
-}
-
-// Network error helper
-export function createNetworkError(
-  url: string,
-  status: number,
-  statusText: string,
-): AppError {
-  return createAppError(
-    `Network request failed: ${status} ${statusText}`,
-    "NETWORK_ERROR",
-    status,
-    { url, status, statusText },
-  );
-}
-
-// Validation error helper
-export function createValidationError(
-  field: string,
-  message: string,
-): AppError {
-  return createAppError(
-    `Validation failed for ${field}: ${message}`,
-    "VALIDATION_ERROR",
-    400,
-    { field },
-  );
-}

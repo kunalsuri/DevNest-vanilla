@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { errorLogger, AppError } from "@/lib/error-logger";
+import { logger } from "@/lib/logger";
+import { AppError, getUserMessage, isAppError } from "@shared/error-codes";
 
 interface UseErrorHandlerOptions {
   showToast?: boolean;
@@ -14,16 +15,29 @@ export function useErrorHandler(options: UseErrorHandlerOptions = {}) {
 
   const handleError = useCallback(
     (error: Error | AppError, context?: string) => {
-      // Log the error
+      // Log the error using the comprehensive logger
       if (logError) {
-        errorLogger.logError(error, { context });
+        logger.error(
+          context ? `Error in ${context}` : "Error occurred",
+          error,
+          {
+            context,
+            isAppError: isAppError(error),
+            errorCode: isAppError(error) ? error.code : undefined,
+          },
+          context,
+        );
       }
 
-      // Show toast notification
+      // Show toast notification with user-friendly message
       if (showToast) {
+        const description = isAppError(error)
+          ? getUserMessage(error)
+          : error.message;
+
         toast({
           title: "Error",
-          description: error.message,
+          description,
           variant: "destructive",
         });
       }

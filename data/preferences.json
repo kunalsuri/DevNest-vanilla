@@ -430,5 +430,77 @@
     "twoFactorEnabled": true,
     "autoLogout": true,
     "theme": "dark"
+  },
+  {
+    "userId": "5d7e4cc4-1263-44d1-b8b4-77dad520aa99",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "5e0213f7-bf02-4ec3-98b2-74ea390d31d1",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "e2b8070a-dcc3-4db0-8df5-9e1490bd6d10",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "d429c765-12c6-451e-ab97-eda26927081e",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "f567f891-15e6-4c7c-8e0b-9cfd1eb3fd25",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "8e6663a9-d53c-475e-852f-0f44070cf030",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "2b822013-4aa2-4416-bf77-0dcac1a92e35",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "01b8bbee-14fb-4caf-8dce-7b3e6e9972f0",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
   }
 ]

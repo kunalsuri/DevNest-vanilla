@@ -5,10 +5,12 @@
  * - Structured logging with JSON output
  * - Multiple log levels (debug, info, warn, error, fatal)
  * - Pluggable transports (console, external services)
- * - Contextual metadata (user, session, request ID)
+ * - Contextual metadata (user, session, request ID, trace ID)
  * - PII/sensitive data sanitization
  * - Performance-optimized with lazy evaluation
  * - Integration with error boundaries and React Query
+ * - Environment-based log level configuration
+ * - Distributed tracing support
  */
 
 import { nanoid } from "nanoid";
@@ -22,6 +24,41 @@ export enum LogLevel {
   FATAL = 4,
 }
 
+/**
+ * Parse log level from string
+ */
+function parseLogLevel(level: string | undefined): LogLevel {
+  if (!level) {
+    return LogLevel.DEBUG;
+  }
+
+  const levelMap: Record<string, LogLevel> = {
+    debug: LogLevel.DEBUG,
+    info: LogLevel.INFO,
+    warn: LogLevel.WARN,
+    error: LogLevel.ERROR,
+    fatal: LogLevel.FATAL,
+  };
+
+  return levelMap[level.toLowerCase()] ?? LogLevel.DEBUG;
+}
+
+/**
+ * Get log level from environment variable
+ */
+function getLogLevelFromEnv(): LogLevel {
+  // Check for Vite environment variable
+  const viteLogLevel = import.meta.env?.VITE_LOG_LEVEL as string | undefined;
+
+  if (viteLogLevel) {
+    return parseLogLevel(viteLogLevel);
+  }
+
+  // Default based on environment mode
+  const isDevelopment = import.meta.env?.MODE === "development";
+  return isDevelopment ? LogLevel.DEBUG : LogLevel.WARN;
+}
+
 // Core log entry structure
 export interface LogEntry {
   timestamp: string;
@@ -33,6 +70,7 @@ export interface LogEntry {
   userId?: string;
   sessionId?: string;
   requestId?: string;
+  traceId?: string; // Added for distributed tracing
   environment: string;
   userAgent?: string;
   url?: string;
@@ -95,12 +133,9 @@ class ConsoleTransport implements LogTransport {
   }
 
   shouldLog(level: LogLevel): boolean {
-    // In development, log everything
-    if (process.env.NODE_ENV === "development") {
-      return true;
-    }
-    // In production, only log warnings and above
-    return level >= LogLevel.WARN;
+    // Use environment-based log level
+    const minLevel = getLogLevelFromEnv();
+    return level >= minLevel;
   }
 }
 
@@ -334,6 +369,18 @@ class LogContext {
     this.setContext("requestId", requestId);
     return requestId;
   }
+
+  // Generate a unique trace ID for distributed tracing
+  generateTraceId(): string {
+    const traceId = nanoid();
+    this.setContext("traceId", traceId);
+    return traceId;
+  }
+
+  // Set trace ID from external source (e.g., HTTP headers)
+  setTraceId(traceId: string): void {
+    this.setContext("traceId", traceId);
+  }
 }
 
 // PII sanitization utility
@@ -409,8 +456,13 @@ class DataSanitizer {
 class Logger {
   private static instance: Logger;
   private transports: LogTransport[] = [];
-  private context = LogContext.getInstance();
-  private minLevel: LogLevel = LogLevel.DEBUG;
+  private readonly context = LogContext.getInstance();
+  private minLevel: LogLevel;
+
+  private constructor() {
+    // Initialize with environment-based log level
+    this.minLevel = getLogLevelFromEnv();
+  }
 
   static getInstance(): Logger {
     if (!Logger.instance) {
@@ -453,10 +505,14 @@ class Logger {
       userId: context.userId,
       sessionId: context.sessionId,
       requestId: context.requestId,
-      environment: process.env.NODE_ENV || "development",
+      traceId: context.traceId, // Added for distributed tracing
+      environment: import.meta.env.MODE || "development",
       userAgent:
         typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-      url: typeof window !== "undefined" ? window.location.href : undefined,
+      url:
+        typeof globalThis.window !== "undefined"
+          ? globalThis.window.location.href
+          : undefined,
       metadata: metadata ? DataSanitizer.sanitize(metadata) : undefined,
       error: error
         ? {
@@ -563,6 +619,18 @@ class Logger {
 
   generateRequestId(): string {
     return this.context.generateRequestId();
+  }
+
+  generateTraceId(): string {
+    return this.context.generateTraceId();
+  }
+
+  setTraceId(traceId: string): void {
+    this.context.setTraceId(traceId);
+  }
+
+  getTraceId(): string | undefined {
+    return this.context.getContext().traceId;
   }
 
   clearContext(): void {

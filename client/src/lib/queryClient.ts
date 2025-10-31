@@ -1,12 +1,13 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { errorLogger } from "./error-logger";
 import {
-  errorLogger,
   createNetworkError,
   createAppError,
-} from "./error-logger";
+  ErrorCode,
+} from "@shared/error-codes";
 import { logger } from "./logger";
 
-async function throwIfResNotOk(res: Response) {
+async function throwIfResNotOk(res: Response, traceId?: string) {
   if (!res.ok) {
     let errorMessage = res.statusText;
     let errorData: any = null;
@@ -22,15 +23,34 @@ async function throwIfResNotOk(res: Response) {
         }
       }
     } catch (parseError) {
-      errorLogger.logError(parseError as Error, {
-        context: "Failed to parse error response",
-        url: res.url,
-        status: res.status,
-      });
+      logger.error(
+        "Failed to parse error response",
+        parseError as Error,
+        {
+          url: res.url,
+          status: res.status,
+          traceId,
+        },
+        "queryClient",
+      );
     }
 
-    const networkError = createNetworkError(res.url, res.status, errorMessage);
-    errorLogger.logApiError(res.url, "UNKNOWN", res.status, networkError);
+    const networkError = createNetworkError(
+      res.url,
+      res.status,
+      errorMessage,
+      traceId,
+    );
+    logger.error(
+      "Network request failed",
+      networkError,
+      {
+        url: res.url,
+        status: res.status,
+        traceId,
+      },
+      "queryClient",
+    );
     throw networkError;
   }
 }
@@ -43,9 +63,16 @@ export async function apiRequest(
   const startTime = performance.now();
   const requestId = logger.generateRequestId();
 
+  // Generate or reuse trace ID for distributed tracing
+  let traceId = logger.getTraceId();
+  if (!traceId) {
+    traceId = logger.generateTraceId();
+  }
+
   // Log the API request
   logger.logApiRequest(method, url, {
     requestId,
+    traceId,
     hasData: !!data,
     dataSize: data ? JSON.stringify(data).length : 0,
   });
@@ -61,6 +88,8 @@ export async function apiRequest(
       method,
       headers: {
         ...authHeaders,
+        "X-Trace-Id": traceId, // Add trace ID to request headers
+        "X-Request-Id": requestId, // Add request ID to headers
         ...(data ? { "Content-Type": "application/json" } : {}),
       },
       body: data ? JSON.stringify(data) : undefined,
@@ -72,31 +101,37 @@ export async function apiRequest(
     // Log successful response
     logger.logApiResponse(method, url, res.status, duration, {
       requestId,
+      traceId,
       responseSize: res.headers.get("content-length") || "unknown",
     });
 
-    await throwIfResNotOk(res);
+    await throwIfResNotOk(res, traceId);
     return res;
   } catch (error) {
     const duration = Math.round(performance.now() - startTime);
 
-    // Log the API error with both systems
-    errorLogger.logApiError(url, method, 0, error as Error);
+    // Log the API error
     logger.logApiError(method, url, error as Error, {
       requestId,
+      traceId,
       duration,
       hasData: !!data,
     });
 
-    // Re-throw with enhanced error information
+    // Re-throw with enhanced error information including trace ID
     if (error instanceof Error) {
-      throw createAppError(error.message, "API_REQUEST_FAILED", undefined, {
-        url,
-        method,
-        requestId,
-        duration,
-        originalError: error.message,
-      });
+      throw createAppError(
+        error.message,
+        ErrorCode.API_REQUEST_FAILED,
+        {
+          url,
+          method,
+          requestId,
+          duration,
+          originalError: error.message,
+        },
+        traceId,
+      );
     }
     throw error;
   }

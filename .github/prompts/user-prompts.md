@@ -1,5 +1,23 @@
 Prompt Flow | Evaluation-Driven Development
 
+20251031 - Generic Prompt
+
+### 🧠 Generic Implementation & Evaluation Prompt
+
+**Instruction:**
+
+Use the latest project report file (`<report-file-name>.md`) as the primary reference.
+
+Implement **all items listed under the "High Priority" section** in that report.
+
+Operate in a **fully autonomous** mode using contextual guidance from `/.github/prompts/autonomous-code-implementation.prompt.ms`; and implement all features 100%
+
+After implementation:
+
+1. **Evaluate** the completed features for correctness, performance, and alignment with design objectives.
+2. **Add comprehensive test cases** for all new or updated functionalities in the `/tests/` directory.
+3. Ensure **code quality, documentation, and version consistency** across the repository.
+
 # Prompt 28/10/2025 - P2
 
 Take the role of an expert prompt engineer who applies the latest best practices in prompt engineering. Review and audit the file "./github/copilot-instructions.md", identifying any areas that need updates or improvements. If the file is already accurate and aligned with best practices, simply confirm that no changes are required. Update it directly in the file.
