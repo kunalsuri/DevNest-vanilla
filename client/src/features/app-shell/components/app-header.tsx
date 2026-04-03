@@ -44,8 +44,8 @@ export function AppHeader() {
   };
 
   return (
-    <header className="h-14 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4">
+    <header className="h-14 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-50">
+      <div className="flex h-full w-full items-center justify-between px-4">
         {/* Mobile Menu */}
         <div className="flex items-center gap-2 md:hidden">
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -122,7 +122,7 @@ export function AppHeader() {
                         {user.firstName} {user.lastName}
                       </p>
                       <p
-                        className="w-[200px] truncate text-sm text-muted-foreground"
+                        className="w-50 truncate text-sm text-muted-foreground"
                         data-testid="text-user-email"
                       >
                         {user.email}

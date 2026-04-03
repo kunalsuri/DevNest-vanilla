@@ -1,15 +1,48 @@
 import { Express, Request, Response, static as expressStatic } from "express";
 import multer from "multer";
-import { storage } from "./storage";
-import { validateAccessToken } from "./auth/auth-middleware";
+import { validateAccessToken, validateCSRF } from "./auth/auth-middleware";
 import { z } from "zod";
 import path from "node:path";
 import fs from "node:fs/promises";
 import logger from "./logger";
+import { userService } from "./services";
 import {
   validateProfileUpdate,
   handleValidationErrors,
 } from "./middleware/validation";
+
+// Allowed image extensions (independent of MIME type)
+const ALLOWED_IMAGE_EXTENSIONS = new Set([
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".webp",
+]);
+
+// Magic bytes for supported image formats
+const IMAGE_MAGIC_BYTES: Array<{ bytes: number[]; offset: number }> = [
+  { bytes: [0xff, 0xd8, 0xff], offset: 0 }, // JPEG
+  { bytes: [0x89, 0x50, 0x4e, 0x47], offset: 0 }, // PNG
+  { bytes: [0x47, 0x49, 0x46], offset: 0 }, // GIF
+  { bytes: [0x52, 0x49, 0x46, 0x46], offset: 0 }, // WEBP (RIFF header)
+];
+
+async function hasValidImageSignature(filePath: string): Promise<boolean> {
+  const buffer = Buffer.alloc(12);
+  let fd: fs.FileHandle | undefined;
+  try {
+    fd = await fs.open(filePath, "r");
+    await fd.read(buffer, 0, 12, 0);
+    return IMAGE_MAGIC_BYTES.some(({ bytes, offset }) =>
+      bytes.every((b, i) => buffer[offset + i] === b),
+    );
+  } catch {
+    return false;
+  } finally {
+    await fd?.close();
+  }
+}
 
 // Configure multer for file uploads
 const upload = multer({
@@ -31,10 +64,14 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
   fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (
+      file.mimetype.startsWith("image/") &&
+      ALLOWED_IMAGE_EXTENSIONS.has(ext)
+    ) {
       cb(null, true);
     } else {
-      cb(new Error("Only image files are allowed"));
+      cb(new Error("Only image files (jpg, jpeg, png, gif, webp) are allowed"));
     }
   },
 });
@@ -69,13 +106,11 @@ export function setupProfile(app: Express) {
   // Get user profile
   app.get("/api/profile", validateAccessToken, async (req, res) => {
     try {
-      const user = await storage.getUser(req.jwtUser!.userId);
+      const user = await userService.getUserById(req.jwtUser!.userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
-
-      const { password, ...publicUser } = user;
-      res.json(publicUser);
+      res.json(user);
     } catch (error) {
       logger.error("Profile fetch error", {
         error: error instanceof Error ? error.message : String(error),
@@ -89,44 +124,28 @@ export function setupProfile(app: Express) {
   app.put(
     "/api/profile",
     validateAccessToken,
+    validateCSRF,
     validateProfileUpdate,
     handleValidationErrors,
     async (req: Request, res: Response) => {
       try {
-        const currentUser = await storage.getUser(req.jwtUser!.userId);
-        if (!currentUser) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
         const validatedData = profileUpdateSchema.parse(req.body);
-
-        // Check if email is already taken by another user
-        if (validatedData.email && validatedData.email !== currentUser.email) {
-          const existingUser = await storage.getUserByEmail(
-            validatedData.email,
-          );
-          if (existingUser && existingUser.id !== currentUser.id) {
-            return res.status(400).json({ message: "Email already taken" });
-          }
-        }
-
-        const updatedUser = await storage.updateUser(
-          currentUser.id,
+        const updatedUser = await userService.updateUser(
+          req.jwtUser!.userId,
           validatedData,
         );
-
-        if (!updatedUser) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
-        const { password, ...publicUser } = updatedUser;
-        res.json(publicUser);
+        res.json(updatedUser);
       } catch (error) {
         if (error instanceof z.ZodError) {
-          return res.status(400).json({
-            message: "Validation failed",
-            errors: error.errors,
-          });
+          return res
+            .status(400)
+            .json({ message: "Validation failed", errors: error.issues });
+        }
+        if (error instanceof Error && error.message === "Email already taken") {
+          return res.status(400).json({ message: error.message });
+        }
+        if (error instanceof Error && error.message === "User not found") {
+          return res.status(404).json({ message: error.message });
         }
         logger.error("Profile update error", {
           error: error instanceof Error ? error.message : String(error),
@@ -141,47 +160,34 @@ export function setupProfile(app: Express) {
   app.post(
     "/api/profile/upload-picture",
     validateAccessToken,
+    validateCSRF,
     async (req, res, next) => {
-      // Now proceed with multer
       upload.single("profilePicture")(req, res, next);
     },
     async (req, res) => {
       try {
-        const user = await storage.getUser(req.jwtUser!.userId);
-        if (!user) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
         if (!req.file) {
           return res.status(400).json({ message: "No file uploaded" });
         }
 
-        // Delete old profile picture if exists
-        if (user.profilePicture) {
-          try {
-            await fs.unlink(user.profilePicture);
-          } catch (error: any) {
-            // Log but don't fail if file doesn't exist
-            if (error.code !== "ENOENT") {
-              logger.warn("Failed to delete old profile picture", {
-                error: error.message,
-                path: user.profilePicture,
-              });
-            }
-          }
+        // Validate file content signature (magic bytes) to guard against spoofed MIME types
+        const validSignature = await hasValidImageSignature(req.file.path);
+        if (!validSignature) {
+          await fs.unlink(req.file.path).catch(() => undefined);
+          return res
+            .status(400)
+            .json({ message: "Invalid image file content" });
         }
 
-        const profilePicturePath = req.file.path;
-        const updatedUser = await storage.updateUser(user.id, {
-          profilePicture: profilePicturePath,
-        });
-
-        if (!updatedUser) {
-          return res.status(404).json({ message: "User not found" });
-        }
-
-        res.json({ profilePicture: profilePicturePath });
+        const updatedUser = await userService.updateProfilePicture(
+          req.jwtUser!.userId,
+          req.file.path,
+        );
+        res.json({ profilePicture: updatedUser.profilePicture });
       } catch (error) {
+        if (req.file) {
+          await fs.unlink(req.file.path).catch(() => undefined);
+        }
         logger.error("Profile picture upload error", {
           error: error instanceof Error ? error.message : String(error),
           userId: req.jwtUser?.userId,
@@ -192,53 +198,40 @@ export function setupProfile(app: Express) {
   );
 
   // Delete user account
-  app.delete("/api/profile", validateAccessToken, async (req, res) => {
-    try {
-      const user = await storage.getUser(req.jwtUser!.userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
+  app.delete(
+    "/api/profile",
+    validateAccessToken,
+    validateCSRF,
+    async (req, res) => {
+      try {
+        await userService.deleteUser(req.jwtUser!.userId);
 
-      // Delete profile picture if exists
-      if (user.profilePicture) {
-        try {
-          await fs.unlink(user.profilePicture);
-        } catch (error: any) {
-          // Log but don't fail if file doesn't exist
-          if (error.code !== "ENOENT") {
-            logger.warn(
-              "Failed to delete profile picture during account deletion",
-              {
-                error: error.message,
-                path: user.profilePicture,
-              },
-            );
-          }
+        // Revoke all user sessions
+        if (req.sessionId) {
+          const { sessionManager } = await import("./auth/session-manager");
+          await sessionManager.revokeSession(req.sessionId);
         }
+
+        res.json({ message: "Account deleted successfully" });
+      } catch (error) {
+        if (error instanceof Error && error.message === "User not found") {
+          return res.status(404).json({ message: error.message });
+        }
+        logger.error("Account deletion error", {
+          error: error instanceof Error ? error.message : String(error),
+          userId: req.jwtUser?.userId,
+        });
+        res.status(500).json({ message: "Internal server error" });
       }
-
-      await storage.deleteUser(user.id);
-
-      // Revoke all user sessions
-      if (req.sessionId) {
-        const { sessionManager } = await import("./auth/session-manager");
-        await sessionManager.revokeSession(req.sessionId);
-      }
-
-      res.json({ message: "Account deleted successfully" });
-    } catch (error) {
-      logger.error("Account deletion error", {
-        error: error instanceof Error ? error.message : String(error),
-        userId: req.jwtUser?.userId,
-      });
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+    },
+  );
 
   // Get user preferences
   app.get("/api/profile/preferences", validateAccessToken, async (req, res) => {
     try {
-      const preferences = await storage.getUserPreferences(req.jwtUser!.userId);
+      const preferences = await userService.getUserPreferences(
+        req.jwtUser!.userId,
+      );
       res.json(preferences);
     } catch (error) {
       logger.error("Get preferences error", {
@@ -250,21 +243,26 @@ export function setupProfile(app: Express) {
   });
 
   // Update user preferences
-  app.put("/api/profile/preferences", validateAccessToken, async (req, res) => {
-    try {
-      const preferences = await storage.updateUserPreferences(
-        req.jwtUser!.userId,
-        req.body,
-      );
-      res.json(preferences);
-    } catch (error) {
-      logger.error("Update preferences error", {
-        error: error instanceof Error ? error.message : String(error),
-        userId: req.jwtUser?.userId,
-      });
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+  app.put(
+    "/api/profile/preferences",
+    validateAccessToken,
+    validateCSRF,
+    async (req, res) => {
+      try {
+        const preferences = await userService.updateUserPreferences(
+          req.jwtUser!.userId,
+          req.body,
+        );
+        res.json(preferences);
+      } catch (error) {
+        logger.error("Update preferences error", {
+          error: error instanceof Error ? error.message : String(error),
+          userId: req.jwtUser?.userId,
+        });
+        res.status(500).json({ message: "Internal server error" });
+      }
+    },
+  );
 
   // Serve uploaded profile pictures
   app.use("/uploads", expressStatic("uploads"));

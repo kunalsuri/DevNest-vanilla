@@ -1,5 +1,3 @@
-Refined Prompt:
-
 **Role:**
 Act as a senior software engineer and codebase auditor.
 

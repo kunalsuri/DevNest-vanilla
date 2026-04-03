@@ -11,7 +11,7 @@ jobs:
   lint-and-typecheck:
     name: Lint & Type Check
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,8 +19,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -28,9 +28,8 @@ jobs:
       - name: Run TypeScript type check
         run: npm run check
 
-      - name: Run ESLint (if configured)
-        run: npm run lint || echo "Lint script not configured"
-        continue-on-error: true
+      - name: Run ESLint
+        run: npm run lint
 
   test:
     name: Run Tests
@@ -44,8 +43,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -78,8 +77,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -115,22 +114,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
+        run: npm audit --audit-level=high
 
       - name: Check for vulnerable dependencies
-        run: |
-          npm audit --json > audit-results.json || true
-          if [ -f audit-results.json ]; then
-            cat audit-results.json
-          fi
+        run: npm audit --audit-level=high --json > audit-results.json
 
   validate:
     name: Full Validation
@@ -145,8 +139,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
@@ -165,21 +159,21 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
             });
-            
+
             const botComment = comments.find(comment => 
               comment.user.type === 'Bot' && 
               comment.body.includes('CI Validation')
             );
 
             const message = `## ✅ CI Validation Completed
-            
+
             All checks have passed successfully!
-            
+
             - ✅ Type checking
             - ✅ Unit tests
             - ✅ Build process
             - ✅ Security audit
-            
+
             Commit: ${context.sha.substring(0, 7)}
             Workflow: ${context.workflow}`;
 

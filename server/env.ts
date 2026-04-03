@@ -128,13 +128,18 @@ function validateEnv(): Env {
       }
 
       if (productionWarnings.length > 0) {
-        logger.error("Production security warnings detected:", {
+        logger.error("Production security requirements not met:", {
           warnings: productionWarnings,
         });
 
-        // In strict production mode, we could throw an error here
-        // Uncomment the next line to enforce secure production configuration
-        // throw new Error('Production security requirements not met. See warnings above.');
+        console.error("\n❌ Production Security Requirements Not Met:\n");
+        for (const warning of productionWarnings) {
+          console.error(`  ${warning}`);
+        }
+        console.error(
+          "\nSet secure values for all secrets before starting in production.\n",
+        );
+        process.exit(1);
       }
     }
 
@@ -150,14 +155,14 @@ function validateEnv(): Env {
   } catch (error) {
     if (error instanceof z.ZodError) {
       logger.error("Environment variable validation failed:", {
-        errors: error.errors.map((err) => ({
+        errors: error.issues.map((err: z.core.$ZodIssue) => ({
           path: err.path.join("."),
           message: err.message,
         })),
       });
 
       console.error("\n❌ Environment Variable Validation Failed:\n");
-      for (const err of error.errors) {
+      for (const err of error.issues) {
         console.error(`  • ${err.path.join(".")}: ${err.message}`);
       }
       console.error(

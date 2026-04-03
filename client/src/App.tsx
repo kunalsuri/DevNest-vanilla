@@ -93,7 +93,7 @@ function App() {
         enableMetrics: true,
       },
       fileLogging: {
-        logDirectory: "/Users/ks248120/Documents/GitHub/DevNest/logs",
+        logDirectory: import.meta.env.VITE_LOG_DIR ?? "logs",
         maxFileSize: 10 * 1024 * 1024, // 10MB
         maxFiles: 5,
       },

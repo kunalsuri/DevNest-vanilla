@@ -46,11 +46,13 @@ export interface AuthResult {
     role: string;
   };
   accessToken: string;
+  refreshToken: string;
   csrfToken: string;
 }
 
 export interface TokenRefreshResult {
   accessToken: string;
+  refreshToken: string;
   csrfToken: string;
   user: {
     id: string;
@@ -137,6 +139,7 @@ export class AuthService {
     return {
       user: userWithoutPassword,
       accessToken: finalTokens.accessToken,
+      refreshToken: finalTokens.refreshToken,
       csrfToken,
     };
   }
@@ -208,6 +211,7 @@ export class AuthService {
     return {
       user: userWithoutPassword,
       accessToken: finalTokens.accessToken,
+      refreshToken: finalTokens.refreshToken,
       csrfToken,
     };
   }
@@ -266,6 +270,7 @@ export class AuthService {
     return {
       user: userWithoutPassword,
       accessToken: newTokens.accessToken,
+      refreshToken: newTokens.refreshToken,
       csrfToken: newCSRFToken,
     };
   }

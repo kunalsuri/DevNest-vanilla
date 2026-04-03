@@ -1,23 +1,10 @@
 // server/auth/jwt-auth-routes.ts
 import { Express, Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
-import {
-  jwtRegisterSchema,
-  jwtLoginSchema,
-  PublicUser,
-  JWTRegisterData,
-  JWTLoginData,
-} from "@shared/schema";
-import {
-  generateTokenPair,
-  hashPassword,
-  comparePassword,
-  verifyRefreshToken,
-  verifyAccessToken,
-  generateCSRFToken,
-} from "./jwt-utils";
-import { sessionManager } from "./session-manager";
-import { storage } from "../storage";
+import { jwtRegisterSchema, jwtLoginSchema, PublicUser } from "@shared/schema";
+import { authService } from "../services";
+import { userService } from "../services";
+import { verifyRefreshToken } from "./jwt-utils";
 import logger from "../logger";
 import { z } from "zod";
 import {
@@ -25,6 +12,23 @@ import {
   validateLogin,
   handleValidationErrors,
 } from "../middleware/validation";
+
+/** Helper: set HTTP-only refresh token + JS-readable CSRF cookies */
+function setAuthCookies(
+  res: Response,
+  refreshToken: string,
+  csrfToken: string,
+): void {
+  const isProduction = process.env.NODE_ENV === "production";
+  const cookieOpts = {
+    secure: isProduction,
+    sameSite: "lax" as const,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  };
+  res.cookie("refreshToken", refreshToken, { ...cookieOpts, httpOnly: true });
+  res.cookie("csrfToken", csrfToken, { ...cookieOpts, httpOnly: false });
+}
 
 /**
  * Setup JWT-based authentication routes
@@ -66,111 +70,35 @@ export function setupJWTAuthRoutes(app: Express): void {
     handleValidationErrors,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const validatedData: JWTRegisterData = jwtRegisterSchema.parse(
-          req.body,
-        );
-
-        // Check if user already exists
-        const existingUser = await storage.getUserByUsername(
-          validatedData.username,
-        );
-        if (existingUser) {
-          res.status(400).json({
-            message: "Username already exists",
-            code: "USERNAME_EXISTS",
-          });
-          return;
-        }
-
-        const existingEmail = await storage.getUserByEmail(validatedData.email);
-        if (existingEmail) {
-          res.status(400).json({
-            message: "Email already exists",
-            code: "EMAIL_EXISTS",
-          });
-          return;
-        }
-
-        // Hash password
-        const hashedPassword = await hashPassword(validatedData.password);
-
-        // Create user
-        const user = await storage.createUser({
-          ...validatedData,
-          password: hashedPassword,
-        });
-
-        // Generate temporary refresh token for session creation
-        const { refreshToken } = generateTokenPair({
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          sessionId: "", // Will be set after session creation
-        });
-
-        // Create session
-        const session = await sessionManager.createSession(
-          user.id,
-          refreshToken,
+        const validatedData = jwtRegisterSchema.parse(req.body);
+        const result = await authService.register(
+          validatedData,
           req.headers["user-agent"],
           req.ip,
         );
-
-        // Generate new tokens with correct session ID
-        const finalTokens = generateTokenPair({
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          sessionId: session.sessionId,
-        });
-
-        // Update session with final refresh token
-        await sessionManager.updateSessionTokens(
-          session.sessionId,
-          finalTokens.refreshToken,
-        );
-
-        // Generate CSRF token
-        const csrfToken = generateCSRFToken();
-        await sessionManager.updateSessionTokens(
-          session.sessionId,
-          finalTokens.refreshToken,
-          csrfToken,
-        );
-
-        // Set HTTP-only refresh token cookie
-        res.cookie("refreshToken", finalTokens.refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: "/",
-        });
-
-        // Set CSRF token cookie (readable by JS)
-        res.cookie("csrfToken", csrfToken, {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: "/",
-        });
-
-        // Return user data and access token
-        const { password: _password, ...userWithoutPassword } = user;
+        setAuthCookies(res, result.refreshToken, result.csrfToken);
         res.status(201).json({
-          user: userWithoutPassword as PublicUser,
-          accessToken: finalTokens.accessToken,
-          csrfToken,
+          user: result.user as PublicUser,
+          accessToken: result.accessToken,
+          csrfToken: result.csrfToken,
         });
       } catch (error) {
         if (error instanceof z.ZodError) {
           res.status(400).json({
             message: "Validation error",
-            errors: error.errors,
+            errors: error.issues,
             code: "VALIDATION_ERROR",
+          });
+          return;
+        }
+        if (
+          error instanceof Error &&
+          error.message.includes("already exists")
+        ) {
+          const isUsername = error.message.toLowerCase().includes("username");
+          res.status(400).json({
+            message: error.message,
+            code: isUsername ? "USERNAME_EXISTS" : "EMAIL_EXISTS",
           });
           return;
         }
@@ -212,102 +140,31 @@ export function setupJWTAuthRoutes(app: Express): void {
     handleValidationErrors,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const validatedData: JWTLoginData = jwtLoginSchema.parse(req.body);
-
-        // Find user
-        const user = await storage.getUserByUsername(validatedData.username);
-        if (!user) {
-          res.status(401).json({
-            message: "Invalid credentials",
-            code: "INVALID_CREDENTIALS",
-          });
-          return;
-        }
-
-        // Verify password
-        const isValidPassword = await comparePassword(
-          validatedData.password,
-          user.password,
-        );
-        if (!isValidPassword) {
-          res.status(401).json({
-            message: "Invalid credentials",
-            code: "INVALID_CREDENTIALS",
-          });
-          return;
-        }
-
-        // Generate temporary refresh token for session creation
-        const { refreshToken } = generateTokenPair({
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          sessionId: "", // Will be set after session creation
-        });
-
-        // Create session
-        const session = await sessionManager.createSession(
-          user.id,
-          refreshToken,
+        const validatedData = jwtLoginSchema.parse(req.body);
+        const result = await authService.login(
+          validatedData,
           req.headers["user-agent"],
           req.ip,
         );
-
-        // Generate final tokens with correct session ID
-        const finalTokens = generateTokenPair({
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          sessionId: session.sessionId,
-        });
-
-        // Update session with final refresh token
-        await sessionManager.updateSessionTokens(
-          session.sessionId,
-          finalTokens.refreshToken,
-        );
-
-        // Generate CSRF token
-        const csrfToken = generateCSRFToken();
-        await sessionManager.updateSessionTokens(
-          session.sessionId,
-          finalTokens.refreshToken,
-          csrfToken,
-        );
-
-        // Set HTTP-only refresh token cookie
-        res.cookie("refreshToken", finalTokens.refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: "/",
-        });
-
-        // Set CSRF token cookie (readable by JS)
-        res.cookie("csrfToken", csrfToken, {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: "/",
-        });
-
-        // Return user data and access token
-        const { password: _password, ...userWithoutPassword } = user;
+        setAuthCookies(res, result.refreshToken, result.csrfToken);
         res.json({
-          user: userWithoutPassword as PublicUser,
-          accessToken: finalTokens.accessToken,
-          csrfToken,
+          user: result.user as PublicUser,
+          accessToken: result.accessToken,
+          csrfToken: result.csrfToken,
         });
       } catch (error) {
         if (error instanceof z.ZodError) {
           res.status(400).json({
             message: "Validation error",
-            errors: error.errors,
+            errors: error.issues,
             code: "VALIDATION_ERROR",
+          });
+          return;
+        }
+        if (error instanceof Error && error.message === "Invalid credentials") {
+          res.status(401).json({
+            message: "Invalid credentials",
+            code: "INVALID_CREDENTIALS",
           });
           return;
         }
@@ -321,10 +178,9 @@ export function setupJWTAuthRoutes(app: Express): void {
     "/api/auth/refresh",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const refreshToken = req.cookies.refreshToken;
+        const incomingRefreshToken = req.cookies.refreshToken;
 
-        if (!refreshToken) {
-          // Clear any stale cookies
+        if (!incomingRefreshToken) {
           res.clearCookie("refreshToken", { path: "/" });
           res.clearCookie("csrfToken", { path: "/" });
           res.status(401).json({
@@ -334,91 +190,27 @@ export function setupJWTAuthRoutes(app: Express): void {
           return;
         }
 
-        // Verify refresh token
-        const payload = verifyRefreshToken(refreshToken);
-        if (!payload) {
-          // Clear invalid cookies
-          res.clearCookie("refreshToken", { path: "/" });
-          res.clearCookie("csrfToken", { path: "/" });
+        const result = await authService.refreshToken(incomingRefreshToken);
+        setAuthCookies(res, result.refreshToken, result.csrfToken);
+        res.json({
+          user: result.user as PublicUser,
+          accessToken: result.accessToken,
+          csrfToken: result.csrfToken,
+        });
+      } catch (error) {
+        res.clearCookie("refreshToken", { path: "/" });
+        res.clearCookie("csrfToken", { path: "/" });
+        if (
+          error instanceof Error &&
+          (error.message.includes("Invalid refresh token") ||
+            error.message.includes("session revoked"))
+        ) {
           res.status(401).json({
-            message: "Invalid refresh token",
+            message: error.message,
             code: "INVALID_REFRESH_TOKEN",
           });
           return;
         }
-
-        // Validate refresh token against session
-        const isValidToken = await sessionManager.validateRefreshToken(
-          payload.sessionId,
-          refreshToken,
-        );
-        if (!isValidToken) {
-          // Token mismatch or session not found - clear cookies and revoke session
-          await sessionManager.revokeSession(payload.sessionId);
-          res.clearCookie("refreshToken", { path: "/" });
-          res.clearCookie("csrfToken", { path: "/" });
-          res.status(401).json({
-            message: "Invalid refresh token - session revoked",
-            code: "TOKEN_MISMATCH",
-          });
-          return;
-        }
-
-        // Get user data
-        const user = await storage.getUser(payload.userId);
-        if (!user) {
-          res.status(401).json({
-            message: "User not found",
-            code: "USER_NOT_FOUND",
-          });
-          return;
-        }
-
-        // Generate new token pair (refresh token rotation)
-        const newTokens = generateTokenPair({
-          userId: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          sessionId: payload.sessionId,
-        });
-
-        // Generate new CSRF token
-        const newCSRFToken = generateCSRFToken();
-
-        // Update session with new tokens
-        await sessionManager.updateSessionTokens(
-          payload.sessionId,
-          newTokens.refreshToken,
-          newCSRFToken,
-        );
-
-        // Set new HTTP-only refresh token cookie
-        res.cookie("refreshToken", newTokens.refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: "/",
-        });
-
-        // Set new CSRF token cookie
-        res.cookie("csrfToken", newCSRFToken, {
-          httpOnly: false,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: "/",
-        });
-
-        // Return new access token and user data
-        const { password: _password, ...userWithoutPassword } = user;
-        res.json({
-          user: userWithoutPassword as PublicUser,
-          accessToken: newTokens.accessToken,
-          csrfToken: newCSRFToken,
-        });
-      } catch (error) {
         next(error);
       }
     },
@@ -429,20 +221,9 @@ export function setupJWTAuthRoutes(app: Express): void {
     "/api/auth/logout",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const refreshToken = req.cookies.refreshToken;
-
-        if (refreshToken) {
-          // Verify and get session ID from refresh token
-          const payload = verifyRefreshToken(refreshToken);
-          if (payload) {
-            await sessionManager.revokeSession(payload.sessionId);
-          }
-        }
-
-        // Clear cookies
+        await authService.logout(req.cookies.refreshToken);
         res.clearCookie("refreshToken");
         res.clearCookie("csrfToken");
-
         res.json({
           message: "Logged out successfully",
           code: "LOGOUT_SUCCESS",
@@ -467,28 +248,24 @@ export function setupJWTAuthRoutes(app: Express): void {
           return;
         }
 
-        const token = authHeader.slice(7);
-        const payload = verifyAccessToken(token);
-        if (!payload) {
-          res.status(401).json({
-            message: "Invalid access token",
-            code: "INVALID_TOKEN",
-          });
-          return;
-        }
-
-        const user = await storage.getUser(payload.userId);
-        if (!user) {
-          res.status(401).json({
-            message: "User not found",
-            code: "USER_NOT_FOUND",
-          });
-          return;
-        }
-
-        const { password: _password, ...userWithoutPassword } = user;
-        res.json(userWithoutPassword as PublicUser);
+        const user = await authService.getUserFromToken(authHeader.slice(7));
+        res.json(user as PublicUser);
       } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "Invalid access token"
+        ) {
+          res
+            .status(401)
+            .json({ message: "Invalid access token", code: "INVALID_TOKEN" });
+          return;
+        }
+        if (error instanceof Error && error.message === "User not found") {
+          res
+            .status(401)
+            .json({ message: "User not found", code: "USER_NOT_FOUND" });
+          return;
+        }
         next(error);
       }
     },
@@ -508,28 +285,23 @@ export function setupJWTAuthRoutes(app: Express): void {
           return;
         }
 
-        const token = authHeader.slice(7);
-        const payload = verifyAccessToken(token);
-        if (!payload) {
-          res.status(401).json({
-            message: "Invalid access token",
-            code: "INVALID_TOKEN",
-          });
-          return;
-        }
-
-        // Revoke all user sessions
-        await sessionManager.revokeUserSessions(payload.userId);
-
-        // Clear cookies
+        await authService.logoutAll(authHeader.slice(7));
         res.clearCookie("refreshToken");
         res.clearCookie("csrfToken");
-
         res.json({
           message: "Logged out from all sessions",
           code: "LOGOUT_ALL_SUCCESS",
         });
       } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === "Invalid access token"
+        ) {
+          res
+            .status(401)
+            .json({ message: "Invalid access token", code: "INVALID_TOKEN" });
+          return;
+        }
         next(error);
       }
     },
@@ -540,7 +312,7 @@ export function setupJWTAuthRoutes(app: Express): void {
     "/api/auth/cleanup-sessions",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        // This should be protected with admin middleware in a real app
+        const { sessionManager } = await import("./session-manager");
         await sessionManager.cleanupSessions();
         res.json({
           message: "Sessions cleaned up successfully",
@@ -559,38 +331,7 @@ export function setupJWTAuthRoutes(app: Express): void {
       try {
         const { passwordResetRequestSchema } = await import("@shared/schema");
         const validatedData = passwordResetRequestSchema.parse(req.body);
-
-        const user = await storage.getUserByEmail(validatedData.email);
-        if (!user) {
-          // Don't reveal whether email exists for security
-          res.json({
-            message:
-              "If your email is registered, you will receive reset instructions",
-          });
-          return;
-        }
-
-        // Generate reset token
-        const { nanoid } = await import("nanoid");
-        const token = nanoid(32);
-        const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
-
-        await storage.createPasswordResetToken({
-          userId: user.id,
-          token,
-          expiresAt,
-        });
-
-        // In a real app, you'd send an email here
-        // For now, we'll log the token for testing (only in development)
-        if (process.env.NODE_ENV === "development") {
-          logger.info(`Password reset token for ${user.email}`, {
-            email: user.email,
-            token,
-            resetUrl: `http://localhost:5000/auth?reset-token=${token}`,
-          });
-        }
-
+        await authService.requestPasswordReset(validatedData.email);
         res.json({
           message:
             "If your email is registered, you will receive reset instructions",
@@ -599,7 +340,7 @@ export function setupJWTAuthRoutes(app: Express): void {
         if (error instanceof z.ZodError) {
           res
             .status(400)
-            .json({ message: "Validation error", errors: error.errors });
+            .json({ message: "Validation error", errors: error.issues });
           return;
         }
         next(error);
@@ -614,34 +355,24 @@ export function setupJWTAuthRoutes(app: Express): void {
       try {
         const { passwordResetConfirmSchema } = await import("@shared/schema");
         const validatedData = passwordResetConfirmSchema.parse(req.body);
-
-        const resetToken = await storage.getPasswordResetToken(
+        await authService.confirmPasswordReset(
           validatedData.token,
+          validatedData.password,
         );
-        if (!resetToken) {
-          res.status(400).json({ message: "Invalid or expired reset token" });
-          return;
-        }
-
-        const user = await storage.getUser(resetToken.userId);
-        if (!user) {
-          res.status(400).json({ message: "User not found" });
-          return;
-        }
-
-        // Update user password
-        const hashedPassword = await hashPassword(validatedData.password);
-        await storage.updateUserPassword(user.id, hashedPassword);
-
-        // Delete the used token
-        await storage.deletePasswordResetToken(validatedData.token);
-
         res.json({ message: "Password reset successful" });
       } catch (error) {
         if (error instanceof z.ZodError) {
           res
             .status(400)
-            .json({ message: "Validation error", errors: error.errors });
+            .json({ message: "Validation error", errors: error.issues });
+          return;
+        }
+        if (
+          error instanceof Error &&
+          (error.message.includes("reset token") ||
+            error.message === "User not found")
+        ) {
+          res.status(400).json({ message: error.message });
           return;
         }
         next(error);
