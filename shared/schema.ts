@@ -1,3 +1,17 @@
+/**
+ * shared/schema.ts — Type definitions and Zod validation schemas
+ *
+ * ARCHITECTURE NOTE — Drizzle ORM is used here exclusively for type generation
+ * and Zod schema derivation via `drizzle-zod`. At runtime this application uses
+ * FileStorage (server/storage.ts) backed by JSON files in data/.
+ *
+ * The PostgreSQL table definitions below are NOT executed against a database in
+ * the default file-based mode. If you want to migrate to a database backend,
+ * set DATABASE_URL and use `npm run db:push` to apply the schema.
+ *
+ * Do NOT read secrets (JWT, session keys, etc.) from this file — use
+ * server/env.ts which validates environment variables at startup.
+ */
 import { sql } from "drizzle-orm";
 import {
   pgTable,

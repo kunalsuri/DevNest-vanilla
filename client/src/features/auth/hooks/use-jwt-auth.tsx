@@ -105,6 +105,11 @@ export function JWTAuthProvider({
             lastName: tokenUser.lastName || "",
             profilePicture: null,
             createdAt: null,
+            age: null,
+            officeLocation: null,
+            position: null,
+            department: null,
+            phone: null,
           };
           return user;
         }

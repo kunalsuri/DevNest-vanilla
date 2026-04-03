@@ -30,28 +30,6 @@
     "expiresAt": "2026-04-10T22:51:44.309Z"
   },
   {
-    "sessionId": "c1b49df64390a7daa596dc73ed1c0f0a47337048b23a9cd605312869491d6e38",
-    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "39776f008824b240beb98f24704f6f71bf1068f0e18d1b7d2bea3dc6536440d1",
-    "csrfTokenHash": "3c80d803615e6b24db7404b5f081990cd268179a40fe4443d25c931c5d205814",
-    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    "ip": "127.0.0.1",
-    "createdAt": "2026-04-03T22:53:13.662Z",
-    "expiresAt": "2026-04-10T22:53:13.662Z",
-    "revokedAt": "2026-04-03T22:54:03.762Z"
-  },
-  {
-    "sessionId": "8c7c66dee07890fe88f159b747333a7ac820a40602ec940c58205395d6a9e0e1",
-    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "b8aab41b8f4e6dc6139d3487b1376f4334ab5fdf3dcd1aed54d2375bec427cef",
-    "csrfTokenHash": "0ac5268e791f7a7d5578b2894bc8fc5be9b16aa42db258afeb9b04898d857c97",
-    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    "ip": "127.0.0.1",
-    "createdAt": "2026-04-03T22:55:00.018Z",
-    "expiresAt": "2026-04-10T22:55:00.018Z",
-    "revokedAt": "2026-04-03T22:55:07.302Z"
-  },
-  {
     "sessionId": "e7f1c006d7204f4c44d6b274a7418e397f2016a39d1dbab1ff425596dee46fe9",
     "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
     "refreshTokenHash": "959b273baff9458b492714eb91f298c3d2755a096404bd74c0a1ee2b7e8a2ee8",
@@ -60,5 +38,85 @@
     "ip": "127.0.0.1",
     "createdAt": "2026-04-03T22:55:09.857Z",
     "expiresAt": "2026-04-10T22:55:09.857Z"
+  },
+  {
+    "sessionId": "f5b326bc5bd1e02dde4a4025a0f2aea5aa8e66e25aa6a3448407b7883ae136f2",
+    "userId": "4de2c4d4-64a1-4c52-a997-d32a34493294",
+    "refreshTokenHash": "3d56dd224be0f385edaf7673cb4d49f5ca52b49b191b729c54df340f127c9d6f",
+    "csrfTokenHash": "8fb9f6e567da82c8844179dd2204869923d77dcb8a13d11537c1c9dd8d116a63",
+    "createdAt": "2026-04-03T23:16:01.613Z",
+    "expiresAt": "2026-04-10T23:16:01.613Z"
+  },
+  {
+    "sessionId": "8645a6061b45f7b6563e621185ff8f4e48f56e27349efde82c910f9976e69709",
+    "userId": "9a6191de-29b9-4c8e-a6e3-b3d844b87090",
+    "refreshTokenHash": "c61b53696500907d5ca9dff410b7874a8f4b01e32b39a140ea51f84583f68e04",
+    "csrfTokenHash": "3c2f3eec634d91a0f1ae8e75f6724b8e10819a40505e92252a7e3c45f12032e3",
+    "createdAt": "2026-04-03T23:16:01.823Z",
+    "expiresAt": "2026-04-10T23:16:01.823Z"
+  },
+  {
+    "sessionId": "4bbdb5da1c56ee45aa1dd501d56146af3c669b7727ec88ac10150434d747bab5",
+    "userId": "d0d5a0f4-133a-4bb1-a394-39218a753dd5",
+    "refreshTokenHash": "9b7f01f4cc001d40a4dc3ad7ce04f96f107e666cccff321f5543922121c59176",
+    "csrfTokenHash": "93bc0458b82ff9a080fcfbe40e9376cf9fac381ebbf5b181c4bcebe47bc4eb51",
+    "createdAt": "2026-04-03T23:16:02.029Z",
+    "expiresAt": "2026-04-10T23:16:02.029Z"
+  },
+  {
+    "sessionId": "0574323af0d22f2494446bc4740b9edf6b912c9b827a0c4c4fad2a24543e2fa2",
+    "userId": "d0d5a0f4-133a-4bb1-a394-39218a753dd5",
+    "refreshTokenHash": "915a7a57947b1b07bb82692d9b3c6de3e25be2ca0e799a556b80eb821317d00a",
+    "csrfTokenHash": "8b9250daec950e9a501947265d699b951c302f6c5dfd88bf9fb753747d599ca8",
+    "createdAt": "2026-04-03T23:16:02.437Z",
+    "expiresAt": "2026-04-10T23:16:02.437Z"
+  },
+  {
+    "sessionId": "404ddfd217f17792e6059d78bb25bb641aef0840d55e29a2cb6b172505d886ac",
+    "userId": "e6a2476e-9250-41d8-bbd0-30591d5e6441",
+    "refreshTokenHash": "e0f2267380ebc9c56422b7b38e3a5e8900d636d5ffa62c1294b76df831959b8a",
+    "csrfTokenHash": "81aa2796d0ca157a5f37f376e6cbf17f51661f00086613709e62707a4f31acde",
+    "createdAt": "2026-04-03T23:16:02.644Z",
+    "expiresAt": "2026-04-10T23:16:02.644Z"
+  },
+  {
+    "sessionId": "6427cb8bc16ffa59fc1b8d0780098ac04fbe1f1ec13f1e23115dcd7b6b133995",
+    "userId": "bca68285-92bc-47da-8a0a-1058734d7588",
+    "refreshTokenHash": "faf6782d6c40dd03976e345ffdf0cc4920b80eda8fe6e2882701e2e6ab6584b5",
+    "csrfTokenHash": "0d59782da0b02976e0458bbb918a31593fb0a5424a53dca2cd92a46d9ea16244",
+    "createdAt": "2026-04-03T23:17:14.908Z",
+    "expiresAt": "2026-04-10T23:17:14.908Z"
+  },
+  {
+    "sessionId": "75cac49280e961f25c1c3d2d7c97a87f87c6cd02d204920e40e2aefec642d173",
+    "userId": "1e2c6638-8757-467d-b5ca-0150057a710f",
+    "refreshTokenHash": "9538068708e1376872097c66b61d7eb9430495f0aa14a1874e80ad89f895fb93",
+    "csrfTokenHash": "21b18d97e8e6bef6ad82d92997760689a2e99c27c0eceab3acc530d07a0ec1ed",
+    "createdAt": "2026-04-03T23:17:15.256Z",
+    "expiresAt": "2026-04-10T23:17:15.256Z"
+  },
+  {
+    "sessionId": "3378742abd6d486215e4156b7460174442b12c6386907b01a2b2acfa8dcd2a28",
+    "userId": "3e128679-d9a9-4bc7-afad-b83f5127d12f",
+    "refreshTokenHash": "401d0cb39e1eefafebab3d43a202b2d1229ce0c8a4d50375a25dda1420895d62",
+    "csrfTokenHash": "249c78f5b46a0235a225664f4e9683b30e41486be44700a66ef6dc05cb0ccb1c",
+    "createdAt": "2026-04-03T23:17:15.644Z",
+    "expiresAt": "2026-04-10T23:17:15.644Z"
+  },
+  {
+    "sessionId": "794eac192caedf65b7854a51165c32898ede03384d95f78025706c2b9e0529d9",
+    "userId": "3e128679-d9a9-4bc7-afad-b83f5127d12f",
+    "refreshTokenHash": "285803250c4f3d1722bffeb447036681fc286541d9a29dd15fca82c37c7735c4",
+    "csrfTokenHash": "4023627a52cd6b7778f6ab9d329f5a1b43c2bfacc54b86d85dfea97a144e0e26",
+    "createdAt": "2026-04-03T23:17:16.143Z",
+    "expiresAt": "2026-04-10T23:17:16.143Z"
+  },
+  {
+    "sessionId": "2d727e2562ef7f97335400016b2168365a2b49a7c756e1fa7849412b097e1056",
+    "userId": "9d926b23-8ecf-40db-b5d3-9bbf0603824d",
+    "refreshTokenHash": "ad67d2dfcdb009b2b207e767e3803ea391837b6b1d050d67b2df32ba83cce0f2",
+    "csrfTokenHash": "40cf93a869951463bfe14434615632289dbc4a66ae515ef4b44fa922550268ef",
+    "createdAt": "2026-04-03T23:17:16.370Z",
+    "expiresAt": "2026-04-10T23:17:16.370Z"
   }
 ]

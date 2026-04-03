@@ -1,0 +1,129 @@
+# .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  # Manual trigger — select environment at dispatch time
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target deployment environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: staging
+
+  # Auto-deploy to staging on every push to the develop branch
+  push:
+    branches:
+      - develop
+
+jobs:
+  # -------------------------------------------------------------------------
+  # Gate: CI must pass before any deployment proceeds
+  # -------------------------------------------------------------------------
+  ci-gate:
+    name: CI Gate
+    uses: ./.github/workflows/ci.yml
+
+  # -------------------------------------------------------------------------
+  # Deploy to Staging
+  # -------------------------------------------------------------------------
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: ci-gate
+    if: |
+      github.ref == 'refs/heads/develop' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: ${{ vars.STAGING_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to staging
+        # Replace this step with your actual deployment command.
+        # Examples: fly deploy, railway up, scp + ssh, docker push + remote exec.
+        run: |
+          echo "⚙️  Deploying to STAGING environment"
+          echo "   Commit: ${{ github.sha }}"
+          echo "   Branch: ${{ github.ref_name }}"
+          echo "   Triggered by: ${{ github.actor }}"
+          # TODO: add real deploy command here, e.g.:
+          # fly deploy --config fly.staging.toml
+        env:
+          STAGING_DEPLOY_TOKEN: ${{ secrets.STAGING_DEPLOY_TOKEN }}
+
+      - name: Verify staging health
+        run: |
+          echo "⏳  Waiting for staging to come up…"
+          sleep 15
+          # TODO: replace with actual staging URL
+          # curl --fail --retry 5 --retry-delay 5 "${{ vars.STAGING_URL }}/health"
+          echo "✅  Staging health check placeholder passed"
+
+  # -------------------------------------------------------------------------
+  # Deploy to Production
+  # -------------------------------------------------------------------------
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: ci-gate
+    if: |
+      github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    environment:
+      name: production
+      url: ${{ vars.PRODUCTION_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to production
+        run: |
+          echo "🚀  Deploying to PRODUCTION environment"
+          echo "   Commit: ${{ github.sha }}"
+          echo "   Triggered by: ${{ github.actor }}"
+          # TODO: add real deploy command here
+        env:
+          PRODUCTION_DEPLOY_TOKEN: ${{ secrets.PRODUCTION_DEPLOY_TOKEN }}
+
+      - name: Verify production health
+        run: |
+          echo "⏳  Waiting for production to come up…"
+          sleep 15
+          # TODO: replace with actual production URL
+          # curl --fail --retry 5 --retry-delay 5 "${{ vars.PRODUCTION_URL }}/health"
+          echo "✅  Production health check placeholder passed"

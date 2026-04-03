@@ -7,7 +7,7 @@ import {
 } from "./jwt-utils";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { SERVER_START_TIME } from "../index";
+import { SERVER_START_TIME } from "../server-start-time";
 import logger from "../logger";
 
 export class SessionManager {

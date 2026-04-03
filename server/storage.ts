@@ -9,6 +9,7 @@ import {
 import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { Mutex } from "async-mutex";
 import logger from "./logger";
 
 export interface IStorage {
@@ -42,6 +43,10 @@ export class FileStorage implements IStorage {
   private readonly tokensFile: string;
   private readonly preferencesFile: string;
   private readonly loadingPromise: Promise<void>;
+  // Serialise all file writes to prevent concurrent write races
+  private readonly usersMutex = new Mutex();
+  private readonly tokensMutex = new Mutex();
+  private readonly preferencesMutex = new Mutex();
 
   constructor() {
     this.users = new Map();
@@ -146,29 +151,35 @@ export class FileStorage implements IStorage {
   }
 
   private async saveUsers(): Promise<void> {
-    await this.ensureDataDir();
-    const usersArray = Array.from(this.users.values());
-    await fs.writeFile(this.usersFile, JSON.stringify(usersArray, null, 2));
+    await this.usersMutex.runExclusive(async () => {
+      await this.ensureDataDir();
+      const usersArray = Array.from(this.users.values());
+      await fs.writeFile(this.usersFile, JSON.stringify(usersArray, null, 2));
+    });
   }
 
   private async saveTokens(): Promise<void> {
-    await this.ensureDataDir();
-    const tokensArray = Array.from(this.passwordResetTokens.values());
-    await fs.writeFile(this.tokensFile, JSON.stringify(tokensArray, null, 2));
+    await this.tokensMutex.runExclusive(async () => {
+      await this.ensureDataDir();
+      const tokensArray = Array.from(this.passwordResetTokens.values());
+      await fs.writeFile(this.tokensFile, JSON.stringify(tokensArray, null, 2));
+    });
   }
 
   private async savePreferences(): Promise<void> {
-    await this.ensureDataDir();
-    const preferencesArray = Array.from(this.userPreferences.entries()).map(
-      ([userId, preferences]) => ({
-        userId,
-        ...preferences,
-      }),
-    );
-    await fs.writeFile(
-      this.preferencesFile,
-      JSON.stringify(preferencesArray, null, 2),
-    );
+    await this.preferencesMutex.runExclusive(async () => {
+      await this.ensureDataDir();
+      const preferencesArray = Array.from(this.userPreferences.entries()).map(
+        ([userId, preferences]) => ({
+          userId,
+          ...preferences,
+        }),
+      );
+      await fs.writeFile(
+        this.preferencesFile,
+        JSON.stringify(preferencesArray, null, 2),
+      );
+    });
   }
 
   async getUser(id: string): Promise<User | undefined> {
@@ -197,6 +208,11 @@ export class FileStorage implements IStorage {
       role: "user", // Default role
       profilePicture: null,
       createdAt: new Date(),
+      age: null,
+      officeLocation: null,
+      position: null,
+      department: null,
+      phone: null,
     };
     this.users.set(id, user);
     await this.saveUsers();

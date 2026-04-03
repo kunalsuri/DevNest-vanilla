@@ -29,9 +29,6 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/server ./server
 COPY --from=builder /app/shared ./shared
 
-# Copy configuration (secrets must be injected via environment variables)
-COPY --from=builder /app/data/config.json ./data/config.json
-
 # Create writable runtime directories
 RUN mkdir -p data logs uploads/profile-pictures backups && \
     chown -R node:node data logs uploads backups

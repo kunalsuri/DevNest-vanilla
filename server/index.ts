@@ -10,7 +10,7 @@ import logger from "./logger";
 import { env } from "./env";
 
 // Server startup timestamp to help invalidate stale sessions
-export const SERVER_START_TIME = new Date();
+export { SERVER_START_TIME } from "./server-start-time";
 
 const app = express();
 

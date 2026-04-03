@@ -1,10 +1,5 @@
 {
-  "jwt": {
-    "accessTokenSecret": "dev-access-secret-change-in-production",
-    "refreshTokenSecret": "dev-refresh-secret-change-in-production",
-    "accessTokenExpiresIn": "15m",
-    "refreshTokenExpiresIn": "7d"
-  },
+  "_comment": "Non-secret runtime defaults. All secrets (JWT, session, etc.) MUST be supplied via environment variables. See .env.example.",
   "security": {
     "bcryptRounds": 12,
     "csrfTokenLength": 24,

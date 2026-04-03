@@ -30,6 +30,9 @@ yarn-error.log*
 logs/combined.log
 logs/combined.log
 
+# Sensitive runtime artifacts
+cookies.txt
+
 # Runtime data
 pids
 *.pid

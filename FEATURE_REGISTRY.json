@@ -1,6 +1,6 @@
 {
   "_comment": "Machine-readable registry of all implemented features. Update this file after each feature is implemented.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "lastUpdated": "2026-04-04",
   "features": [
     {
@@ -133,13 +133,14 @@
     {
       "id": "admin-panel",
       "name": "Admin Panel",
-      "description": "Server-side admin API for user management, role control, and audit log access.",
+      "description": "Server-side admin API and React admin UI for user management, role control, and audit log access.",
       "status": "implemented",
-      "notes": "Server API implemented. Client-side admin UI is still pending.",
       "server": {
         "routes": [
           "GET    /api/admin/users",
           "GET    /api/admin/users/:id",
+          "POST   /api/admin/users",
+          "PATCH  /api/admin/users/:id",
           "PATCH  /api/admin/users/:id/role",
           "DELETE /api/admin/users/:id",
           "GET    /api/admin/stats",
@@ -147,7 +148,30 @@
         ],
         "services": ["server/api/admin-routes.ts"]
       },
-      "tests": [],
+      "client": {
+        "pages": ["client/src/pages/admin-users-page.tsx"],
+        "hooks": ["client/src/hooks/use-admin-access.tsx"]
+      },
+      "tests": ["tests/unit/server/admin.test.ts"],
+      "lastUpdated": "2026-04-04"
+    },
+    {
+      "id": "feature-flag-admin-api",
+      "name": "Feature Flags Admin API",
+      "description": "Admin-only HTTP API for runtime create/update/delete/toggle of feature flags without restarting the server.",
+      "status": "implemented",
+      "server": {
+        "routes": [
+          "GET    /api/admin/feature-flags",
+          "GET    /api/admin/feature-flags/:key",
+          "POST   /api/admin/feature-flags",
+          "PUT    /api/admin/feature-flags/:key",
+          "PATCH  /api/admin/feature-flags/:key",
+          "DELETE /api/admin/feature-flags/:key"
+        ],
+        "services": ["server/api/feature-flag-routes.ts"]
+      },
+      "tests": ["tests/unit/server/feature-flag-admin.test.ts"],
       "lastUpdated": "2026-04-04"
     },
     {
@@ -158,7 +182,7 @@
       "server": {
         "services": ["server/services/audit-log-service.ts"]
       },
-      "tests": [],
+      "tests": ["tests/unit/server/audit-log.test.ts"],
       "lastUpdated": "2026-04-04"
     },
     {
@@ -178,7 +202,7 @@
           "server/api/notification-routes.ts"
         ]
       },
-      "tests": [],
+      "tests": ["tests/unit/server/notification.test.ts"],
       "lastUpdated": "2026-04-04"
     },
     {
@@ -217,13 +241,25 @@
       "lastUpdated": "2026-04-03"
     }
   ],
-  "pending": [
+  "infrastructure": [
     {
-      "id": "admin-ui",
-      "name": "Admin Panel — Client UI",
-      "description": "React admin dashboard for user management and audit log viewing.",
-      "priority": "HIGH"
+      "id": "staging-config",
+      "name": "Staging Environment Config",
+      "description": ".env.staging.example with staging-appropriate defaults.",
+      "status": "implemented",
+      "files": [".env.staging.example"],
+      "lastUpdated": "2026-04-04"
     },
+    {
+      "id": "cd-pipeline",
+      "name": "CD Pipeline",
+      "description": "GitHub Actions deploy workflow with staging and production environments, manual dispatch, and health-check verification.",
+      "status": "implemented",
+      "files": [".github/workflows/deploy.yml"],
+      "lastUpdated": "2026-04-04"
+    }
+  ],
+  "pending": [
     {
       "id": "email-delivery",
       "name": "Email Delivery",

@@ -8,6 +8,7 @@ import { handleHealthCheck, handleReadinessCheck } from "./health";
 import { setupAdminRoutes } from "./api/admin-routes";
 import { setupNotificationRoutes } from "./api/notification-routes";
 import { setupSubscriptionRoutes } from "./api/subscription-routes";
+import { setupFeatureFlagAdminRoutes } from "./api/feature-flag-routes";
 import { featureFlagService } from "./services";
 import logger from "./logger";
 
@@ -28,6 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAdminRoutes(app);
   setupNotificationRoutes(app);
   setupSubscriptionRoutes(app);
+  setupFeatureFlagAdminRoutes(app);
 
   // Setup logging endpoints for browser log persistence
   app.post("/api/logs", handleLogSubmission);
