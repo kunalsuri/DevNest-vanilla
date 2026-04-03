@@ -30,16 +30,6 @@
     "expiresAt": "2026-04-10T22:51:44.309Z"
   },
   {
-    "sessionId": "e7f1c006d7204f4c44d6b274a7418e397f2016a39d1dbab1ff425596dee46fe9",
-    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
-    "refreshTokenHash": "959b273baff9458b492714eb91f298c3d2755a096404bd74c0a1ee2b7e8a2ee8",
-    "csrfTokenHash": "05f356d4ae04c9d57b9110634706d58b030b4fd7006a0246c397f45b8b72988e",
-    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
-    "ip": "127.0.0.1",
-    "createdAt": "2026-04-03T22:55:09.857Z",
-    "expiresAt": "2026-04-10T22:55:09.857Z"
-  },
-  {
     "sessionId": "f5b326bc5bd1e02dde4a4025a0f2aea5aa8e66e25aa6a3448407b7883ae136f2",
     "userId": "4de2c4d4-64a1-4c52-a997-d32a34493294",
     "refreshTokenHash": "3d56dd224be0f385edaf7673cb4d49f5ca52b49b191b729c54df340f127c9d6f",
@@ -118,5 +108,27 @@
     "csrfTokenHash": "40cf93a869951463bfe14434615632289dbc4a66ae515ef4b44fa922550268ef",
     "createdAt": "2026-04-03T23:17:16.370Z",
     "expiresAt": "2026-04-10T23:17:16.370Z"
+  },
+  {
+    "sessionId": "0a6ac22a5bfc68eb4273bb7465c7dfe5011ee52bac573168d4d07cc509e62034",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "1c226e924cd4cbba053a8b3255728ce51cb9cd8ea9139ec4cd4520ed54012e71",
+    "csrfTokenHash": "8dd499c97845ceffea1041d800887378f10c4c3fd85bb689ccb6a1fe4034797c",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2026-04-03T23:25:13.192Z",
+    "expiresAt": "2026-04-10T23:25:13.192Z",
+    "revokedAt": "2026-04-03T23:28:25.771Z"
+  },
+  {
+    "sessionId": "692372b04ab41698dce969a78f45ae38e59a4dc739574ce9dcf1c8a33e94fe33",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "53b9ba4a4b0493dfe3ee02b3437050dcfbc93dfbb8ef0d14236a0d398ca9aaf9",
+    "csrfTokenHash": "1f5b5151d2c2ec80e773735d8c3fe95eba7a8c8eaa389c15886eaedf2f09e204",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2026-04-03T23:28:27.943Z",
+    "expiresAt": "2026-04-10T23:28:27.943Z",
+    "revokedAt": "2026-04-03T23:29:45.494Z"
   }
 ]
