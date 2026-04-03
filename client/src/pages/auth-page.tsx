@@ -15,7 +15,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Code2, Rocket, Github, Mail, Key, Zap } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  Code2,
+  Rocket,
+  Github,
+  Mail,
+  Key,
+  ShieldCheck,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -177,6 +186,21 @@ export default function AuthPage() {
     }
   };
 
+  /** Quick-fill and submit as the admin account (dev/test helper) */
+  const onAdminSignIn = async () => {
+    loginForm.setValue("username", "admin");
+    loginForm.setValue("password", "Admin123!");
+    try {
+      await loginMutation.mutateAsync({
+        username: "admin",
+        password: "Admin123!",
+      });
+      setLocation("/admin/users");
+    } catch {
+      // If admin credentials differ, surface the toast from the mutation
+    }
+  };
+
   const onRegister = async (data: RegisterFormData) => {
     try {
       await registerMutation.mutateAsync(data);
@@ -197,23 +221,6 @@ export default function AuthPage() {
   const onPasswordResetConfirm = async (data: PasswordResetConfirmData) => {
     try {
       await passwordResetConfirmMutation.mutateAsync(data);
-    } catch (error) {
-      // Error handled by mutation onError
-    }
-  };
-
-  const onDemoLogin = async () => {
-    try {
-      // Fill the form with demo credentials
-      loginForm.setValue("username", "admin");
-      loginForm.setValue("password", "admin123");
-
-      // Trigger login with demo credentials
-      await loginMutation.mutateAsync({
-        username: "admin",
-        password: "admin123",
-      });
-      setLocation("/");
     } catch (error) {
       // Error handled by mutation onError
     }
@@ -462,23 +469,6 @@ export default function AuthPage() {
                       </form>
                     </Form>
 
-                    {/* Demo Login Button */}
-                    <div className="mt-4">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        className="w-full"
-                        onClick={onDemoLogin}
-                        disabled={loginMutation.isPending}
-                        data-testid="button-demo-login"
-                      >
-                        <Zap className="w-4 h-4 mr-2" />
-                        {loginMutation.isPending
-                          ? "Signing in..."
-                          : "Demo Login (One Click)"}
-                      </Button>
-                    </div>
-
                     <div className="relative my-4">
                       <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-border"></div>
@@ -498,6 +488,37 @@ export default function AuthPage() {
                       <Github className="w-4 h-4 mr-2" />
                       GitHub
                     </Button>
+
+                    {/* Dev / tester quick-access */}
+                    <div className="mt-3">
+                      <div className="relative mb-3">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-dashed border-border"></div>
+                        </div>
+                        <div className="relative flex justify-center text-xs">
+                          <span className="px-2 bg-background text-muted-foreground">
+                            Testing shortcuts
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="w-full gap-2"
+                        onClick={onAdminSignIn}
+                        disabled={loginMutation.isPending}
+                        data-testid="button-admin-signin"
+                      >
+                        <ShieldCheck className="w-4 h-4" />
+                        Admin Sign In
+                        <Badge
+                          variant="outline"
+                          className="ml-auto text-xs font-normal"
+                        >
+                          admin
+                        </Badge>
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>

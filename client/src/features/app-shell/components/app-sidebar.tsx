@@ -16,11 +16,11 @@ import {
 } from "@/components/ui/sidebar";
 import { useJWTAuth } from "@/features/auth";
 import { navigationConfig, bottomNavItems } from "../config/navigation";
-import { Search, LogOut } from "lucide-react";
+import { Search, LogOut, Users } from "lucide-react";
 
 export function AppSidebar() {
   const [location] = useLocation();
-  const { logoutMutation } = useJWTAuth();
+  const { logoutMutation, hasRole } = useJWTAuth();
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -85,6 +85,32 @@ export function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
+
+      {/* Admin section — only visible to admin role */}
+      {hasRole("admin") && (
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location === "/admin/users"}
+                    tooltip="User Management"
+                    data-testid="link-admin-users"
+                  >
+                    <Link href="/admin/users">
+                      <Users />
+                      <span>User Management</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      )}
 
       <SidebarFooter>
         <SidebarMenu>

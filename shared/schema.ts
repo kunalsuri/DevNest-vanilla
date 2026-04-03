@@ -1,5 +1,11 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  varchar,
+  timestamp,
+  integer,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -15,6 +21,12 @@ export const users = pgTable("users", {
   profilePicture: text("profile_picture"),
   role: text("role").notNull().default("user"), // admin, user
   createdAt: timestamp("created_at").defaultNow(),
+  // Professional profile fields
+  age: integer("age"),
+  officeLocation: text("office_location"),
+  position: text("position"),
+  department: text("department"),
+  phone: text("phone"),
 });
 
 export const passwordResetTokens = pgTable("password_reset_tokens", {

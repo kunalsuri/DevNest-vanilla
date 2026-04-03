@@ -36,6 +36,21 @@ pids
 *.seed
 *.pid.lock
 
+# User data files (sensitive — never commit)
+data/users.json
+data/sessions.json
+data/password_reset_tokens.json
+data/preferences.json
+data/notifications.json
+data/subscriptions.json
+data/audit-log.jsonl
+
+# Uploaded files
+uploads/
+
+# Data backups
+backups/
+
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov

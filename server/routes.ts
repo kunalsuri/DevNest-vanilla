@@ -5,11 +5,18 @@ import { setupJWTAuthRoutes } from "./auth/jwt-auth-routes";
 import { sessionManager } from "./auth/session-manager";
 import { handleLogSubmission, handleLogRetrieval } from "./logging-endpoint";
 import { handleHealthCheck, handleReadinessCheck } from "./health";
+import { setupAdminRoutes } from "./api/admin-routes";
+import { setupNotificationRoutes } from "./api/notification-routes";
+import { setupSubscriptionRoutes } from "./api/subscription-routes";
+import { featureFlagService } from "./services";
 import logger from "./logger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Ensure session manager is ready
   await sessionManager.ready();
+
+  // Load persisted feature flags (falls back to defaults if file missing)
+  await featureFlagService.ready();
 
   // Health check endpoints (no auth required)
   app.get("/health", handleHealthCheck);
@@ -18,6 +25,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup API routes
   setupJWTAuthRoutes(app);
   setupProfile(app);
+  setupAdminRoutes(app);
+  setupNotificationRoutes(app);
+  setupSubscriptionRoutes(app);
 
   // Setup logging endpoints for browser log persistence
   app.post("/api/logs", handleLogSubmission);

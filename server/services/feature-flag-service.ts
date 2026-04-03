@@ -11,6 +11,8 @@
  * - Role-based access
  */
 
+import fs from "node:fs/promises";
+import path from "node:path";
 import logger from "../logger";
 
 export interface FeatureFlag {
@@ -40,9 +42,51 @@ export interface FeatureFlagContext {
 
 class FeatureFlagService {
   private readonly flags: Map<string, FeatureFlag> = new Map();
+  private readonly flagsFile = path.resolve(
+    process.cwd(),
+    "data",
+    "feature-flags.json",
+  );
 
   constructor() {
     this.initializeDefaultFlags();
+  }
+
+  /**
+   * Load persisted flags from disk, falling back to defaults.
+   * Call once during server startup.
+   */
+  async ready(): Promise<void> {
+    try {
+      const raw = await fs.readFile(this.flagsFile, "utf-8");
+      const stored: FeatureFlag[] = JSON.parse(raw);
+      this.flags.clear();
+      for (const flag of stored) {
+        this.flags.set(flag.key, flag);
+      }
+      logger.info("Feature flags loaded from file", {
+        count: this.flags.size,
+      });
+    } catch (err: any) {
+      if (err.code !== "ENOENT") {
+        logger.warn("Could not load feature-flags.json, using defaults", {
+          error: err.message,
+        });
+      }
+      // Keep the defaults already set by initializeDefaultFlags()
+    }
+  }
+
+  private async saveFlags(): Promise<void> {
+    try {
+      await fs.mkdir(path.dirname(this.flagsFile), { recursive: true });
+      const arr = Array.from(this.flags.values());
+      await fs.writeFile(this.flagsFile, JSON.stringify(arr, null, 2), "utf-8");
+    } catch (err) {
+      logger.error("Failed to persist feature flags", {
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
   }
 
   /**
@@ -168,6 +212,7 @@ class FeatureFlagService {
       flagKey: flag.key,
       enabled: flag.enabled,
     });
+    void this.saveFlags();
   }
 
   /**
@@ -177,6 +222,7 @@ class FeatureFlagService {
     const deleted = this.flags.delete(flagKey);
     if (deleted) {
       logger.info("Feature flag removed", { flagKey });
+      void this.saveFlags();
     }
     return deleted;
   }

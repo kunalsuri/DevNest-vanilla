@@ -4,6 +4,7 @@ import { validateAccessToken, validateCSRF } from "./auth/auth-middleware";
 import { z } from "zod";
 import path from "node:path";
 import fs from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import logger from "./logger";
 import { userService } from "./services";
 import {
@@ -53,11 +54,10 @@ const upload = multer({
         .then(() => cb(null, uploadDir))
         .catch((err) => cb(err, uploadDir));
     },
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname);
-      const jwtReq = req as Request & { jwtUser?: { userId: string } };
-      const filename = `${jwtReq.jwtUser?.userId || "unknown"}_${Date.now()}${ext}`;
-      cb(null, filename);
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname).toLowerCase();
+      // Use a fully opaque UUID filename to prevent user ID enumeration
+      cb(null, `${randomUUID()}${ext}`);
     },
   }),
   limits: {

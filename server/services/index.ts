@@ -22,3 +22,11 @@ export {
   type FeatureFlag,
   type FeatureFlagContext,
 } from "./feature-flag-service";
+export { auditLogService, type AuditEntry } from "./audit-log-service";
+export { notificationService, type Notification } from "./notification-service";
+export {
+  subscriptionService,
+  type Plan,
+  type Subscription,
+  PLANS,
+} from "./subscription-service";

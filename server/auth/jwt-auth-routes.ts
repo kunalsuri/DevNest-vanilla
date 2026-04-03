@@ -12,6 +12,7 @@ import {
   validateLogin,
   handleValidationErrors,
 } from "../middleware/validation";
+import { validateAccessToken, requireAdmin } from "./auth-middleware";
 
 /** Helper: set HTTP-only refresh token + JS-readable CSRF cookies */
 function setAuthCookies(
@@ -310,6 +311,8 @@ export function setupJWTAuthRoutes(app: Express): void {
   // Cleanup expired sessions endpoint (admin only)
   app.post(
     "/api/auth/cleanup-sessions",
+    validateAccessToken,
+    requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { sessionManager } = await import("./session-manager");

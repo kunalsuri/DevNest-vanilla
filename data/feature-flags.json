@@ -1,0 +1,44 @@
+[
+  {
+    "key": "enhanced_logging",
+    "name": "Enhanced Logging",
+    "description": "Enable detailed request/response logging",
+    "enabled": true,
+    "rolloutPercentage": 100,
+    "environments": [
+      "development"
+    ]
+  },
+  {
+    "key": "new_profile_ui",
+    "name": "New Profile UI",
+    "description": "Enable redesigned profile interface",
+    "enabled": false,
+    "rolloutPercentage": 25,
+    "enabledForRoles": [
+      "admin"
+    ]
+  },
+  {
+    "key": "beta_features",
+    "name": "Beta Features",
+    "description": "Access to experimental beta features",
+    "enabled": false,
+    "enabledForRoles": [
+      "admin",
+      "beta_tester"
+    ]
+  },
+  {
+    "key": "flag1",
+    "name": "Flag 1",
+    "description": "Test",
+    "enabled": true
+  },
+  {
+    "key": "flag2",
+    "name": "Flag 2",
+    "description": "Test",
+    "enabled": false
+  }
+]

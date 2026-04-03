@@ -1024,5 +1024,95 @@
     "twoFactorEnabled": true,
     "autoLogout": true,
     "theme": "dark"
+  },
+  {
+    "userId": "eaa8452b-4a54-4af7-a7dd-f87a693eef12",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "eacb1b1b-38fe-4813-9064-500a0d5a21cf",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "aa6e6c7f-d8bc-4ced-9032-30d48a4d2744",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "93b41359-7ab3-4c8b-bb57-c1e5082f4674",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "bfdce244-a69a-4a32-990c-dbd1ccfdd23c",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "df6cc395-bcdd-476b-9ca5-4fb7e9f37de9",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "de2ac2cf-6bae-471a-a1cf-2e787771f3a4",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "6630bec0-8387-44f7-92ce-59c88411464c",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "6c4bba7f-306f-48f0-aec3-3ebba004e803",
+    "emailNotifications": false,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": false,
+    "autoLogout": true,
+    "theme": "dark"
+  },
+  {
+    "userId": "d92cd9b4-2cfd-49f1-a80b-7b4fcd90251f",
+    "emailNotifications": true,
+    "pushNotifications": true,
+    "marketingEmails": false,
+    "twoFactorEnabled": true,
+    "autoLogout": true,
+    "theme": "dark"
   }
 ]

@@ -45,13 +45,10 @@ export function ObservabilityDemo() {
             </div>
             <Alert>
               <Info className="h-4 w-4" />
-              <AlertTitle>Demo Access</AlertTitle>
+              <AlertTitle>Admin Access Required</AlertTitle>
               <AlertDescription>
-                Use the admin credentials to access the dashboard:
-                <br />
-                <strong>Username:</strong> admin
-                <br />
-                <strong>Password:</strong> admin123
+                Sign in with an administrator account to access this dashboard.
+                Contact your system administrator if you need access.
               </AlertDescription>
             </Alert>
           </CardContent>

@@ -28,6 +28,11 @@ const ProfilePage = lazy(() => import("@/pages/profile-page"));
 const PreferencesPage = lazy(() => import("@/pages/preferences-page"));
 const WorkspacesPage = lazy(() => import("@/pages/workspaces-page"));
 const HelpPage = lazy(() => import("@/pages/help-page"));
+const AdminUsersPage = lazy(() =>
+  import("@/pages/admin-users-page").then((mod) => ({
+    default: mod.AdminUsersPage,
+  })),
+);
 const NotFound = lazy(() => import("@/pages/not-found"));
 
 // Loading fallback component
@@ -70,6 +75,7 @@ function Router() {
           />
           <ProtectedRoute path="/workspaces" component={WorkspacesPage} />
           <ProtectedRoute path="/help" component={HelpPage} />
+          <ProtectedRoute path="/admin/users" component={AdminUsersPage} />
           <Route component={NotFound} />
         </Switch>
       </Suspense>

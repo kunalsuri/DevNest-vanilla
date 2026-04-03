@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files (secrets)
+.env
+.env.local
+.env.production
+
+# Version control
+.git/
+.gitignore
+
+# Editor configs
+.vscode/
+.DS_Store
+
+# Test results and coverage
+tests/*-test-results-*.json
+tests/*-test-results-*.md
+tests/*-coverage/
+coverage/
+
+# Logs (mounted as volume)
+logs/
+
+# Uploaded files (mounted as volume)
+uploads/
+
+# Backups
+backups/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# CI / GitHub
+.github/
+
+# Scripts not needed in container
+scripts/
+
+# Docs
+docs/
+artifacts/
+migration-2026/
