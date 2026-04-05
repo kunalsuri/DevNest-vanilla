@@ -41,6 +41,9 @@ export const users = pgTable("users", {
   position: text("position"),
   department: text("department"),
   phone: text("phone"),
+  // Account lockout fields
+  failedLoginAttempts: integer("failed_login_attempts").default(0),
+  lockedUntil: timestamp("locked_until"),
 });
 
 export const passwordResetTokens = pgTable("password_reset_tokens", {

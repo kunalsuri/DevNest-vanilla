@@ -213,6 +213,8 @@ export class FileStorage implements IStorage {
       position: null,
       department: null,
       phone: null,
+      failedLoginAttempts: 0,
+      lockedUntil: null,
     };
     this.users.set(id, user);
     await this.saveUsers();

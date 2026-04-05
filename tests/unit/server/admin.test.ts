@@ -7,6 +7,15 @@ import { storage } from "@server/storage";
 import { setupAdminRoutes } from "@server/api/admin-routes";
 import { generateTokenPair } from "@server/auth/jwt-utils";
 
+// Allow CSRF validation to pass in unit tests by default
+vi.mock("@server/auth/session-manager", () => ({
+  sessionManager: {
+    getSession: vi.fn().mockResolvedValue(null),
+    validateCSRFToken: vi.fn().mockResolvedValue(true),
+    revokeSession: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 // ---------------------------------------------------------------------------
 // Helper: build a minimal Express app with admin routes wired up
 // ---------------------------------------------------------------------------
@@ -148,6 +157,7 @@ describe("Admin Routes", () => {
       const res = await request(app)
         .patch("/api/admin/users/some-id/role")
         .set("Authorization", `Bearer ${adminToken()}`)
+        .set("X-CSRF-Token", "test-csrf-token")
         .send({ role: "superuser" });
       expect(res.status).toBe(400);
     });

@@ -158,14 +158,35 @@ export class AuthService {
       throw new Error("Invalid credentials");
     }
 
+    // Check account lockout
+    if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
+      const retryAfter = Math.ceil(
+        (new Date(user.lockedUntil).getTime() - Date.now()) / 60000,
+      );
+      throw new Error(`Account locked. Try again in ${retryAfter} minute(s).`);
+    }
+
     // Verify password
     const isValidPassword = await comparePassword(
       credentials.password,
       user.password,
     );
     if (!isValidPassword) {
+      const attempts = (user.failedLoginAttempts ?? 0) + 1;
+      const lockUntil =
+        attempts >= 10 ? new Date(Date.now() + 30 * 60 * 1000) : undefined;
+      await storage.updateUser(user.id, {
+        failedLoginAttempts: attempts,
+        ...(lockUntil ? { lockedUntil: lockUntil } : {}),
+      });
       throw new Error("Invalid credentials");
     }
+
+    // Reset lockout counters on successful login
+    await storage.updateUser(user.id, {
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+    });
 
     // Generate temporary refresh token for session creation
     const { refreshToken } = generateTokenPair({

@@ -49,7 +49,7 @@ app.use(
         frameSrc: ["'none'"],
       },
     },
-    crossOriginEmbedderPolicy: false, // Disable for development compatibility
+    crossOriginEmbedderPolicy: env.NODE_ENV === "production",
     crossOriginResourcePolicy: { policy: "cross-origin" },
     hsts: {
       maxAge: 31536000, // 1 year
@@ -66,9 +66,15 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, Postman, etc.)
+      // Allow null-origin only in non-production (Postman, curl, local dev)
       if (!origin) {
-        return callback(null, true);
+        if (env.NODE_ENV !== "production") {
+          return callback(null, true);
+        }
+        logger.warn("CORS blocked null-origin request in production");
+        return callback(
+          new Error("Requests without an origin are not allowed in production"),
+        );
       }
 
       if (env.ALLOWED_ORIGINS.includes(origin)) {
@@ -139,6 +145,7 @@ const authLimiter = rateLimit({
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 app.use("/api/auth/refresh", authLimiter);
+app.use("/api/auth/password-reset", authLimiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" })); // Add size limit for security
@@ -209,11 +216,27 @@ app.use((req, res, next) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
 
-      // Log error details with Winston
+      // Log error details with Winston — sanitize sensitive fields first
+      const SENSITIVE_FIELDS = [
+        "password",
+        "currentPassword",
+        "newPassword",
+        "confirmPassword",
+        "token",
+      ];
+      const sanitizedBody = req.body ? { ...req.body } : undefined;
+      if (sanitizedBody) {
+        SENSITIVE_FIELDS.forEach((f) => {
+          if (f in sanitizedBody) {
+            sanitizedBody[f] = "[FILTERED]";
+          }
+        });
+      }
+
       logger.error(`Error ${status} on ${req.method} ${req.path}`, {
         message: err.message,
         stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-        body: req.body,
+        body: sanitizedBody,
         statusCode: status,
         method: req.method,
         path: req.path,

@@ -86,9 +86,6 @@ const envSchema = z.object({
     .optional()
     .or(z.literal(""))
     .transform((val) => val || undefined),
-
-  // Optional Replit configuration
-  REPL_ID: z.string().optional(),
 });
 
 // Export the validated and typed environment variables

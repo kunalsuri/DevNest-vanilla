@@ -2,8 +2,11 @@ import { Express, Request, Response, static as expressStatic } from "express";
 import multer from "multer";
 import { validateAccessToken, validateCSRF } from "./auth/auth-middleware";
 import { z } from "zod";
-import path from "node:path";
+import path, { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import fs from "node:fs/promises";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 import { randomUUID } from "node:crypto";
 import logger from "./logger";
 import { userService } from "./services";
@@ -75,6 +78,14 @@ const upload = multer({
     }
   },
 });
+
+const preferencesSchema = z
+  .object({
+    theme: z.enum(["light", "dark", "system"]).optional(),
+    notifications: z.boolean().optional(),
+    language: z.string().max(10).optional(),
+  })
+  .strict();
 
 const profileUpdateSchema = z.object({
   firstName: z.string().min(1).max(50).optional(),
@@ -248,10 +259,18 @@ export function setupProfile(app: Express) {
     validateAccessToken,
     validateCSRF,
     async (req, res) => {
+      const result = preferencesSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({
+          message: "Validation error",
+          code: "VALIDATION_ERROR",
+          errors: result.error.issues,
+        });
+      }
       try {
         const preferences = await userService.updateUserPreferences(
           req.jwtUser!.userId,
-          req.body,
+          result.data,
         );
         res.json(preferences);
       } catch (error) {
@@ -264,6 +283,14 @@ export function setupProfile(app: Express) {
     },
   );
 
-  // Serve uploaded profile pictures
-  app.use("/uploads", expressStatic("uploads"));
+  // Serve uploaded profile pictures from an absolute path to prevent path traversal
+  app.use(
+    "/uploads",
+    expressStatic(join(__dirname, "..", "uploads"), {
+      dotfiles: "deny",
+      index: false,
+      etag: true,
+      maxAge: "1d",
+    }),
+  );
 }

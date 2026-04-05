@@ -57,9 +57,7 @@ describe("Health Check Endpoints", () => {
       if (response.body.checks) {
         // Verify structure when checks are present
         if (response.body.checks.memory) {
-          expect(response.body.checks.memory).toHaveProperty("used");
-          expect(response.body.checks.memory).toHaveProperty("total");
-          expect(response.body.checks.memory).toHaveProperty("percentage");
+          expect(["ok", "high"]).toContain(response.body.checks.memory);
         }
       }
     });

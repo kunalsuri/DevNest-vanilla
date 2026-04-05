@@ -7,7 +7,6 @@ import {
 } from "./jwt-utils";
 import fs from "node:fs/promises";
 import path from "node:path";
-import { SERVER_START_TIME } from "../server-start-time";
 import logger from "../logger";
 
 export class SessionManager {
@@ -136,13 +135,12 @@ export class SessionManager {
       return null;
     }
 
-    // Check if session is expired, revoked, or created before server restart
+    // Check if session is expired or revoked
     const now = new Date();
     const isExpired = session.expiresAt <= now;
     const isRevoked = !!session.revokedAt;
-    const isStale = session.createdAt < SERVER_START_TIME;
 
-    if (isExpired || isRevoked || isStale) {
+    if (isExpired || isRevoked) {
       await this.revokeSession(sessionId);
       return null;
     }
@@ -264,16 +262,6 @@ export class SessionManager {
     if (cleaned) {
       await this.saveSessions();
     }
-  }
-
-  /**
-   * Get CSRF token for session
-   */
-  getCSRFToken(session: Session): string {
-    // Generate a new CSRF token based on the stored hash
-    // In a real implementation, you'd want to return the actual token
-    // For now, we'll generate based on session data
-    return generateSecureToken(24);
   }
 
   /**

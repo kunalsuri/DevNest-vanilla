@@ -10,7 +10,7 @@ DevNest is a feature-rich web application that demonstrates modern full-stack de
 
 ### 🚀 Core Features
 
-- **Modern React Frontend**: Built with React 18, TypeScript, and Vite for lightning-fast development
+- **Modern React Frontend**: Built with React 19, TypeScript, and Vite for lightning-fast development
 - **Express.js Backend**: Robust server-side architecture with middleware and routing
 - **JWT Authentication**: Secure authentication system with token-based access control
 - **User Management**: Complete user registration, login, and profile management
@@ -46,7 +46,7 @@ DevNest is a feature-rich web application that demonstrates modern full-stack de
 
 ### Frontend
 
-- **React 18** - Modern React with hooks and concurrent features
+- **React 19** - Modern React with hooks and concurrent features
 - **TypeScript** - Type-safe development
 - **Vite** - Fast build tool and development server
 - **Tailwind CSS** - Utility-first CSS framework
@@ -79,9 +79,9 @@ DevNest is a feature-rich web application that demonstrates modern full-stack de
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn package manager
-- PostgreSQL database (for production)
+- Node.js 20+
+- npm 10+ package manager
+- PostgreSQL database (optional — file-based JSON storage is the default in development)
 
 ### Quick Start
 
@@ -262,19 +262,38 @@ For detailed testing documentation, see [`tests/README.md`](tests/README.md).
 
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
+- `POST /api/auth/logout` - User logout (current session)
+- `POST /api/auth/logout-all` - Revoke all sessions
+- `POST /api/auth/refresh` - Rotate access + refresh tokens
 - `GET /api/auth/me` - Get current user
+- `POST /api/auth/password-reset/request` - Request password reset email
+- `POST /api/auth/password-reset/confirm` - Confirm password reset with token
 
-### User Management
+### Profile
 
-- `GET /api/user/profile` - Get user profile
-- `PUT /api/user/profile` - Update user profile
-- `POST /api/user/preferences` - Update user preferences
+- `GET /api/profile` - Get user profile
+- `PUT /api/profile` - Update user profile
+- `PUT /api/profile/preferences` - Update user preferences
+- `POST /api/profile/upload-picture` - Upload profile picture
+- `DELETE /api/profile` - Delete account
 
 ### Admin
 
-- `GET /api/admin/users` - List all users (admin only)
+- `GET /api/admin/users` - List users with pagination (admin only)
 - `POST /api/admin/users` - Create user (admin only)
+- `GET /api/admin/users/:id` - Get user by ID (admin only)
+- `PATCH /api/admin/users/:id` - Update user (admin only)
+- `PATCH /api/admin/users/:id/role` - Update user role (admin only)
+- `DELETE /api/admin/users/:id` - Delete user (admin only)
+- `GET /api/admin/stats` - System statistics (admin only)
+- `GET /api/admin/audit-log` - Recent audit log entries (admin only)
+
+### Security Features
+
+- **Helmet** — Content Security Policy, HSTS, and other HTTP security headers
+- **CSRF protection** — Per-session CSRF tokens required on all state-changing requests
+- **Rate limiting** — General API limiter + strict auth limiter (login, register, refresh, password-reset)
+- **Audit logging** — Append-only JSONL log of all privileged actions
 
 ## Contributing
 
@@ -351,23 +370,20 @@ npm run build
 
 Required environment variables for production:
 
-- `DATABASE_URL` - PostgreSQL connection string
-- `JWT_SECRET` - Secret key for JWT token signing
+- `DATABASE_URL` - PostgreSQL connection string (optional; omit to use file-based storage)
+- `JWT_ACCESS_SECRET` - Secret key for signing JWT access tokens
+- `JWT_REFRESH_SECRET` - Secret key for signing JWT refresh tokens
+- `SESSION_SECRET` - Secret for session CSRF hashing
 - `NODE_ENV=production`
 
 ### Docker Support
 
-```dockerfile
-# Example Dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY . .
-RUN npm run build
-EXPOSE 5000
-CMD ["npm", "start"]
+```bash
+docker build -t devnest .
+docker run --env-file .env -p 5000:5000 devnest
 ```
+
+The included `Dockerfile` uses `node:20-alpine` with a multi-stage build.
 
 ## License
 

@@ -110,6 +110,8 @@ export function JWTAuthProvider({
             position: null,
             department: null,
             phone: null,
+            failedLoginAttempts: null,
+            lockedUntil: null,
           };
           return user;
         }

@@ -37,11 +37,7 @@ interface HealthStatus {
   uptime: number;
   checks?: {
     sessionManager?: boolean;
-    memory?: {
-      used: number;
-      total: number;
-      percentage: number;
-    };
+    memory?: "ok" | "high";
   };
   error?: string;
 }
@@ -106,10 +102,12 @@ export async function handleReadinessCheck(
       health.checks.sessionManager = sessionCheck;
     }
 
-    // Check memory usage
+    // Check memory usage — expose only ok/high status, not raw figures
     const memoryCheck = checkMemory();
+    const memoryStatus: "ok" | "high" =
+      memoryCheck.percentage > 90 ? "high" : "ok";
     if (health.checks) {
-      health.checks.memory = memoryCheck;
+      health.checks.memory = memoryStatus;
     }
 
     // If any check fails, mark as unhealthy

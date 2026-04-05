@@ -224,6 +224,10 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 export function setupSwagger(app: Express): void {
+  if (env.NODE_ENV === "production") {
+    return;
+  }
+
   // Swagger UI
   app.use(
     "/api-docs",

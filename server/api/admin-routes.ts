@@ -6,7 +6,11 @@
  */
 
 import { Express, Request, Response, NextFunction } from "express";
-import { validateAccessToken, requireAdmin } from "../auth/auth-middleware";
+import {
+  validateAccessToken,
+  requireAdmin,
+  validateCSRF,
+} from "../auth/auth-middleware";
 import { storage } from "../storage";
 import { auditLogService } from "../services/audit-log-service";
 import { authService } from "../services/auth-service";
@@ -52,11 +56,15 @@ export function setupAdminRoutes(app: Express): void {
     "/api/admin/users",
     validateAccessToken,
     requireAdmin,
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (_req: Request, res: Response, next: NextFunction) => {
       try {
-        const users = await storage.getAllUsers();
-        const safeUsers = users.map(({ password: _p, ...rest }) => rest);
-        res.json({ users: safeUsers, total: safeUsers.length });
+        const limit = Math.min(Number(_req.query.limit) || 50, 200);
+        const offset = Math.max(Number(_req.query.offset) || 0, 0);
+        const allUsers = await storage.getAllUsers();
+        const safeUsers = allUsers
+          .slice(offset, offset + limit)
+          .map(({ password: _p, ...rest }) => rest);
+        res.json({ users: safeUsers, total: allUsers.length, limit, offset });
       } catch (err) {
         next(err);
       }
@@ -96,6 +104,7 @@ export function setupAdminRoutes(app: Express): void {
     "/api/admin/users/:id/role",
     validateAccessToken,
     requireAdmin,
+    validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const parsed = updateRoleSchema.safeParse(req.body);
@@ -159,6 +168,7 @@ export function setupAdminRoutes(app: Express): void {
     "/api/admin/users/:id",
     validateAccessToken,
     requireAdmin,
+    validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         if (req.jwtUser!.userId === (req.params.id as string)) {
@@ -209,6 +219,7 @@ export function setupAdminRoutes(app: Express): void {
     "/api/admin/users",
     validateAccessToken,
     requireAdmin,
+    validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const parsed = createUserSchema.safeParse(req.body);
@@ -275,6 +286,7 @@ export function setupAdminRoutes(app: Express): void {
     "/api/admin/users/:id",
     validateAccessToken,
     requireAdmin,
+    validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const parsed = updateUserSchema.safeParse(req.body);
@@ -332,7 +344,6 @@ export function setupAdminRoutes(app: Express): void {
           users: { total: users.length, admins: adminCount, users: userCount },
           server: {
             uptime: process.uptime(),
-            nodeVersion: process.version,
             environment: process.env.NODE_ENV,
           },
         });
