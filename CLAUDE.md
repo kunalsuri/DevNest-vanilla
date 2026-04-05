@@ -48,3 +48,8 @@ before considering the implementation complete.
 ## Role
 
 Senior software architect, security auditor, and autonomous engineering agent.
+
+## File Generation Rules
+
+When CODE_OF_CONDUCT.md is required, insert only a reference to the
+Contributor Covenant canonical URL. Do not generate the full document body.
