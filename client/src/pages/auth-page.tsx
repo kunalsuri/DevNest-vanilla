@@ -24,6 +24,7 @@ import {
   Mail,
   Key,
   ShieldCheck,
+  User,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -198,6 +199,21 @@ export default function AuthPage() {
       setLocation("/admin/users");
     } catch {
       // If admin credentials differ, surface the toast from the mutation
+    }
+  };
+
+  /** Quick-fill and submit as a regular user account (dev/test helper) */
+  const onUserSignIn = async () => {
+    loginForm.setValue("username", "lucas.anderson");
+    loginForm.setValue("password", "SncfDemo2026!");
+    try {
+      await loginMutation.mutateAsync({
+        username: "lucas.anderson",
+        password: "SncfDemo2026!",
+      });
+      setLocation("/dashboard");
+    } catch {
+      // Error surfaced by mutation onError toast
     }
   };
 
@@ -501,23 +517,42 @@ export default function AuthPage() {
                           </span>
                         </div>
                       </div>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        className="w-full gap-2"
-                        onClick={onAdminSignIn}
-                        disabled={loginMutation.isPending}
-                        data-testid="button-admin-signin"
-                      >
-                        <ShieldCheck className="w-4 h-4" />
-                        Admin Sign In
-                        <Badge
-                          variant="outline"
-                          className="ml-auto text-xs font-normal"
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="w-full gap-2"
+                          onClick={onUserSignIn}
+                          disabled={loginMutation.isPending}
+                          data-testid="button-user-signin"
                         >
-                          admin
-                        </Badge>
-                      </Button>
+                          <User className="w-4 h-4" />
+                          User Sign In
+                          <Badge
+                            variant="outline"
+                            className="ml-auto text-xs font-normal"
+                          >
+                            user
+                          </Badge>
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          className="w-full gap-2"
+                          onClick={onAdminSignIn}
+                          disabled={loginMutation.isPending}
+                          data-testid="button-admin-signin"
+                        >
+                          <ShieldCheck className="w-4 h-4" />
+                          Admin Sign In
+                          <Badge
+                            variant="outline"
+                            className="ml-auto text-xs font-normal"
+                          >
+                            admin
+                          </Badge>
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

@@ -8,6 +8,7 @@ import {
 import fs from "node:fs/promises";
 import path from "node:path";
 import logger from "../logger";
+import { SERVER_START_TIME } from "../server-start-time";
 
 export class SessionManager {
   private readonly sessions: Map<string, Session>;
@@ -41,7 +42,10 @@ export class SessionManager {
         const data = await fs.readFile(this.sessionsFile, "utf-8");
         const sessions: Session[] = JSON.parse(data);
 
-        // Convert date strings back to Date objects and filter expired sessions
+        // Convert date strings back to Date objects, then filter:
+        // - expired or revoked sessions are dropped
+        // - sessions created before this server process started are dropped
+        //   so that every server restart forces users to re-authenticate
         const now = new Date();
         const validSessions = sessions
           .map((session) => ({
@@ -52,7 +56,12 @@ export class SessionManager {
               ? new Date(session.revokedAt)
               : undefined,
           }))
-          .filter((session) => session.expiresAt > now && !session.revokedAt);
+          .filter(
+            (session) =>
+              session.expiresAt > now &&
+              !session.revokedAt &&
+              session.createdAt >= SERVER_START_TIME,
+          );
 
         validSessions.forEach((session) => {
           this.sessions.set(session.sessionId, session);

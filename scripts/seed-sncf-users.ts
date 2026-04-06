@@ -204,13 +204,16 @@ async function main() {
     };
 
     if (existingByUsername.has(seed.username)) {
-      // Upsert: update profile fields on existing record
+      // Upsert: update profile fields and reset password on existing record
       const existingUser = existingByUsername.get(seed.username);
       if (existingUser) {
-        Object.assign(existingUser, profileFields);
+        const hashed = await bcrypt.hash(SEED_PASSWORD, 12);
+        Object.assign(existingUser, { ...profileFields, password: hashed });
       }
       updated++;
-      console.log(`  [UPDATE] ${seed.username} — profile fields enriched`);
+      console.log(
+        `  [UPDATE] ${seed.username} — profile fields and password reset`,
+      );
     } else {
       // Insert new user
       const hashed = await bcrypt.hash(SEED_PASSWORD, 12);
