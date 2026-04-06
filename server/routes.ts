@@ -1,4 +1,4 @@
-import { type Express, static as expressStatic } from "express";
+import { type Express } from "express";
 import { createServer, type Server } from "node:http";
 import { setupProfile } from "./profile";
 import { setupJWTAuthRoutes } from "./auth/jwt-auth-routes";
@@ -10,6 +10,7 @@ import { setupNotificationRoutes } from "./api/notification-routes";
 import { setupSubscriptionRoutes } from "./api/subscription-routes";
 import { setupFeatureFlagAdminRoutes } from "./api/feature-flag-routes";
 import { featureFlagService } from "./services";
+import { validateAccessToken, requireAdmin } from "./auth/auth-middleware";
 import logger from "./logger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -31,12 +32,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupSubscriptionRoutes(app);
   setupFeatureFlagAdminRoutes(app);
 
-  // Setup logging endpoints for browser log persistence
-  app.post("/api/logs", handleLogSubmission);
-  app.get("/api/logs", handleLogRetrieval);
-
-  // Serve uploaded profile pictures
-  app.use("/uploads", expressStatic("uploads"));
+  // Setup logging endpoints for browser log persistence (auth required)
+  app.post("/api/logs", validateAccessToken, handleLogSubmission);
+  app.get("/api/logs", validateAccessToken, requireAdmin, handleLogRetrieval);
 
   // Start session cleanup interval
   startSessionCleanup();

@@ -183,8 +183,8 @@ export const validatePasswordUpdate: ValidationChain[] = [
     .withMessage("Current password is required"),
 
   body("newPassword")
-    .isLength({ min: 6, max: 128 })
-    .withMessage("New password must be between 6 and 128 characters")
+    .isLength({ min: 8, max: 128 })
+    .withMessage("New password must be between 8 and 128 characters")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage(
       "New password must contain at least one uppercase letter, one lowercase letter, and one number",

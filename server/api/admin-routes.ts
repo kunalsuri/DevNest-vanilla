@@ -36,7 +36,7 @@ const updateUserSchema = z.object({
 const createUserSchema = z.object({
   username: z.string().min(3).max(50),
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(8),
   firstName: z.string().min(1).max(50),
   lastName: z.string().min(1).max(50),
   role: z.enum(["user", "admin"]).default("user"),

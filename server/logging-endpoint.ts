@@ -39,6 +39,9 @@ interface LogEntry {
   metadata?: any;
 }
 
+const MAX_LOG_ENTRIES = 50;
+const MAX_MESSAGE_LENGTH = 2000;
+
 /**
  * POST /api/logs - Accept log entries from browser clients
  * Logs are processed through Winston for consistent server-side logging
@@ -51,13 +54,23 @@ export async function handleLogSubmission(req: Request, res: Response) {
       return res.status(400).json({ error: "Invalid log entries" });
     }
 
+    if (entries.length > MAX_LOG_ENTRIES) {
+      return res
+        .status(400)
+        .json({ error: `Maximum ${MAX_LOG_ENTRIES} log entries per request` });
+    }
+
     // Process each log entry through Winston
     for (const entry of entries) {
+      const message =
+        typeof entry.message === "string"
+          ? entry.message.slice(0, MAX_MESSAGE_LENGTH)
+          : "";
       const levelName = entry.levelName || getLevelName(entry.level);
       const logLevel = levelName.toLowerCase();
 
       // Log through Winston with client context
-      logger.log(logLevel as any, `[Client] ${entry.message}`, {
+      logger.log(logLevel as any, `[Client] ${message}`, {
         component: entry.component,
         source: "client",
         ...entry.metadata,
