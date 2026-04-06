@@ -788,5 +788,15 @@
     "csrfTokenHash": "958208f848d83220264e3c1bef483d08c889cd05a671c1caf692bb87d0ba51fe",
     "createdAt": "2026-04-05T22:54:47.345Z",
     "expiresAt": "2026-04-12T22:54:47.345Z"
+  },
+  {
+    "sessionId": "fc16250aefc15a35bb45e5fab475d2ffb732c4c95c9200d6213acb37c2ad8124",
+    "userId": "cde4b1be-76f3-4eaa-b9db-afcb9d235ce2",
+    "refreshTokenHash": "22e3ac75a8c741194d1c0ba899eca239f42937caac3009f2c46a201cff451073",
+    "csrfTokenHash": "c169fcc577914d71a62593d49c33cc08fb59625659ad0b81957131985689ce8e",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+    "ip": "127.0.0.1",
+    "createdAt": "2026-04-05T23:48:42.721Z",
+    "expiresAt": "2026-04-12T23:48:42.721Z"
   }
 ]
