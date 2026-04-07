@@ -170,6 +170,35 @@ export const validateProfileUpdate: ValidationChain[] = [
     .withMessage("Profile picture must be a valid URL")
     .isLength({ max: 500 })
     .withMessage("Profile picture URL must not exceed 500 characters"),
+
+  body("age")
+    .optional({ nullable: true })
+    .isInt({ min: 1, max: 120 })
+    .withMessage("Age must be a number between 1 and 120"),
+
+  body("officeLocation")
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage("Office location must not exceed 100 characters"),
+
+  body("position")
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage("Position must not exceed 100 characters"),
+
+  body("department")
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 100 })
+    .withMessage("Department must not exceed 100 characters"),
+
+  body("phone")
+    .optional({ nullable: true })
+    .trim()
+    .isLength({ max: 30 })
+    .withMessage("Phone number must not exceed 30 characters"),
 ];
 
 /**

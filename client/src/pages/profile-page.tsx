@@ -4,6 +4,7 @@ import {
   ProfileNameSection,
   AccountEmailSection,
   LinkedAccountsSection,
+  ProfessionalInfoSection,
 } from "@/features/user-profile/components";
 import { Separator } from "@/components/ui/separator";
 
@@ -27,6 +28,7 @@ export default function ProfilePage() {
 
         <ProfilePictureSection />
         <ProfileNameSection />
+        <ProfessionalInfoSection />
         <AccountEmailSection />
         <LinkedAccountsSection />
       </div>

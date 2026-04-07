@@ -91,6 +91,11 @@ const profileUpdateSchema = z.object({
   firstName: z.string().min(1).max(50).optional(),
   lastName: z.string().min(1).max(50).optional(),
   email: z.string().email().optional(),
+  age: z.number().int().min(1).max(120).optional().nullable(),
+  officeLocation: z.string().max(100).optional().nullable(),
+  position: z.string().max(100).optional().nullable(),
+  department: z.string().max(100).optional().nullable(),
+  phone: z.string().max(30).optional().nullable(),
 });
 
 export function setupProfile(app: Express) {
