@@ -707,41 +707,58 @@ export default function AuthPage() {
 
       {/* Right Side - Visual */}
       <div className="hidden lg:block relative w-0 flex-1">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-          <div className="text-center text-white space-y-6 max-w-md mx-auto px-8">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-secondary flex items-center justify-center">
+          {/* Decorative circles */}
+          <div className="absolute top-16 right-16 w-32 h-32 rounded-full bg-white/5 blur-xl" />
+          <div className="absolute bottom-24 left-16 w-48 h-48 rounded-full bg-white/5 blur-2xl" />
+
+          <div className="relative text-center text-white space-y-6 max-w-md mx-auto px-8">
             {activeTab === "login" ? (
               <>
                 <Code2 className="w-16 h-16 mx-auto opacity-90" />
-                <h3 className="text-2xl font-bold">
-                  Start Building Amazing Apps
-                </h3>
-                <p className="text-white/90">
-                  Access your dashboard to manage projects, configure settings,
-                  and collaborate with your team.
+                <h3 className="text-3xl font-bold">Welcome to DevNest</h3>
+                <p className="text-white/80 text-base leading-relaxed">
+                  Your full-stack launchpad. Sign in to access your dashboard,
+                  manage projects, and ship faster.
                 </p>
+                <div className="pt-4 space-y-3 text-left">
+                  {[
+                    "JWT authentication & refresh tokens",
+                    "Role-based access control (RBAC)",
+                    "Real-time observability & logging",
+                    "Production-grade security headers",
+                  ].map((feature) => (
+                    <div key={feature} className="flex items-center gap-3">
+                      <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                        <ShieldCheck className="w-3 h-3" />
+                      </div>
+                      <span className="text-sm text-white/90">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </>
             ) : (
               <>
                 <Rocket className="w-16 h-16 mx-auto opacity-90" />
-                <h3 className="text-2xl font-bold">
-                  Join the Developer Community
-                </h3>
-                <p className="text-white/90">
-                  Get started with DevNest and build your next project with our
-                  powerful monorepo template.
+                <h3 className="text-3xl font-bold">Build something great</h3>
+                <p className="text-white/80 text-base leading-relaxed">
+                  Join DevNest and start building your next project with a
+                  battle-tested monorepo template.
                 </p>
                 <div className="grid grid-cols-3 gap-4 pt-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold">5min</div>
-                    <div className="text-sm opacity-90">Setup Time</div>
+                    <div className="text-3xl font-bold">5 min</div>
+                    <div className="text-sm text-white/80 mt-1">To go live</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">100%</div>
-                    <div className="text-sm opacity-90">TypeScript</div>
+                    <div className="text-3xl font-bold">100%</div>
+                    <div className="text-sm text-white/80 mt-1">TypeScript</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold">0</div>
-                    <div className="text-sm opacity-90">Config Needed</div>
+                    <div className="text-3xl font-bold">30+</div>
+                    <div className="text-sm text-white/80 mt-1">
+                      UI Components
+                    </div>
                   </div>
                 </div>
               </>

@@ -1,6 +1,14 @@
 # DevNest
 
-Full-stack web app — React 19 + Express 5 + TypeScript. JWT auth, user management, admin dashboard, observability, dark mode.
+[![Node.js](https://img.shields.io/badge/node-%3E%3D20-brightgreen?logo=node.js)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Express](https://img.shields.io/badge/Express-5-000000?logo=express)](https://expressjs.com/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+
+A production-ready full-stack monorepo template. Spin up a complete app — React 19 frontend, Express 5 backend, JWT auth with RBAC, admin dashboard, dark mode, observability, and 30+ shadcn/ui components — in minutes.
+
+**What's included:** JWT auth · Role-based access control · Password reset flow · Admin user management · Audit logging · Dark/light theme · Responsive UI · Docker support · File-based storage (PostgreSQL optional)
 
 ## Quick Start
 

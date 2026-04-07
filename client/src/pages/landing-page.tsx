@@ -20,7 +20,6 @@ import {
   Package,
   User,
   Component,
-  Twitter,
   BookOpen,
 } from "lucide-react";
 
@@ -62,13 +61,17 @@ export default function LandingPage() {
                 Architecture
               </a>
               <a
-                href="#docs"
+                href="https://github.com/kunalsuri/DevNest-vanilla#readme"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 Docs
               </a>
               <a
-                href="https://github.com/devnest"
+                href="https://github.com/kunalsuri/DevNest-vanilla"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 GitHub
@@ -108,19 +111,32 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <div className="relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-br from-primary/10 via-secondary/5 to-transparent rounded-full blur-3xl" />
+        </div>
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
           <div className="text-center space-y-8">
+            {/* Announcement badge */}
+            <div className="flex justify-center">
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                v1.0 &mdash; Open Source &amp; Production Ready
+              </span>
+            </div>
+
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
-                <span className="block">Full-Stack Monorepo</span>
-                <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Template for Modern Apps
+                <span className="block">Ship full-stack apps</span>
+                <span className="block bg-gradient-to-r from-primary via-primary/80 to-secondary bg-clip-text text-transparent">
+                  in minutes, not weeks
                 </span>
               </h1>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                A production-ready React + TypeScript + Express template with
-                authentication, dark mode, and modular architecture. Perfect for
-                rapid prototyping and team collaboration.
+                A production-ready React 19 + TypeScript + Express monorepo with
+                JWT auth, RBAC, dark mode, observability, and 30+ UI components.
+                Clone, configure, and launch.
               </p>
             </div>
 
@@ -135,34 +151,64 @@ export default function LandingPage() {
                   Start Building
                 </Button>
               </Link>
-              <Button
-                variant="outline"
-                size="lg"
-                className="inline-flex items-center gap-2"
-                data-testid="button-github"
+              <a
+                href="https://github.com/kunalsuri/DevNest-vanilla"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <Github className="w-5 h-5" />
-                View on GitHub
-              </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="inline-flex items-center gap-2"
+                  data-testid="button-github"
+                >
+                  <Github className="w-5 h-5" />
+                  View on GitHub
+                </Button>
+              </a>
             </div>
 
             {/* Tech Stack Badges */}
-            <div className="flex flex-wrap justify-center gap-3 pt-8">
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-                React
-              </span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-                TypeScript
-              </span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-                Express
-              </span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-                Tailwind CSS
-              </span>
-              <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm font-medium">
-                JSON Storage
-              </span>
+            <div className="flex flex-wrap justify-center gap-3 pt-4">
+              {[
+                {
+                  label: "React 19",
+                  color:
+                    "text-cyan-600 bg-cyan-50 dark:bg-cyan-950 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800",
+                },
+                {
+                  label: "TypeScript",
+                  color:
+                    "text-blue-600 bg-blue-50 dark:bg-blue-950 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+                },
+                {
+                  label: "Express 5",
+                  color:
+                    "text-green-600 bg-green-50 dark:bg-green-950 dark:text-green-400 border-green-200 dark:border-green-800",
+                },
+                {
+                  label: "Tailwind v4",
+                  color:
+                    "text-sky-600 bg-sky-50 dark:bg-sky-950 dark:text-sky-400 border-sky-200 dark:border-sky-800",
+                },
+                {
+                  label: "shadcn/ui",
+                  color:
+                    "text-purple-600 bg-purple-50 dark:bg-purple-950 dark:text-purple-400 border-purple-200 dark:border-purple-800",
+                },
+                {
+                  label: "JWT Auth",
+                  color:
+                    "text-orange-600 bg-orange-50 dark:bg-orange-950 dark:text-orange-400 border-orange-200 dark:border-orange-800",
+                },
+              ].map(({ label, color }) => (
+                <span
+                  key={label}
+                  className={`px-3 py-1 rounded-full text-sm font-medium border ${color}`}
+                >
+                  {label}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -350,7 +396,7 @@ export default function LandingPage() {
                       Frontend
                     </h4>
                     <ul className="text-sm text-muted-foreground space-y-1">
-                      <li>• React 18 + TypeScript</li>
+                      <li>• React 19 + TypeScript</li>
                       <li>• Tailwind CSS</li>
                       <li>• Lucide Icons</li>
                       <li>• Responsive Design</li>
@@ -416,19 +462,17 @@ export default function LandingPage() {
             </div>
             <div className="flex items-center space-x-6">
               <a
-                href="#"
+                href="https://github.com/kunalsuri/DevNest-vanilla"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Github className="w-5 h-5" />
               </a>
               <a
-                href="#"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+                href="https://github.com/kunalsuri/DevNest-vanilla#readme"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <BookOpen className="w-5 h-5" />
