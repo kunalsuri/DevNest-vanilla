@@ -2,8 +2,11 @@ import { AppLayout } from "@/features/app-shell";
 import { StatsCards, UsageChart, RecentActivity } from "@/features/dashboard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { useJWTAuth } from "@/features/auth";
 
 export function DashboardPage() {
+  const { user } = useJWTAuth();
+
   return (
     <AppLayout>
       <div className="space-y-6">
@@ -13,10 +16,10 @@ export function DashboardPage() {
             className="text-3xl font-bold tracking-tight"
             data-testid="text-dashboard-title"
           >
-            Dashboard
+            {user ? `Welcome back, ${user.firstName}` : "Dashboard"}
           </h1>
           <p className="text-muted-foreground">
-            Welcome back! Here's what's happening with your projects.
+            Here&apos;s what&apos;s happening with your projects today.
           </p>
         </div>
 
