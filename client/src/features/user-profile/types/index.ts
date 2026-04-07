@@ -8,6 +8,11 @@ export interface UserProfile {
   linkedAccounts?: LinkedAccount[];
   createdAt?: Date;
   updatedAt?: Date;
+  age?: number | null;
+  officeLocation?: string | null;
+  position?: string | null;
+  department?: string | null;
+  phone?: string | null;
 }
 
 export interface LinkedAccount {
@@ -22,6 +27,11 @@ export interface ProfileUpdateData {
   lastName?: string;
   email?: string;
   profilePicture?: string;
+  age?: number | null;
+  officeLocation?: string | null;
+  position?: string | null;
+  department?: string | null;
+  phone?: string | null;
 }
 
 // AccountPreferences moved to @shared/schema for consistency

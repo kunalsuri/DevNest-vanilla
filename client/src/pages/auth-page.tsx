@@ -204,7 +204,7 @@ export default function AuthPage() {
 
   /** Quick-fill and submit as a regular user account (dev/test helper) */
   const onUserSignIn = async () => {
-    loginForm.setValue("username", "lucas.anderson");
+    loginForm.setValue("username", "lucas.anderson"); // matches data/users.json seeded user
     loginForm.setValue("password", "SncfDemo2026!");
     try {
       await loginMutation.mutateAsync({

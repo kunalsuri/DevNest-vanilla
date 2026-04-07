@@ -29,6 +29,11 @@ export interface UpdateUserDTO {
   lastName?: string;
   email?: string;
   profilePicture?: string;
+  age?: number | null;
+  officeLocation?: string | null;
+  position?: string | null;
+  department?: string | null;
+  phone?: string | null;
 }
 
 export interface User {
