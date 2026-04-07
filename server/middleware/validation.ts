@@ -80,8 +80,8 @@ export const validateRegister: ValidationChain[] = [
     .withMessage("Email is required"),
 
   body("password")
-    .isLength({ min: 6, max: 128 })
-    .withMessage("Password must be between 6 and 128 characters")
+    .isLength({ min: 8, max: 128 })
+    .withMessage("Password must be between 8 and 128 characters")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, and one number",
@@ -234,8 +234,8 @@ export const validatePasswordResetConfirm: ValidationChain[] = [
     .withMessage("Reset token is required"),
 
   body("password")
-    .isLength({ min: 6, max: 128 })
-    .withMessage("Password must be between 6 and 128 characters")
+    .isLength({ min: 8, max: 128 })
+    .withMessage("Password must be between 8 and 128 characters")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage(
       "Password must contain at least one uppercase letter, one lowercase letter, and one number",

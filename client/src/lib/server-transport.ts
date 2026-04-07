@@ -93,6 +93,18 @@ export class ServerTransport implements LogTransport {
       return;
     }
 
+    // Dynamically import auth headers to avoid circular dependencies
+    // and to pick up the latest token on each send
+    let authHeaders: Record<string, string> = {};
+    try {
+      const { getAuthHeaders } = await import(
+        "@/features/auth/utils/jwt-auth-utils"
+      );
+      authHeaders = getAuthHeaders();
+    } catch {
+      // Auth module may not be available yet during early init
+    }
+
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
@@ -100,9 +112,11 @@ export class ServerTransport implements LogTransport {
         const response = await fetch(this.config.endpoint, {
           method: "POST",
           headers: {
+            ...authHeaders,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ logs }),
+          credentials: "include",
         });
 
         if (!response.ok) {

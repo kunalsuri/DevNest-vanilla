@@ -1,5 +1,4 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { errorLogger } from "./error-logger";
 import {
   createNetworkError,
   createAppError,
@@ -183,7 +182,12 @@ export const queryClient = new QueryClient({
     mutations: {
       retry: false,
       onError: (error: Error) => {
-        errorLogger.logError(error, { context: "Mutation failed" });
+        logger.error(
+          "Mutation failed",
+          error,
+          { context: "Mutation" },
+          "queryClient",
+        );
       },
     },
   },
