@@ -74,11 +74,11 @@ export function optionalAuth(
 /**
  * Middleware to validate CSRF token for state-changing operations
  */
-export function validateCSRF(
+export async function validateCSRF(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   // Only validate CSRF for state-changing HTTP methods
   if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
     next();
@@ -104,28 +104,25 @@ export function validateCSRF(
     return;
   }
 
-  // Validate CSRF token against session
-  sessionManager
-    .validateCSRFToken(sessionId, csrfToken)
-    .then((isValid) => {
-      if (!isValid) {
-        res.status(403).json({
-          message: "Invalid CSRF token",
-          code: "INVALID_CSRF_TOKEN",
-        });
-        return;
-      }
-      next();
-    })
-    .catch((error) => {
-      logger.error("CSRF validation error", {
-        error: error instanceof Error ? error.message : String(error),
+  try {
+    const isValid = await sessionManager.validateCSRFToken(
+      sessionId,
+      csrfToken,
+    );
+    if (!isValid) {
+      res.status(403).json({
+        message: "Invalid CSRF token",
+        code: "INVALID_CSRF_TOKEN",
       });
-      res.status(500).json({
-        message: "Internal server error during CSRF validation",
-        code: "CSRF_VALIDATION_ERROR",
-      });
+      return;
+    }
+    next();
+  } catch (error) {
+    logger.error("CSRF validation error", {
+      error: error instanceof Error ? error.message : String(error),
     });
+    next(error);
+  }
 }
 
 /**
@@ -178,11 +175,11 @@ export function protectedRoute(
 /**
  * Middleware to check session validity
  */
-export function validateSession(
+export async function validateSession(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   const sessionId = req.sessionId;
 
   if (!sessionId) {
@@ -190,28 +187,22 @@ export function validateSession(
     return;
   }
 
-  sessionManager
-    .getSession(sessionId)
-    .then((session) => {
-      if (!session) {
-        // Session is invalid, expired, or revoked
-        res.status(401).json({
-          message: "Invalid or expired session",
-          code: "INVALID_SESSION",
-        });
-        return;
-      }
-      next();
-    })
-    .catch((error) => {
-      logger.error("Session validation error", {
-        error: error instanceof Error ? error.message : String(error),
+  try {
+    const session = await sessionManager.getSession(sessionId);
+    if (!session) {
+      res.status(401).json({
+        message: "Invalid or expired session",
+        code: "INVALID_SESSION",
       });
-      res.status(500).json({
-        message: "Internal server error during session validation",
-        code: "SESSION_VALIDATION_ERROR",
-      });
+      return;
+    }
+    next();
+  } catch (error) {
+    logger.error("Session validation error", {
+      error: error instanceof Error ? error.message : String(error),
     });
+    next(error);
+  }
 }
 
 /**

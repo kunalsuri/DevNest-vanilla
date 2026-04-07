@@ -505,55 +505,57 @@ export default function AuthPage() {
                       GitHub
                     </Button>
 
-                    {/* Dev / tester quick-access */}
-                    <div className="mt-3">
-                      <div className="relative mb-3">
-                        <div className="absolute inset-0 flex items-center">
-                          <div className="w-full border-t border-dashed border-border"></div>
+                    {/* Dev / tester quick-access — only visible in development */}
+                    {import.meta.env.DEV && (
+                      <div className="mt-3">
+                        <div className="relative mb-3">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-dashed border-border"></div>
+                          </div>
+                          <div className="relative flex justify-center text-xs">
+                            <span className="px-2 bg-background text-muted-foreground">
+                              Testing shortcuts
+                            </span>
+                          </div>
                         </div>
-                        <div className="relative flex justify-center text-xs">
-                          <span className="px-2 bg-background text-muted-foreground">
-                            Testing shortcuts
-                          </span>
+                        <div className="flex flex-col gap-2">
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="w-full gap-2"
+                            onClick={onUserSignIn}
+                            disabled={loginMutation.isPending}
+                            data-testid="button-user-signin"
+                          >
+                            <User className="w-4 h-4" />
+                            User Sign In
+                            <Badge
+                              variant="outline"
+                              className="ml-auto text-xs font-normal"
+                            >
+                              user
+                            </Badge>
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            className="w-full gap-2"
+                            onClick={onAdminSignIn}
+                            disabled={loginMutation.isPending}
+                            data-testid="button-admin-signin"
+                          >
+                            <ShieldCheck className="w-4 h-4" />
+                            Admin Sign In
+                            <Badge
+                              variant="outline"
+                              className="ml-auto text-xs font-normal"
+                            >
+                              admin
+                            </Badge>
+                          </Button>
                         </div>
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          className="w-full gap-2"
-                          onClick={onUserSignIn}
-                          disabled={loginMutation.isPending}
-                          data-testid="button-user-signin"
-                        >
-                          <User className="w-4 h-4" />
-                          User Sign In
-                          <Badge
-                            variant="outline"
-                            className="ml-auto text-xs font-normal"
-                          >
-                            user
-                          </Badge>
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          className="w-full gap-2"
-                          onClick={onAdminSignIn}
-                          disabled={loginMutation.isPending}
-                          data-testid="button-admin-signin"
-                        >
-                          <ShieldCheck className="w-4 h-4" />
-                          Admin Sign In
-                          <Badge
-                            variant="outline"
-                            className="ml-auto text-xs font-normal"
-                          >
-                            admin
-                          </Badge>
-                        </Button>
-                      </div>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>

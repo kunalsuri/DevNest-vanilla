@@ -13,6 +13,7 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
+import { Mutex } from "async-mutex";
 import logger from "../logger";
 
 export interface FeatureFlag {
@@ -42,6 +43,7 @@ export interface FeatureFlagContext {
 
 class FeatureFlagService {
   private readonly flags: Map<string, FeatureFlag> = new Map();
+  private readonly mutex = new Mutex();
   private readonly flagsFile = path.resolve(
     process.cwd(),
     "data",
@@ -78,15 +80,21 @@ class FeatureFlagService {
   }
 
   private async saveFlags(): Promise<void> {
-    try {
-      await fs.mkdir(path.dirname(this.flagsFile), { recursive: true });
-      const arr = Array.from(this.flags.values());
-      await fs.writeFile(this.flagsFile, JSON.stringify(arr, null, 2), "utf-8");
-    } catch (err) {
-      logger.error("Failed to persist feature flags", {
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
+    await this.mutex.runExclusive(async () => {
+      try {
+        await fs.mkdir(path.dirname(this.flagsFile), { recursive: true });
+        const arr = Array.from(this.flags.values());
+        await fs.writeFile(
+          this.flagsFile,
+          JSON.stringify(arr, null, 2),
+          "utf-8",
+        );
+      } catch (err) {
+        logger.error("Failed to persist feature flags", {
+          error: err instanceof Error ? err.message : String(err),
+        });
+      }
+    });
   }
 
   /**
@@ -206,23 +214,23 @@ class FeatureFlagService {
   /**
    * Add or update a feature flag
    */
-  setFlag(flag: FeatureFlag): void {
+  async setFlag(flag: FeatureFlag): Promise<void> {
     this.flags.set(flag.key, flag);
     logger.info("Feature flag updated", {
       flagKey: flag.key,
       enabled: flag.enabled,
     });
-    void this.saveFlags();
+    await this.saveFlags();
   }
 
   /**
    * Remove a feature flag
    */
-  removeFlag(flagKey: string): boolean {
+  async removeFlag(flagKey: string): Promise<boolean> {
     const deleted = this.flags.delete(flagKey);
     if (deleted) {
       logger.info("Feature flag removed", { flagKey });
-      void this.saveFlags();
+      await this.saveFlags();
     }
     return deleted;
   }

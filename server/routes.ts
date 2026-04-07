@@ -10,7 +10,7 @@ import { setupNotificationRoutes } from "./api/notification-routes";
 import { setupSubscriptionRoutes } from "./api/subscription-routes";
 import { setupFeatureFlagAdminRoutes } from "./api/feature-flag-routes";
 import { featureFlagService } from "./services";
-import { validateAccessToken, requireAdmin } from "./auth/auth-middleware";
+import { authenticate, requireAdmin } from "./auth/auth-middleware";
 import logger from "./logger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -33,8 +33,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupFeatureFlagAdminRoutes(app);
 
   // Setup logging endpoints for browser log persistence (auth required)
-  app.post("/api/logs", validateAccessToken, handleLogSubmission);
-  app.get("/api/logs", validateAccessToken, requireAdmin, handleLogRetrieval);
+  app.post("/api/logs", authenticate, handleLogSubmission);
+  app.get("/api/logs", authenticate, requireAdmin, handleLogRetrieval);
 
   // Start session cleanup interval
   startSessionCleanup();
@@ -44,11 +44,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 }
 
 /**
- * Start periodic session cleanup
+ * Start periodic session cleanup.
+ * Guards against overlapping runs if a cleanup takes longer than the interval.
  */
+let isCleanupRunning = false;
+
 function startSessionCleanup(): void {
   setInterval(
     async () => {
+      if (isCleanupRunning) {
+        return;
+      }
+      isCleanupRunning = true;
       try {
         await sessionManager.cleanupSessions();
         logger.info("Expired sessions cleaned up");
@@ -56,6 +63,8 @@ function startSessionCleanup(): void {
         logger.error("Error during session cleanup", {
           error: error instanceof Error ? error.message : String(error),
         });
+      } finally {
+        isCleanupRunning = false;
       }
     },
     60 * 60 * 1000,

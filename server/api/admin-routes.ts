@@ -7,7 +7,7 @@
 
 import { Express, Request, Response, NextFunction } from "express";
 import {
-  validateAccessToken,
+  authenticate,
   requireAdmin,
   validateCSRF,
 } from "../auth/auth-middleware";
@@ -33,6 +33,11 @@ const updateUserSchema = z.object({
   phone: z.string().max(30).nullable().optional(),
 });
 
+const paginationSchema = z.object({
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
 const createUserSchema = z.object({
   username: z.string().min(3).max(50),
   email: z.string().email(),
@@ -54,12 +59,11 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.get(
     "/api/admin/users",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (_req: Request, res: Response, next: NextFunction) => {
       try {
-        const limit = Math.min(Number(_req.query.limit) || 50, 200);
-        const offset = Math.max(Number(_req.query.offset) || 0, 0);
+        const { limit, offset } = paginationSchema.parse(_req.query);
         const allUsers = await storage.getAllUsers();
         const safeUsers = allUsers
           .slice(offset, offset + limit)
@@ -77,7 +81,7 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.get(
     "/api/admin/users/:id",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -102,7 +106,7 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.patch(
     "/api/admin/users/:id/role",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
@@ -166,7 +170,7 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.delete(
     "/api/admin/users/:id",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
@@ -217,7 +221,7 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.post(
     "/api/admin/users",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
@@ -284,7 +288,7 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.patch(
     "/api/admin/users/:id",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     validateCSRF,
     async (req: Request, res: Response, next: NextFunction) => {
@@ -333,7 +337,7 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.get(
     "/api/admin/stats",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -359,11 +363,17 @@ export function setupAdminRoutes(app: Express): void {
    */
   app.get(
     "/api/admin/audit-log",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const limit = Math.min(Number(req.query.limit) || 100, 500);
+        const limitSchema = z.coerce
+          .number()
+          .int()
+          .min(1)
+          .max(500)
+          .default(100);
+        const limit = limitSchema.parse(req.query.limit);
         const entries = await auditLogService.getRecentEntries(limit);
         res.json({ entries, total: entries.length });
       } catch (err) {
