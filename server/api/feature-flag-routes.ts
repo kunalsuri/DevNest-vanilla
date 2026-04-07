@@ -15,7 +15,7 @@
 
 import { Express, Request, Response, NextFunction } from "express";
 import { z } from "zod";
-import { validateAccessToken, requireAdmin } from "../auth/auth-middleware";
+import { authenticate, requireAdmin } from "../auth/auth-middleware";
 import { featureFlagService } from "../services";
 import { auditLogService } from "../services/audit-log-service";
 import logger from "../logger";
@@ -57,7 +57,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
    */
   app.get(
     "/api/admin/feature-flags",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     (_req: Request, res: Response, next: NextFunction) => {
       try {
@@ -75,7 +75,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
    */
   app.get(
     "/api/admin/feature-flags/:key",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -100,7 +100,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
    */
   app.post(
     "/api/admin/feature-flags",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -115,7 +115,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
         }
 
         const existing = featureFlagService.getFlag(parsed.data.key);
-        featureFlagService.setFlag(parsed.data);
+        await featureFlagService.setFlag(parsed.data);
 
         await auditLogService.log({
           timestamp: new Date().toISOString(),
@@ -144,7 +144,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
    */
   app.put(
     "/api/admin/feature-flags/:key",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -167,7 +167,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
           return;
         }
 
-        featureFlagService.setFlag(parsed.data);
+        await featureFlagService.setFlag(parsed.data);
 
         await auditLogService.log({
           timestamp: new Date().toISOString(),
@@ -193,7 +193,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
    */
   app.patch(
     "/api/admin/feature-flags/:key",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -217,7 +217,7 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
           return;
         }
 
-        featureFlagService.setFlag({ ...existing, ...parsed.data, key });
+        await featureFlagService.setFlag({ ...existing, ...parsed.data, key });
 
         await auditLogService.log({
           timestamp: new Date().toISOString(),
@@ -243,12 +243,12 @@ export function setupFeatureFlagAdminRoutes(app: Express): void {
    */
   app.delete(
     "/api/admin/feature-flags/:key",
-    validateAccessToken,
+    authenticate,
     requireAdmin,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const key = req.params.key as string;
-        const deleted = featureFlagService.removeFlag(key);
+        const deleted = await featureFlagService.removeFlag(key);
         if (!deleted) {
           res.status(404).json({
             message: "Feature flag not found",

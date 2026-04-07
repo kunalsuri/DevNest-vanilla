@@ -10,6 +10,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { Mutex } from "async-mutex";
 import logger from "../logger";
 
 export interface Notification {
@@ -29,6 +30,8 @@ const NOTIFICATIONS_FILE = path.resolve(
 );
 
 class NotificationService {
+  private readonly mutex = new Mutex();
+
   private async load(): Promise<Notification[]> {
     try {
       const raw = await fs.readFile(NOTIFICATIONS_FILE, "utf-8");
@@ -66,56 +69,64 @@ class NotificationService {
     title: string,
     message: string,
   ): Promise<Notification> {
-    const all = await this.load();
-    const notification: Notification = {
-      id: randomUUID(),
-      userId,
-      type,
-      title,
-      message,
-      read: false,
-      createdAt: new Date().toISOString(),
-    };
-    all.push(notification);
-    await this.save(all);
-    logger.info("Notification created", { userId, type, title });
-    return notification;
+    return this.mutex.runExclusive(async () => {
+      const all = await this.load();
+      const notification: Notification = {
+        id: randomUUID(),
+        userId,
+        type,
+        title,
+        message,
+        read: false,
+        createdAt: new Date().toISOString(),
+      };
+      all.push(notification);
+      await this.save(all);
+      logger.info("Notification created", { userId, type, title });
+      return notification;
+    });
   }
 
   async markRead(notificationId: string, userId: string): Promise<boolean> {
-    const all = await this.load();
-    const n = all.find(
-      (item) => item.id === notificationId && item.userId === userId,
-    );
-    if (!n) {
-      return false;
-    }
-    n.read = true;
-    await this.save(all);
-    return true;
+    return this.mutex.runExclusive(async () => {
+      const all = await this.load();
+      const n = all.find(
+        (item) => item.id === notificationId && item.userId === userId,
+      );
+      if (!n) {
+        return false;
+      }
+      n.read = true;
+      await this.save(all);
+      return true;
+    });
   }
 
   async markAllRead(userId: string): Promise<void> {
-    const all = await this.load();
-    all.forEach((n) => {
-      if (n.userId === userId) {
-        n.read = true;
-      }
+    await this.mutex.runExclusive(async () => {
+      const all = await this.load();
+      all.forEach((n) => {
+        if (n.userId === userId) {
+          n.read = true;
+        }
+      });
+      await this.save(all);
     });
-    await this.save(all);
   }
 
   async delete(notificationId: string, userId: string): Promise<boolean> {
-    const all = await this.load();
-    const idx = all.findIndex(
-      (n) => n.id === notificationId && n.userId === userId,
-    );
-    if (idx === -1) {
-      return false;
-    }
-    all.splice(idx, 1);
-    await this.save(all);
-    return true;
+    return this.mutex.runExclusive(async () => {
+      const all = await this.load();
+      const idx = all.findIndex(
+        (n) => n.id === notificationId && n.userId === userId,
+      );
+      if (idx === -1) {
+        return false;
+      }
+      all.splice(idx, 1);
+      await this.save(all);
+      return true;
+    });
   }
 }
 

@@ -242,9 +242,11 @@ app.use((req, res, next) => {
         path: req.path,
       });
 
-      // Send structured error response
+      // Send structured error response with trace context for correlation
       res.status(status).json({
         message,
+        code: (err as any).code || "INTERNAL_ERROR",
+        ...(req.traceId && { traceId: req.traceId }),
         ...(process.env.NODE_ENV === "development" && {
           stack: err.stack,
           details: err.details,

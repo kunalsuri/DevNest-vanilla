@@ -6,6 +6,20 @@ import { setupFeatureFlagAdminRoutes } from "@server/api/feature-flag-routes";
 import { generateTokenPair } from "@server/auth/jwt-utils";
 import { featureFlagService } from "@server/services";
 
+// Mock session manager so authenticate middleware passes
+vi.mock("@server/auth/session-manager", () => ({
+  sessionManager: {
+    getSession: vi.fn().mockResolvedValue({
+      sessionId: "ff-session",
+      userId: "ff-admin",
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    }),
+    validateCSRFToken: vi.fn().mockResolvedValue(true),
+    revokeSession: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 async function buildApp() {
   await featureFlagService.ready();
   const app = express();

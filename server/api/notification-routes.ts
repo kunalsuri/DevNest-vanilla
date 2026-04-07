@@ -6,7 +6,7 @@
  */
 
 import { Express, Request, Response, NextFunction } from "express";
-import { validateAccessToken } from "../auth/auth-middleware";
+import { authenticate } from "../auth/auth-middleware";
 import { notificationService } from "../services/notification-service";
 import logger from "../logger";
 
@@ -17,7 +17,7 @@ export function setupNotificationRoutes(app: Express): void {
    */
   app.get(
     "/api/notifications",
-    validateAccessToken,
+    authenticate,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const notifications = await notificationService.getForUser(
@@ -36,7 +36,7 @@ export function setupNotificationRoutes(app: Express): void {
    */
   app.patch(
     "/api/notifications/read-all",
-    validateAccessToken,
+    authenticate,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         await notificationService.markAllRead(req.jwtUser!.userId);
@@ -53,7 +53,7 @@ export function setupNotificationRoutes(app: Express): void {
    */
   app.patch(
     "/api/notifications/:id/read",
-    validateAccessToken,
+    authenticate,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const ok = await notificationService.markRead(
@@ -79,7 +79,7 @@ export function setupNotificationRoutes(app: Express): void {
    */
   app.delete(
     "/api/notifications/:id",
-    validateAccessToken,
+    authenticate,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const ok = await notificationService.delete(

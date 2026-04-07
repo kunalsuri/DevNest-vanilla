@@ -1,6 +1,6 @@
 import { Express, Request, Response, static as expressStatic } from "express";
 import multer from "multer";
-import { validateAccessToken, validateCSRF } from "./auth/auth-middleware";
+import { authenticate, validateCSRF } from "./auth/auth-middleware";
 import { z } from "zod";
 import path, { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -115,7 +115,7 @@ export function setupProfile(app: Express) {
    *         description: User not found
    */
   // Get user profile
-  app.get("/api/profile", validateAccessToken, async (req, res) => {
+  app.get("/api/profile", authenticate, async (req, res) => {
     try {
       const user = await userService.getUserById(req.jwtUser!.userId);
       if (!user) {
@@ -134,7 +134,7 @@ export function setupProfile(app: Express) {
   // Update user profile
   app.put(
     "/api/profile",
-    validateAccessToken,
+    authenticate,
     validateCSRF,
     validateProfileUpdate,
     handleValidationErrors,
@@ -170,7 +170,7 @@ export function setupProfile(app: Express) {
   // Upload profile picture (with auth guard before multer)
   app.post(
     "/api/profile/upload-picture",
-    validateAccessToken,
+    authenticate,
     validateCSRF,
     async (req, res, next) => {
       upload.single("profilePicture")(req, res, next);
@@ -209,36 +209,31 @@ export function setupProfile(app: Express) {
   );
 
   // Delete user account
-  app.delete(
-    "/api/profile",
-    validateAccessToken,
-    validateCSRF,
-    async (req, res) => {
-      try {
-        await userService.deleteUser(req.jwtUser!.userId);
+  app.delete("/api/profile", authenticate, validateCSRF, async (req, res) => {
+    try {
+      await userService.deleteUser(req.jwtUser!.userId);
 
-        // Revoke all user sessions
-        if (req.sessionId) {
-          const { sessionManager } = await import("./auth/session-manager");
-          await sessionManager.revokeSession(req.sessionId);
-        }
-
-        res.json({ message: "Account deleted successfully" });
-      } catch (error) {
-        if (error instanceof Error && error.message === "User not found") {
-          return res.status(404).json({ message: error.message });
-        }
-        logger.error("Account deletion error", {
-          error: error instanceof Error ? error.message : String(error),
-          userId: req.jwtUser?.userId,
-        });
-        res.status(500).json({ message: "Internal server error" });
+      // Revoke all user sessions
+      if (req.sessionId) {
+        const { sessionManager } = await import("./auth/session-manager");
+        await sessionManager.revokeSession(req.sessionId);
       }
-    },
-  );
+
+      res.json({ message: "Account deleted successfully" });
+    } catch (error) {
+      if (error instanceof Error && error.message === "User not found") {
+        return res.status(404).json({ message: error.message });
+      }
+      logger.error("Account deletion error", {
+        error: error instanceof Error ? error.message : String(error),
+        userId: req.jwtUser?.userId,
+      });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
 
   // Get user preferences
-  app.get("/api/profile/preferences", validateAccessToken, async (req, res) => {
+  app.get("/api/profile/preferences", authenticate, async (req, res) => {
     try {
       const preferences = await userService.getUserPreferences(
         req.jwtUser!.userId,
@@ -256,7 +251,7 @@ export function setupProfile(app: Express) {
   // Update user preferences
   app.put(
     "/api/profile/preferences",
-    validateAccessToken,
+    authenticate,
     validateCSRF,
     async (req, res) => {
       const result = preferencesSchema.safeParse(req.body);
@@ -284,8 +279,17 @@ export function setupProfile(app: Express) {
   );
 
   // Serve uploaded profile pictures from an absolute path to prevent path traversal
+  // Set strict CSP headers to prevent XSS via uploaded SVGs or HTML
   app.use(
     "/uploads",
+    (_req, uploadRes, uploadNext) => {
+      uploadRes.setHeader(
+        "Content-Security-Policy",
+        "default-src 'none'; img-src 'self'; style-src 'none'; script-src 'none'",
+      );
+      uploadRes.setHeader("X-Content-Type-Options", "nosniff");
+      uploadNext();
+    },
     expressStatic(join(__dirname, "..", "uploads"), {
       dotfiles: "deny",
       index: false,

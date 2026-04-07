@@ -6,7 +6,7 @@
  */
 
 import { Express, Request, Response, NextFunction } from "express";
-import { validateAccessToken } from "../auth/auth-middleware";
+import { authenticate } from "../auth/auth-middleware";
 import { subscriptionService } from "../services/subscription-service";
 import logger from "../logger";
 
@@ -33,7 +33,7 @@ export function setupSubscriptionRoutes(app: Express): void {
    */
   app.get(
     "/api/subscription",
-    validateAccessToken,
+    authenticate,
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         let sub = await subscriptionService.getSubscription(

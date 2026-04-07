@@ -9,6 +9,7 @@
 import { Request, Response } from "express";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { z } from "zod";
 import logger from "./logger";
 
 /**
@@ -51,13 +52,17 @@ export async function handleLogSubmission(req: Request, res: Response) {
     const entries: LogEntry[] = req.body.logs || [req.body];
 
     if (!Array.isArray(entries) || entries.length === 0) {
-      return res.status(400).json({ error: "Invalid log entries" });
+      return res.status(400).json({
+        message: "Invalid log entries",
+        code: "INVALID_LOG_ENTRIES",
+      });
     }
 
     if (entries.length > MAX_LOG_ENTRIES) {
-      return res
-        .status(400)
-        .json({ error: `Maximum ${MAX_LOG_ENTRIES} log entries per request` });
+      return res.status(400).json({
+        message: `Maximum ${MAX_LOG_ENTRIES} log entries per request`,
+        code: "TOO_MANY_LOG_ENTRIES",
+      });
     }
 
     // Process each log entry through Winston
@@ -86,7 +91,10 @@ export async function handleLogSubmission(req: Request, res: Response) {
     logger.error("[LogEndpoint] Failed to process logs", {
       error: error instanceof Error ? error.message : String(error),
     });
-    res.status(500).json({ error: "Failed to write logs" });
+    res.status(500).json({
+      message: "Failed to write logs",
+      code: "LOG_WRITE_ERROR",
+    });
   }
 }
 
@@ -94,26 +102,45 @@ export async function handleLogSubmission(req: Request, res: Response) {
  * GET /api/logs - Retrieve recent log entries (for debugging)
  * Reads directly from Winston's log files
  */
+const logQuerySchema = z.object({
+  level: z
+    .enum(["all", "debug", "info", "warn", "error", "fatal"])
+    .default("all"),
+  lines: z.coerce.number().int().min(1).max(1000).default(100),
+});
+
 export async function handleLogRetrieval(req: Request, res: Response) {
   try {
     const logsDir = path.resolve(process.cwd(), "logs");
-    const { level = "all", lines = "100" } = req.query;
+    const parsed = logQuerySchema.safeParse(req.query);
+    if (!parsed.success) {
+      res.status(400).json({
+        message: "Invalid query parameters",
+        code: "VALIDATION_ERROR",
+        errors: parsed.error.issues,
+      });
+      return;
+    }
+    const { level, lines } = parsed.data;
 
     const files = await fs.readdir(logsDir);
     const logFiles = files
       .filter((file) => file.endsWith(".log"))
-      .filter((file) => level === "all" || file.startsWith(level as string));
+      .filter((file) => level === "all" || file.startsWith(level));
 
-    const logs: any[] = [];
+    const logs: unknown[] = [];
 
     for (const file of logFiles.slice(-3)) {
-      // Last 3 files
+      // Prevent path traversal — only allow plain filenames
+      if (file.includes("/") || file.includes("\\") || file.includes("..")) {
+        continue;
+      }
       const filePath = path.join(logsDir, file);
       const content = await fs.readFile(filePath, "utf8");
       const fileLines = content
         .split("\n")
         .filter(Boolean)
-        .slice(-Number.parseInt(lines as string, 10))
+        .slice(-lines)
         .map((line) => {
           try {
             return JSON.parse(line);
@@ -127,13 +154,13 @@ export async function handleLogRetrieval(req: Request, res: Response) {
 
     // Sort by timestamp
     logs.sort(
-      (a, b) =>
+      (a: any, b: any) =>
         new Date(a.timestamp || 0).getTime() -
         new Date(b.timestamp || 0).getTime(),
     );
 
     res.json({
-      logs: logs.slice(-Number.parseInt(lines as string, 10)),
+      logs: logs.slice(-lines),
       total: logs.length,
       files: logFiles.length,
     });
@@ -141,6 +168,9 @@ export async function handleLogRetrieval(req: Request, res: Response) {
     logger.error("[LogEndpoint] Failed to retrieve logs", {
       error: error instanceof Error ? error.message : String(error),
     });
-    res.status(500).json({ error: "Failed to retrieve logs" });
+    res.status(500).json({
+      message: "Failed to retrieve logs",
+      code: "LOG_RETRIEVAL_ERROR",
+    });
   }
 }

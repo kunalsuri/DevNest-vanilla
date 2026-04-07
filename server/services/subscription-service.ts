@@ -11,6 +11,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { Mutex } from "async-mutex";
 import logger from "../logger";
 
 export interface Plan {
@@ -84,6 +85,8 @@ const SUBSCRIPTIONS_FILE = path.resolve(
 );
 
 class SubscriptionService {
+  private readonly mutex = new Mutex();
+
   private async load(): Promise<Subscription[]> {
     try {
       const raw = await fs.readFile(SUBSCRIPTIONS_FILE, "utf-8");
@@ -121,30 +124,32 @@ class SubscriptionService {
   }
 
   async createFreeSubscription(userId: string): Promise<Subscription> {
-    const now = new Date();
-    const periodEnd = new Date(now);
-    periodEnd.setMonth(periodEnd.getMonth() + 1);
+    return this.mutex.runExclusive(async () => {
+      const now = new Date();
+      const periodEnd = new Date(now);
+      periodEnd.setMonth(periodEnd.getMonth() + 1);
 
-    const sub: Subscription = {
-      id: randomUUID(),
-      userId,
-      planId: "free",
-      status: "active",
-      trialEndsAt: null,
-      currentPeriodStart: now.toISOString(),
-      currentPeriodEnd: periodEnd.toISOString(),
-      createdAt: now.toISOString(),
-    };
+      const sub: Subscription = {
+        id: randomUUID(),
+        userId,
+        planId: "free",
+        status: "active",
+        trialEndsAt: null,
+        currentPeriodStart: now.toISOString(),
+        currentPeriodEnd: periodEnd.toISOString(),
+        createdAt: now.toISOString(),
+      };
 
-    const all = await this.load();
-    all.push(sub);
-    await this.save(all);
+      const all = await this.load();
+      all.push(sub);
+      await this.save(all);
 
-    logger.info("Free subscription created", {
-      userId,
-      subscriptionId: sub.id,
+      logger.info("Free subscription created", {
+        userId,
+        subscriptionId: sub.id,
+      });
+      return sub;
     });
-    return sub;
   }
 }
 

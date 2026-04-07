@@ -10,7 +10,12 @@ import { generateTokenPair } from "@server/auth/jwt-utils";
 // Allow CSRF validation to pass in unit tests by default
 vi.mock("@server/auth/session-manager", () => ({
   sessionManager: {
-    getSession: vi.fn().mockResolvedValue(null),
+    getSession: vi.fn().mockResolvedValue({
+      sessionId: "admin-session",
+      userId: "admin-test-user",
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+    }),
     validateCSRFToken: vi.fn().mockResolvedValue(true),
     revokeSession: vi.fn().mockResolvedValue(undefined),
   },
