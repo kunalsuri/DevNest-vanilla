@@ -1,0 +1,96 @@
+feature: external-ai-provider
+source_files:
+  - server/features/model-management/services/external-ai-base.ts
+  - server/features/model-management/services/external-ai-factory.ts
+  - server/features/model-management/services/external-ai-service.ts
+  - server/features/model-management/services/google-ai.ts
+  - server/features/model-management/routes/external-ai.ts
+purpose: Provide a pluggable abstraction for cloud LLM providers (Google, Anthropic, Mistral, OpenAI) with API-key validation, model enumeration, health checking, and text generation; only Google AI is fully implemented.
+
+contracts:
+  - endpoint: POST /api/external-ai/message
+    method: POST
+    inputs: >
+      body (validated inline with zod):
+        message: string (min 1)
+        provider: "google" | "anthropic" | "mistral" | "openai"
+        model: string (optional)
+        context: Array<{ role: "user"|"assistant", content: string, timestamp?: string|Date }> (optional)
+        temperature: number 0–2 (optional)
+        maxTokens: number 1–4000 (optional)
+    outputs: "{ success: true, data: { response: string, model: string, provider: string, usage: { promptTokens, completionTokens, totalTokens } }, timestamp: string }"
+    side_effects: >
+      Google: POST https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent
+      Anthropic/Mistral/OpenAI: throws "not yet implemented"
+
+  - endpoint: GET /api/external-ai/health
+    method: GET
+    inputs: "query: { provider?: 'google'|'anthropic'|'mistral'|'openai' }"
+    outputs: "{ success: true, data: ExternalAIHealthCheck | Record<ExternalProvider, ExternalAIHealthCheck>, timestamp: string }"
+    side_effects: "Google: GET https://generativelanguage.googleapis.com/v1beta/models?key=<key>"
+
+  - endpoint: GET /api/external-ai/models/:provider
+    method: GET
+    inputs: "params: { provider: ExternalProvider }"
+    outputs: "{ success: true, data: { provider: string, models: ExternalAIModel[] }, timestamp: string }"
+    side_effects: "Google: GET /v1beta/models?key=<key>"
+
+  - endpoint: GET /api/external-ai/providers
+    method: GET
+    inputs: none
+    outputs: "{ success: true, data: { providers: Array<{ provider, configured, defaultModel }> }, timestamp: string }"
+    side_effects: none (reads env vars)
+
+  - internal: ExternalAIService.generateResponse(provider, messages, options)
+    method: function
+    inputs: "provider: ExternalProvider, messages: ExternalAIMessage[], options?: { model, temperature, maxTokens }"
+    outputs: "Promise<ExternalAIResponse>"
+    side_effects: delegates to provider-specific ExternalAIProvider subclass
+
+  - internal: ExternalAIService.isProviderConfigured(provider)
+    method: function
+    inputs: "provider: ExternalProvider"
+    outputs: "boolean — validates API key presence, non-placeholder value, and format prefix (sk-, AIza, sk-ant-)"
+    side_effects: none
+
+dependencies:
+  npm:
+    - zod
+  internal:
+    - shared/types/external-ai (ExternalProvider, ProviderConfig, ExternalAIMessage, ExternalAIResponse, ExternalAIHealthCheck, ExternalAIModel, GoogleAIConfig, AnthropicConfig, MistralConfig, OpenAIConfig)
+    - shared/utils/logger (log.info, log.error)
+    - shared/utils/errors (createValidationError)
+
+express_v5_changes: >
+  external-ai.ts uses inline zod validation with "return res.status(400).json(...)" inside
+  async functions. In Express 5, res.json() returns void, so "return res.status(400).json(...)"
+  works only as an expression statement that happens to return void — the early-exit behavior
+  depends on whether the handler returns after it. Audit each handler: replace
+  "return res.status(N).json(...)" with "res.status(N).json(...); return;" for clarity.
+  No asyncHandler is used in these routes; error handling is inline try/catch.
+
+migration_complexity: high
+
+notes: >
+  Only Google AI (Gemini) is fully implemented. AnthropicProvider, MistralProvider, and
+  OpenAIProvider exist as stubs that throw "not yet implemented". The migration must
+  implement or integrate SDK-based providers before these routes are usable.
+
+  API keys are loaded exclusively from environment variables at service construction time
+  (loadSettings()). There is no runtime key update mechanism beyond the
+  updateProviderConfig() method, which only mutates in-memory state and has no
+  persistence. In repo-sota, consider Drizzle-persisted provider configs or a secrets manager.
+
+  The service is a singleton (externalAIService) exported from external-ai-service.ts.
+  This makes testing harder; consider dependency injection in repo-sota.
+
+  Google AI maps "assistant" role to "model" role (Google's format). This mapping must
+  be preserved. System messages are not sent to Google AI — the system prompt is prepended
+  by the caller (external-ai.ts route) as a user-role message in the context array, which
+  is incorrect. Gemini supports a system_instruction field; use it instead.
+
+  ExternalAIService.getAllHealthChecks() and checkAllProvidersHealth() are duplicates
+  returning the same data in different shapes — consolidate in migration.
+
+  API key format validation is regex-light (prefix + length). This is not a substitute
+  for an actual validation call. Health check is the correct place to validate liveness.

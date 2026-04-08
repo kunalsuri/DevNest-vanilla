@@ -1,0 +1,75 @@
+feature: lmstudio-adapter
+source_files:
+  - server/features/model-management/services/lmstudio.ts
+  - server/features/model-management/routes/lmstudio.ts
+  - server/features/model-management/types/api.ts
+purpose: Provide health checking, model listing, connection testing, model load/unload stubs, and text generation against a locally-running LM Studio server.
+
+contracts:
+  - endpoint: GET /api/lmstudio/health
+    method: GET
+    inputs: "query: { enableLogging?: 'true' | 'false' }"
+    outputs: "{ success: true, data: LMStudioHealthCheck, timestamp: string }"
+    side_effects: "GET http://<LMSTUDIO_BASE_URL>/v1/models (5 s abort timeout); GET /v1/models again for model list"
+
+  - endpoint: GET /api/lmstudio/models
+    method: GET
+    inputs: "query: { enableLogging?: 'true' | 'false' }"
+    outputs: "{ success: true, data: { models: string[] }, timestamp: string }"
+    side_effects: "GET http://<LMSTUDIO_BASE_URL>/v1/models (10 s abort timeout)"
+
+  - endpoint: POST /api/lmstudio/test
+    method: POST
+    inputs: "body: { model: string }"
+    outputs: "{ success: true, data: OllamaTestResult, timestamp: string }"
+    side_effects: "POST http://<LMSTUDIO_BASE_URL>/v1/chat/completions with hardcoded greeting prompt (30 s timeout)"
+
+  - endpoint: POST /api/lmstudio/load
+    method: POST
+    inputs: "body: { model: string }"
+    outputs: "{ success: true, data: { success: boolean, message?: string }, timestamp: string }"
+    side_effects: "Calls getAvailableModels() and checks if model id/name exists — no actual load API call (LM Studio has no load endpoint)"
+
+  - endpoint: POST /api/lmstudio/unload
+    method: POST
+    inputs: "body: { model: string }"
+    outputs: "{ success: true, data: { success: boolean, message?: string }, timestamp: string }"
+    side_effects: none (LM Studio has no unload API; returns success: true with informational message)
+
+  - internal: callLMStudio(prompt, model)
+    method: function
+    inputs: "prompt: string, model: string"
+    outputs: "Promise<string> — content of choices[0].message.content"
+    side_effects: "POST http://<LMSTUDIO_BASE_URL>/v1/chat/completions stream:false (60 s timeout)"
+
+dependencies:
+  npm: []
+  internal:
+    - shared/config/environment (config.lmstudio.baseUrl)
+    - shared/utils/logger (log.externalService, log.warn, log.error)
+    - shared/utils/errors (createExternalServiceError)
+    - features/model-management/types/api (LMStudioHealthCheck, OllamaTestResult)
+
+express_v5_changes: >
+  Routes use inline try/catch. Patterns like "res.status(400).json(response); return;"
+  are already written in the correct Express 5 style (void return). No structural changes needed.
+
+migration_complexity: low
+
+notes: >
+  BASE_URL comes from config.lmstudio.baseUrl, defaulting to http://localhost:1234.
+
+  LM Studio exposes an OpenAI-compatible /v1 API. The service calls /v1/chat/completions
+  (not /v1/completions), which is the correct endpoint for instruct/chat models.
+
+  load/unload endpoints are effectively no-ops because LM Studio has no programmatic model
+  load API. The migration should document this limitation clearly or remove these endpoints
+  if they provide no value.
+
+  OllamaTestResult is reused as the return type for testLMStudioConnection — this is a
+  naming inconsistency. In repo-sota, rename to LocalModelTestResult or similar.
+
+  No authentication middleware is applied to these routes. Decide whether management
+  endpoints require auth in repo-sota (consistent with ollama-adapter decision).
+
+  Both load and unload silently accept any model string without validation.

@@ -1,0 +1,59 @@
+feature: chat-message-dispatch
+source_files:
+  - server/features/chat/routes/chat.ts
+  - server/features/chat/services/chat.ts
+  - server/features/chat/types/api.ts
+purpose: Accept a user message with conversation context and route it to the correct local LLM provider (Ollama or LM Studio), returning a plain-text assistant response.
+
+contracts:
+  - endpoint: POST /api/chat/message
+    method: POST
+    inputs: >
+      body (validated by chatMessageSchema):
+        message: string
+        provider: "ollama" | "lmstudio"
+        model: string (optional)
+        context: ChatMessage[] (optional, last 10 used)
+    outputs: "{ success: true, data: { response: string }, timestamp: string }"
+    side_effects: >
+      Ollama: HTTP POST to http://localhost:11434/api/generate (stream: false).
+      LM Studio: HTTP POST to http://localhost:1234/v1/chat/completions (stream: false).
+      Both calls are logged via log.externalService().
+
+dependencies:
+  npm:
+    - zod
+  internal:
+    - shared/validation (chatMessageSchema)
+    - shared/middleware/auth (requireAuth)
+    - shared/middleware/csrf (csrfProtection)
+    - shared/middleware/errorHandler (asyncHandler)
+    - shared/utils/errors (ValidationError, createValidationError)
+    - shared/utils/logger (log.externalService)
+    - features/model-management/services/ollama (callOllama — NOT used here; service duplicates fetch logic inline)
+    - features/model-management/services/lmstudio (callLMStudio — NOT used here; service duplicates fetch logic inline)
+
+express_v5_changes: >
+  Remove asyncHandler() wrapper — Express 5 handles async errors natively.
+  ValidationError thrown in the else branch propagates to the error handler without any changes needed.
+
+migration_complexity: medium
+
+notes: >
+  DUPLICATION WARNING: chat/services/chat.ts re-implements Ollama and LM Studio HTTP calls
+  independently from model-management/services/ollama.ts and lmstudio.ts. The chat service
+  uses the /api/generate (generate) endpoint for Ollama instead of /api/chat (chat endpoint),
+  losing role-structured messaging. The model-management services use a proper system prompt
+  via /v1/chat/completions for LM Studio.
+
+  In repo-sota these two code paths must be consolidated: the chat dispatch route should
+  delegate to the canonical provider adapters (ollama-adapter, lmstudio-adapter).
+
+  Streaming is NOT implemented — both providers are called with stream: false. If streaming
+  is desired in repo-sota, the Ollama /api/chat endpoint supports it via SSE; LM Studio also
+  supports SSE on /v1/chat/completions. This is a deliberate decision point for the migration.
+
+  Context window is hard-coded to last 10 messages. This may need to be configurable.
+
+  External cloud providers (google, anthropic, etc.) are not handled by this route —
+  they go through /api/external-ai/message instead.

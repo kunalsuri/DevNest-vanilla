@@ -1,0 +1,119 @@
+feature: external-model-management
+source_files:
+  - server/features/model-management/routes/external-model-mgmt.ts
+  - server/features/model-management/routes/model-management.ts
+purpose: Expose a unified management API for querying provider status, listing models, testing a specific model, and (stub) downloading/deleting local models.
+
+contracts:
+  # --- external-model-mgmt.ts routes (mounted at /api/external-model-mgmt) ---
+
+  - endpoint: GET /api/external-model-mgmt/providers
+    method: GET
+    inputs: none
+    outputs: >
+      { success: true, data: Array<{
+        provider, isConfigured, models: ExternalAIModel[],
+        defaultModel, health: ExternalAIHealthCheck
+      }>, timestamp: string }
+    side_effects: calls ExternalAIService.checkProviderHealth() for all 4 providers in parallel
+
+  - endpoint: GET /api/external-model-mgmt/providers/:provider/models
+    method: GET
+    inputs: "params: { provider: ExternalProvider }"
+    outputs: "{ success: true, data: ExternalAIModel[], timestamp: string }"
+    side_effects: calls ExternalAIService.getAvailableModels()
+
+  - endpoint: POST /api/external-model-mgmt/providers/:provider/models/:model/test
+    method: POST
+    inputs: "params: { provider, model }, body: { message: string }"
+    outputs: "{ success: true, data: { result: ExternalAIResponse, responseTime: number }, timestamp: string }"
+    side_effects: calls ExternalAIService.generateResponse() with the provided message
+
+  - endpoint: GET /api/external-model-mgmt/providers/:provider/health
+    method: GET
+    inputs: "params: { provider: ExternalProvider }"
+    outputs: "{ success: true, data: ExternalAIHealthCheck, timestamp: string }"
+    side_effects: calls ExternalAIService.checkProviderHealth()
+
+  # --- model-management.ts routes (mounted at /api/model-management) — all stubs ---
+
+  - endpoint: GET /api/model-management/providers
+    method: GET
+    inputs: none
+    outputs: "{ success: true, data: [{ id:'ollama', type:'local' }, { id:'lmstudio', type:'local' }], timestamp: string }"
+    side_effects: none (hardcoded, no real lookup)
+
+  - endpoint: GET /api/model-management/providers/:providerId/models
+    method: GET
+    inputs: "params: { providerId: string }"
+    outputs: "{ success: true, data: [], timestamp: string }"
+    side_effects: none (always returns empty array)
+
+  - endpoint: POST /api/model-management/test
+    method: POST
+    inputs: any
+    outputs: "{ success: true, data: { message: 'Model test not implemented yet' }, timestamp: string }"
+    side_effects: none
+
+  - endpoint: POST /api/model-management/providers/:providerId/models/:modelId/download
+    method: POST
+    inputs: "params: { providerId, modelId }"
+    outputs: "{ success: true, data: { message: 'Model download not implemented yet' }, timestamp: string }"
+    side_effects: none
+
+  - endpoint: DELETE /api/model-management/providers/:providerId/models/:modelId
+    method: DELETE
+    inputs: "params: { providerId, modelId }"
+    outputs: "{ success: true, data: { message: 'Model deletion not implemented yet' }, timestamp: string }"
+    side_effects: none
+
+  - endpoint: GET /api/model-management/download-progress/:modelId
+    method: GET
+    inputs: "params: { modelId }"
+    outputs: "{ success: true, data: { progress: 0, status: 'not_started' }, timestamp: string }"
+    side_effects: none
+
+  - endpoint: POST /api/model-management/providers/refresh
+    method: POST
+    inputs: none
+    outputs: "{ success: true, data: [{ id:'ollama' }, { id:'lmstudio' }], timestamp: string }"
+    side_effects: none (hardcoded)
+
+  - endpoint: GET /api/model-management/providers/:providerId/health
+    method: GET
+    inputs: "params: { providerId }"
+    outputs: "{ success: true, data: { healthy: true }, timestamp: string }"
+    side_effects: none (always returns healthy: true regardless of actual state)
+
+dependencies:
+  npm: []
+  internal:
+    - features/model-management/services/external-ai-service (externalAIService singleton)
+    - shared/types/external-ai (ExternalProvider)
+    - shared/types/api (ApiResponse)
+    - shared/utils/logger (log.error)
+
+express_v5_changes: >
+  external-model-mgmt.ts uses "return res.status(400).json(response)" in async handlers.
+  In Express 5, res methods return void, so this must be written as
+  "res.status(400).json(response); return;" to make the early-return intent explicit.
+  model-management.ts routes are synchronous-style (no async, no await) — no changes needed.
+
+migration_complexity: medium
+
+notes: >
+  OVERLAP: /api/external-model-mgmt/providers and /api/external-ai/providers both return
+  provider lists. external-model-mgmt adds health + full model list per provider; external-ai
+  adds just configured+defaultModel. These should be merged into one endpoint in repo-sota.
+
+  STUB ROUTES: All routes in model-management.ts are non-functional placeholders. They exist
+  to satisfy frontend routing but return no real data. Two decisions needed for migration:
+    1. Implement download/delete by calling Ollama's DELETE /api/delete and pull APIs.
+    2. Replace the hardcoded providers list with a real query against the running adapters.
+
+  Download progress (GET /download-progress/:modelId) always returns 0 / not_started.
+  Ollama's /api/pull supports streaming progress via NDJSON — this would need an SSE or
+  WebSocket endpoint to be genuinely useful.
+
+  The model-management stub routes do not call the ollama or lmstudio adapters at all,
+  making /api/model-management/providers/:providerId/health unreliable (always healthy: true).

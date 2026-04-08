@@ -1,0 +1,64 @@
+feature: ollama-adapter
+source_files:
+  - server/features/model-management/services/ollama.ts
+  - server/features/model-management/routes/ollama.ts
+  - server/features/model-management/types/api.ts
+purpose: Provide health checking, model listing, connection testing, and text generation against a locally-running Ollama instance.
+
+contracts:
+  - endpoint: GET /api/ollama/health
+    method: GET
+    inputs: "query: { enableLogging?: 'true' | 'false' }"
+    outputs: "{ success: true, data: OllamaHealthCheck, timestamp: string }"
+    side_effects: "GET http://<OLLAMA_BASE_URL>/api/tags (5 s abort timeout); GET /api/tags again to list models"
+
+  - endpoint: GET /api/ollama/models
+    method: GET
+    inputs: "query: { enableLogging?: 'true' | 'false' }"
+    outputs: "{ success: true, data: { models: string[] }, timestamp: string }"
+    side_effects: "GET http://<OLLAMA_BASE_URL>/api/tags (10 s abort timeout)"
+
+  - endpoint: POST /api/ollama/test
+    method: POST
+    inputs: "body: { model: string }"
+    outputs: "{ success: true, data: OllamaTestResult, timestamp: string }"
+    side_effects: "POST http://<OLLAMA_BASE_URL>/api/generate with hardcoded greeting prompt (30 s timeout)"
+
+  - internal: callOllama(prompt, model)
+    method: function
+    inputs: "prompt: string, model: string (defaults to config.ollama.model)"
+    outputs: "Promise<string> — raw response text"
+    side_effects: "POST http://<OLLAMA_BASE_URL>/api/generate stream:false (60 s timeout)"
+
+dependencies:
+  npm: []
+  internal:
+    - shared/config/environment (config.ollama.baseUrl, config.ollama.model)
+    - shared/utils/logger (log.externalService, log.warn, log.error)
+    - shared/utils/errors (createExternalServiceError)
+    - features/model-management/types/api (OllamaModelsResponse, OllamaGenerateResponse, OllamaHealthCheck, OllamaTestResult)
+
+express_v5_changes: >
+  Routes use inline try/catch with res.status(500).json() — no asyncHandler. No structural
+  change required. Verify that early-return patterns like
+  "res.status(400).json(response); return;" remain valid (they are, since res methods return void in v5).
+
+migration_complexity: low
+
+notes: >
+  BASE_URL comes from config.ollama.baseUrl (environment-validated), defaulting to
+  http://localhost:11434. This is correct; do not hard-code.
+
+  The service uses the /api/generate (raw completion) endpoint, not /api/chat.
+  /api/chat provides role-structured turn history natively and is preferred for chat use cases.
+  The migration should evaluate switching callOllama to /api/chat for consistency with
+  how chat-message-dispatch already formats context.
+
+  AbortController + setTimeout pattern is used for all fetch calls. This is compatible with
+  Node 18+ fetch; no axios or node-fetch dependency is needed.
+
+  OllamaTestResult type is re-exported from features/model-management/types/api.ts but
+  also used by lmstudio-adapter — a shared types file should own it in repo-sota.
+
+  No authentication middleware is applied to these routes in the legacy code.
+  Decide whether Ollama/LM Studio management endpoints should require auth in repo-sota.

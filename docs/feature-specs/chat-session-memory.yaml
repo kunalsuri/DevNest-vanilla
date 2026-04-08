@@ -1,0 +1,50 @@
+feature: chat-session-memory
+source_files:
+  - server/features/chat/routes/chat.ts
+  - server/features/chat/types/api.ts
+  - server/storage.ts
+purpose: Persist, retrieve, and delete named chat sessions (full message history) to/from a flat JSON file on disk.
+
+contracts:
+  - endpoint: GET /api/chat/history
+    method: GET
+    inputs: none (requires session auth)
+    outputs: "{ success: true, data: ChatSession[], timestamp: string }"
+    side_effects: none
+
+  - endpoint: POST /api/chat/save
+    method: POST
+    inputs: "body: ChatSession (validated by chatSessionSchema)"
+    outputs: "{ success: true, timestamp: string }"
+    side_effects: upserts session into ./data/chat_history.json; creates file if missing
+
+  - endpoint: DELETE /api/chat/history/:sessionId
+    method: DELETE
+    inputs: "params: { sessionId: string } (validated by chatSessionIdSchema)"
+    outputs: "{ success: true, timestamp: string }"
+    side_effects: removes matching session from ./data/chat_history.json
+
+dependencies:
+  npm:
+    - zod
+  internal:
+    - shared/validation (chatMessageSchema, chatSessionSchema, chatSessionIdSchema)
+    - shared/middleware/auth (requireAuth)
+    - shared/middleware/csrf (csrfProtection)
+    - shared/middleware/errorHandler (asyncHandler)
+    - shared/utils/errors (ValidationError)
+    - server/storage (FileStorage singleton)
+
+express_v5_changes: >
+  asyncHandler wrapper is unnecessary — Express 5 propagates async rejections natively;
+  remove all asyncHandler() calls. No return-value chaining issues in these handlers.
+
+migration_complexity: low
+
+notes: >
+  Storage is a global FileStorage singleton backed by a plain JSON file (./data/chat_history.json).
+  In repo-sota, this must be replaced with a proper database (Drizzle + whichever DB is used).
+  The IStorage interface is already defined and can guide the repository adapter.
+  Chat sessions are not scoped per-user in the legacy implementation — all users share one history
+  array. The migration should add a userId field to ChatSession and filter by authenticated user.
+  No streaming is involved here; this is purely CRUD.

@@ -1,55 +1,62 @@
-# Project: Audit Remediation Agent
+# Spec-Driven AI Development
 
-## Invariants (never override these)
+## Role
 
-- No implementation without a corresponding SPEC in `/docs/specs/remediation_specs.md`
-- No SPEC without a traceable Audit ID from `/docs/audit/*-audit-report.md`
-- Modify only files explicitly listed in the active SPEC's "Files to Modify" field
-- After every implementation, run tests before advancing to the next SPEC
-- Every completed SPEC must update `/docs/reports/traceability_matrix.md` before proceeding
-- Maximum 3 fix attempts per SPEC; on third FAIL, write a blocking note to
-  `/docs/reports/blockers.md` and halt — do not skip to the next SPEC
+Autonomous engineering agent. Senior architect + security auditor. Never act outside an active SPEC.
 
-## Documentation Structure (canonical paths)
+## Invariants
 
-- Audit report: /docs/audit/\*-audit-report.md
-- Specifications: /docs/specs/remediation_specs.md
-- Traceability matrix: /docs/reports/traceability_matrix.md
-- Implementation log: /docs/reports/implementation_report.md
-- Session state: /docs/reports/session_state.md ← resume anchor
-- Final summary: /docs/reports/final_summary.md
-- Blockers: /docs/reports/blockers.md
+- No implementation without a SPEC in `/docs/specs/remediation_specs.md`
+- Touch only files listed in the active SPEC's `Files to Modify`
+- Run full test sequence after every implementation
+- Update `/docs/reports/traceability_matrix.md` on every COMPLETE or BLOCKED
+- Max 3 attempts per SPEC → on third FAIL, write to `/docs/reports/blockers.md` and halt
 
-## Session State Protocol
+## Session Start
 
-At the start of every session, read `/docs/reports/session_state.md`.
-It contains:
-CURRENT_SPEC: SPEC-XXX
-STATUS: [IN_PROGRESS | COMPLETE | BLOCKED]
+Read `/docs/reports/traceability_matrix.md`.
 
-Resume from CURRENT_SPEC. Do not restart from SPEC-001 unless STATUS is absent.
+- `IN_PROGRESS` → resume CURRENT_SPEC
+- `COMPLETE` → advance to next SPEC
+- `BLOCKED` → surface blocker to user, await instruction
+- No entry → start at SPEC-001
 
-## Test Execution Order (per SPEC)
+## Test Sequence
 
-1. Unit tests relevant to modified files
-2. Integration tests (if applicable)
-3. Linter (`<project linter command>`)
-4. Type checker (`<project type-check command>`)
-5. Security scan (`<project security scan command>`, if applicable)
+1. Unit tests (modified files)
+2. Integration tests (if cross-module)
+3. Linter → `<linter command>`
+4. Type checker → `<typecheck command>`
+5. Security scan → `<scan command>` (if applicable)
 
-If no tests exist for a modified module, create them per the SPEC's Test Plan
-before considering the implementation complete.
+No tests for a module? Write them per the SPEC's Test Plan first.
 
-## Traceability Matrix Format
+## Traceability Matrix
 
 | SPEC-ID | Audit-ID | Files Changed | Tests | Attempts | Status | Notes |
 | ------- | -------- | ------------- | ----- | -------- | ------ | ----- |
 
-## Role
+---
 
-Senior software architect, security auditor, and autonomous engineering agent.
+## LLM Migration: `/repo-legacy` → /repo-sota
 
-## File Generation Rules
+### Port These Only
 
-When CODE_OF_CONDUCT.md is required, insert only a reference to the
-Contributor Covenant canonical URL. Do not generate the full document body.
+1. Multi-provider LLM adapter (Ollama, LM Studio, OpenAI, Google AI)
+2. SSE streaming chat (no WebSockets — DevNest has no WS infrastructure)
+3. Persistent conversation history via Drizzle ORM (JSON fallback if needed)
+4. Runtime provider config API (select/switch provider)
+5. Chat UI components (thread, input, provider selector)
+
+### Rules
+
+- Express 5 only: async route handlers, no `next(err)`
+- Server code → `server/features/llm/` | Client code → `client/src/features/llm/`
+- One `ILLMProvider` interface, N concrete adapters
+- All LLM env vars documented in `.env.example`
+- Tests in `tests/features/llm/` — must pass `npm test` before complete
+
+### Do Not Port
+
+- Auth, sessions, unrelated DB schema, frontend routing shell
+- Any Radix UI component with a shadcn/ui equivalent in DevNest
