@@ -10,6 +10,22 @@ corresponding approved spec under `ai-meta/specs/`. See `AGENT_GUIDE.md`.
 
 ---
 
+## 🚦 Start Here
+
+**→ First time working with this repository?**
+1. Read this README entirely (you are here)
+2. Follow **"Comprehensive Reading Order"** below (~30 minutes)
+3. Steps 1-4 are **MANDATORY** (safety rules and process)
+
+**→ Already onboarded and have a specific task?**
+1. Use **"Quick Start (Feature-based workflow)"** below (~20 minutes)
+2. Prerequisites: Must have read `AGENT_GUIDE.md` at least once
+
+**→ Unsure which path to take?**
+Choose **Comprehensive Reading Order** (better safe than sorry)
+
+---
+
 ## Directory Map
 
 ```
@@ -45,21 +61,40 @@ ai-meta/
 
 ## Reading Order for AI Agents
 
-**Quick Start (Feature-based workflow):**
+### Quick Start (Feature-based workflow)
+
+**Time estimate:** ~20 minutes | **Token estimate:** ~15,000 tokens
+**Prerequisites:** Must have read `AGENT_GUIDE.md` at least once
+**Best for:** Agents with a specific task who understand the rules
+
 1. `FEATURE_MAP.md` — Start here for comprehensive feature overview
 2. `AGENT_ROUTING.md` — Determine which feature(s) your task involves
 3. Feature details in `FEATURE_MAP.md` — Deep dive into relevant features
 4. Related detailed docs — Feature files, specs, architecture as needed
 
-**Comprehensive Reading Order:**
-1. `AGENT_GUIDE.md` — Operating instructions and pre-flight checklist
-2. `CHANGE_POLICY.md` — Boundaries and what can be modified
-3. `SDD_CONTROL.md` — Specification-driven development rules
-4. `FEATURE_MAP.md` — **PRIMARY REFERENCE** for all features
+---
+
+### Comprehensive Reading Order
+
+**Time estimate:** ~30 minutes | **Token estimate:** ~30,000 tokens
+**Best for:** First-time agents or comprehensive codebase understanding
+
+**Phase 1: Safety & Process (MANDATORY — ~10 minutes)**
+
+1. **[MANDATORY]** `AGENT_GUIDE.md` — Operating instructions and pre-flight checklist
+2. **[MANDATORY]** `CHANGE_POLICY.md` — Boundaries and what can be modified
+3. **[MANDATORY]** `SDD_CONTROL.md` — Specification-driven development rules
+4. **[MANDATORY]** `FEATURE_MAP.md` — **PRIMARY REFERENCE** for all features
+
+**Phase 2: System Understanding (~15 minutes)**
+
 5. `AGENT_ROUTING.md` — How to route requests to features
 6. `architecture/OVERVIEW.md` — System architecture and topology
 7. `architecture/MODULE_MAP.md` — File-to-module mapping
 8. `features/INDEX.md` — Feature index with safety levels
+
+**Phase 3: Task-Specific Deep Dive (as needed)**
+
 9. Feature file for the relevant subsystem (`features/<name>.md`) — Detailed feature docs
 10. Spec file for the planned change (`specs/<name>/spec.md`) — Implementation specs
 11. Prior eval reports (`evaluations/<name>/eval.md`) — Evaluation history
@@ -78,3 +113,28 @@ ai-meta/
 | Observability | Winston, Sentry, custom tracing middleware |
 | Testing | Vitest, Testing Library, Supertest |
 | CI tooling | ESLint, Prettier, Husky, lint-staged |
+
+---
+
+## ✅ Onboarding Complete Checkpoint
+
+**You are ready to work when you can answer these questions:**
+
+1. **What is the spec lifecycle?**
+   - Answer: `DRAFT → REVIEW → APPROVED → IN_PROGRESS → DONE` (or `REJECTED`/`BLOCKED`)
+
+2. **What safety level is the Storage Layer (F-12)?**
+   - Answer: `CRITICAL`
+
+3. **Where are user authentication routes located?**
+   - Answer: `server/auth/jwt-auth-routes.ts`
+
+4. **Can I modify `.github/workflows/` directly?**
+   - Answer: `No` (restricted, requires review)
+
+5. **Where do I find the comprehensive feature registry?**
+   - Answer: `ai-meta/FEATURE_MAP.md`
+
+**If you can answer all 5 questions correctly, you are ready to receive tasks.**
+
+**If not:** Review the documents in the Comprehensive Reading Order, focusing on steps 1-4.
