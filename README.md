@@ -174,7 +174,7 @@ We welcome contributions! This project follows **specification-driven developmen
 - **Follow safety levels** — Check [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) for feature risk levels
 - **Respect boundaries** — Read [`/ai-meta/CHANGE_POLICY.md`](ai-meta/CHANGE_POLICY.md)
 - **Maintain documentation** — Update feature map when adding features
-- **Test coverage** — Maintain >80% coverage
+- **Test coverage** — Maintain >70% coverage
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 

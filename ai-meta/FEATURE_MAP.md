@@ -270,7 +270,7 @@ primary source of truth for AI agents to understand:
 **Status:** STABLE | **Safety:** MEDIUM | **Owner:** Admin
 
 **Entry Points:**
-- Server: `GET /api/feature-flags`, `GET /api/feature-flags/:key`, `PUT /api/feature-flags/:key`, `DELETE /api/feature-flags/:key`
+- Server: `GET /api/admin/feature-flags`, `GET /api/admin/feature-flags/:key`, `POST /api/admin/feature-flags`, `PUT /api/admin/feature-flags/:key`, `PATCH /api/admin/feature-flags/:key`, `DELETE /api/admin/feature-flags/:key`
 - Client: Feature flag checks in components via API
 
 **Related Files:**
@@ -279,10 +279,12 @@ primary source of truth for AI agents to understand:
 - Shared: Feature flag types
 
 **APIs:**
-- `GET /api/feature-flags` — List all flags (admin only)
-- `GET /api/feature-flags/:key` — Get specific flag
-- `PUT /api/feature-flags/:key` — Create/update flag (admin only)
-- `DELETE /api/feature-flags/:key` — Delete flag (admin only)
+- `GET /api/admin/feature-flags` — List all flags (admin only)
+- `GET /api/admin/feature-flags/:key` — Get specific flag (admin only)
+- `POST /api/admin/feature-flags` — Create/upsert flag (admin only)
+- `PUT /api/admin/feature-flags/:key` — Replace flag (admin only)
+- `PATCH /api/admin/feature-flags/:key` — Partial update flag (admin only)
+- `DELETE /api/admin/feature-flags/:key` — Delete flag (admin only)
 
 **State Management:**
 - Server: In-memory cache + JSON file persistence
@@ -322,7 +324,7 @@ primary source of truth for AI agents to understand:
 **Status:** PARTIAL | **Safety:** MEDIUM | **Owner:** Notifications
 
 **Entry Points:**
-- Server: `GET/POST /api/notifications`, `GET/PATCH/DELETE /api/notifications/:id`
+- Server: `GET /api/notifications`, `PATCH /api/notifications/read-all`, `PATCH /api/notifications/:id/read`, `DELETE /api/notifications/:id`
 - Client: Notification components (partial)
 
 **Related Files:**
@@ -332,9 +334,8 @@ primary source of truth for AI agents to understand:
 
 **APIs:**
 - `GET /api/notifications` — List user notifications
-- `POST /api/notifications` — Create notification (admin only)
-- `GET /api/notifications/:id` — Get notification
-- `PATCH /api/notifications/:id` — Mark as read
+- `PATCH /api/notifications/read-all` — Mark all notifications as read
+- `PATCH /api/notifications/:id/read` — Mark a notification as read
 - `DELETE /api/notifications/:id` — Delete notification
 
 **State Management:**
@@ -379,7 +380,7 @@ primary source of truth for AI agents to understand:
 **Status:** PARTIAL | **Safety:** MEDIUM | **Owner:** Subscriptions
 
 **Entry Points:**
-- Server: `GET/POST /api/subscriptions`, `GET/PATCH/DELETE /api/subscriptions/:id`
+- Server: `GET /api/subscription/plans`, `GET /api/subscription`
 - Client: Subscription UI (partial)
 
 **Related Files:**
@@ -388,11 +389,8 @@ primary source of truth for AI agents to understand:
 - Shared: Subscription types
 
 **APIs:**
-- `GET /api/subscriptions` — List subscription plans
-- `POST /api/subscriptions` — Create plan (admin only)
-- `GET /api/subscriptions/:id` — Get plan details
-- `PATCH /api/subscriptions/:id` — Update plan (admin only)
-- `DELETE /api/subscriptions/:id` — Delete plan (admin only)
+- `GET /api/subscription/plans` — List available plans (public)
+- `GET /api/subscription` — Get current user's active subscription (authenticated)
 
 **State Management:**
 - Server: Storage layer persistence
@@ -975,7 +973,7 @@ Run this check before committing feature map changes:
 
 ```bash
 # Check that all referenced files exist
-npm run validate:feature-map  # (to be implemented)
+# npm run validate:feature-map  # (future: not yet implemented)
 
 # Ensure linting passes
 npm run lint
