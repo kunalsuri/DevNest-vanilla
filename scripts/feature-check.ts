@@ -18,7 +18,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve, join } from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const INDEX_PATH = join(ROOT, "agent", "INDEX.yaml");
@@ -31,7 +31,8 @@ const SPECS_DIR = join(ROOT, "agent", "specs");
 // A fresh template starts as 'warn' (only F-01 has a spec). Flip to 'error'
 // once specs cover the code you intend to protect. See AGENTS.md §0.
 // ───────────────────────────────────────────────────────────────────────────
-const GATE_MODE: "warn" | "error" = "warn";
+const GATE_MODE: "warn" | "error" =
+  process.env.FEATURE_CHECK_GATE_MODE === "error" ? "error" : "warn";
 
 const VALID_SAFETY = new Set(["LOW", "MEDIUM", "HIGH", "CRITICAL"]);
 const VALID_STATUS = new Set([
@@ -172,7 +173,17 @@ function findSpecFiles(dir: string): string[] {
   return out;
 }
 
-/** Backtick-quoted path-like tokens (containing "/") from APPROVED specs = "covered". */
+function extractFilesInSection(text: string): string {
+  const start = text.search(/^###\s*2\.1\s+Files In\b/m);
+  if (start === -1) {
+    return "";
+  }
+  const rest = text.slice(start);
+  const end = rest.search(/^###\s*2\.2\s+Files Out\b/m);
+  return end === -1 ? rest : rest.slice(0, end);
+}
+
+/** Backtick-quoted paths from the Files In section of APPROVED specs = "covered". */
 function collectCoveredPaths(): Set<string> {
   const covered = new Set<string>();
   if (!existsSync(SPECS_DIR)) {
@@ -186,42 +197,81 @@ function collectCoveredPaths(): Set<string> {
     if (!approved) {
       continue;
     }
-    for (const m of text.matchAll(/`([^`]+\/[^`]*)`/g)) {
+    const filesIn = extractFilesInSection(text);
+    for (const m of filesIn.matchAll(/`([^`]+\/[^`]*)`/g)) {
       covered.add(m[1].trim().replace(/^\.?\//, ""));
     }
   }
   return covered;
 }
 
-function changedAppFiles(): string[] {
-  const run = (cmd: string): string[] => {
-    try {
-      return execSync(cmd, { cwd: ROOT, encoding: "utf8" })
-        .split(/\r?\n/)
-        .filter(Boolean);
-    } catch {
-      return [];
+function gitLines(args: string[]): string[] {
+  try {
+    return execFileSync("git", args, { cwd: ROOT, encoding: "utf8" })
+      .split(/\r?\n/)
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function hasGitRef(ref: string): boolean {
+  try {
+    execFileSync("git", ["rev-parse", "--verify", ref], {
+      cwd: ROOT,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function baseRef(): string {
+  const base = process.env.GITHUB_BASE_REF || "main";
+  const remoteBase = `origin/${base}`;
+  return hasGitRef(remoteBase) ? remoteBase : base;
+}
+
+function changedAppFiles(mode: "changed" | "staged"): string[] {
+  const files = new Set<string>();
+  if (mode === "changed") {
+    for (const file of [
+      ...gitLines(["diff", "--name-only", `${baseRef()}...HEAD`]),
+      ...gitLines(["diff", "--name-only", "HEAD"]),
+      ...gitLines(["ls-files", "--others", "--exclude-standard"]),
+    ]) {
+      files.add(file);
     }
-  };
-  const files = new Set<string>([
-    ...run("git diff --name-only HEAD"),
-    ...run("git ls-files --others --exclude-standard"),
-  ]);
+  } else {
+    for (const file of gitLines(["diff", "--name-only", "--cached"])) {
+      files.add(file);
+    }
+  }
   return [...files].filter((f) =>
     /^(server|client|shared)\/.+\.(ts|tsx)$/.test(f),
   );
 }
 
-function checkSpecGate(): { violations: string[]; fatal: boolean } {
+function checkSpecGate(mode: "changed" | "staged"): {
+  violations: string[];
+  fatal: boolean;
+} {
   const covered = collectCoveredPaths();
-  const changed = changedAppFiles();
+  const changed = changedAppFiles(mode);
   const violations = changed.filter((f) => !covered.has(f));
   return { violations, fatal: GATE_MODE === "error" && violations.length > 0 };
 }
 
 function main(): void {
   const args = process.argv.slice(2);
-  const runGate = args.includes("--changed") || args.includes("--staged");
+  const gateModes: Array<"changed" | "staged"> = [];
+  if (args.includes("--changed")) {
+    gateModes.push("changed");
+  }
+  if (args.includes("--staged")) {
+    gateModes.push("staged");
+  }
 
   if (!existsSync(INDEX_PATH)) {
     console.error(`✗ agent/INDEX.yaml not found at ${INDEX_PATH}`);
@@ -248,14 +298,23 @@ function main(): void {
 
   let fatal = errors.length > 0;
 
-  if (runGate) {
-    const { violations, fatal: gateFatal } = checkSpecGate();
-    if (violations.length) {
+  if (gateModes.length) {
+    const violations = new Set<string>();
+    let gateFatal = false;
+    for (const mode of gateModes) {
+      const result = checkSpecGate(mode);
+      gateFatal = gateFatal || result.fatal;
+      for (const violation of result.violations) {
+        violations.add(violation);
+      }
+    }
+    const allViolations = [...violations];
+    if (allViolations.length) {
       const label = GATE_MODE === "error" ? "✗" : "⚠";
       console.log(
-        `\n${label} ${violations.length} changed app file(s) not covered by an APPROVED spec (GATE_MODE=${GATE_MODE}):`,
+        `\n${label} ${allViolations.length} changed app file(s) not covered by an APPROVED spec (GATE_MODE=${GATE_MODE}):`,
       );
-      for (const v of violations) {
+      for (const v of allViolations) {
         console.log(`  - ${v}`);
       }
       if (GATE_MODE === "warn") {

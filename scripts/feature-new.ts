@@ -91,15 +91,19 @@ function buildSpec(
 ): string {
   return template
     .replace(/^# Spec Template\s*$/m, `# Spec: ${name}`)
-    .replace(/^\| \*\*Feature\*\* \|.*$/m, `| **Feature** | ${name} |`)
-    .replace(/^\| \*\*Feature ID\*\* \|.*$/m, `| **Feature ID** | ${id} |`)
-    .replace(/^\| \*\*Status\*\* \|.*$/m, `| **Status** | DRAFT |`)
+    .replace(/^\|\s*\*\*Feature\*\*\s*\|.*$/m, `| **Feature** | ${name} |`)
+    .replace(/^\|\s*\*\*Feature ID\*\*\s*\|.*$/m, `| **Feature ID** | ${id} |`)
+    .replace(/^\|\s*\*\*Status\*\*\s*\|.*$/m, `| **Status** | DRAFT |`)
     .replace(
-      /^\| \*\*Safety Level\*\* \|.*$/m,
+      /^\|\s*\*\*Safety Level\*\*\s*\|.*$/m,
       `| **Safety Level** | ${safety} |`,
     )
-    .replace(/^\| \*\*Author\*\* \|.*$/m, `| **Author** | ${author} |`)
-    .replace(/^\| \*\*Date\*\* \|.*$/m, `| **Date** | ${date} |`);
+    .replace(/^\|\s*\*\*Author\*\*\s*\|.*$/m, `| **Author** | ${author} |`)
+    .replace(/^\|\s*\*\*Date\*\*\s*\|.*$/m, `| **Date** | ${date} |`);
+}
+
+function quoteYaml(value: string): string {
+  return JSON.stringify(value);
 }
 
 function main(): void {
@@ -137,6 +141,12 @@ function main(): void {
   if (!existsSync(TEMPLATE_PATH)) {
     die("agent/specs/TEMPLATE.md not found");
   }
+  if (!existsSync(INDEX_PATH)) {
+    die("agent/INDEX.yaml not found");
+  }
+  if (!existsSync(FEATURE_MAP_PATH)) {
+    die("agent/FEATURE_MAP.md not found");
+  }
 
   const indexText = readFileSync(INDEX_PATH, "utf8");
   const id = nextFeatureId(indexText);
@@ -156,14 +166,14 @@ function main(): void {
   writeFileSync(join(specDir, "spec.md"), specText, "utf8");
 
   // 2. INDEX.yaml entry
-  const kwList = keywords.length ? keywords.join(", ") : slug;
+  const kwList = keywords.length ? keywords : [slug];
   const indexEntry = [
     "",
     `  - id: ${id}`,
-    `    name: ${name}`,
+    `    name: ${quoteYaml(name)}`,
     `    safety: ${safety}`,
     `    status: ${status}`,
-    `    keywords: [${kwList}]`,
+    `    keywords: [${kwList.map(quoteYaml).join(", ")}]`,
     "    server: []",
     "    client: []",
     `    spec: specs/${slug}/spec.md`,

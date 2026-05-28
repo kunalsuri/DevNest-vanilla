@@ -12,14 +12,14 @@
 Before writing a single line of application code, confirm ALL of the following:
 
 - [ ] 1. You have read [`/AGENTS.md`](../AGENTS.md) (prime directive + safety levels + boundaries).
-- [ ] 2. Read `agent/CHANGE_POLICY.md` — the full permission matrix for what you may touch.
-- [ ] 3. Read `agent/architecture/OVERVIEW.md` — runtime topology.
-- [ ] 4. Read `agent/architecture/MODULE_MAP.md` — locate the files you will edit.
-- [ ] 5. Read `agent/INDEX.yaml` — identify the feature and its safety level (compact registry).
-- [ ] 6. Read the relevant `agent/features/<name>.md` — understand scope and risks.
-- [ ] 7. Locate or create `agent/specs/<feature>/spec.md` (run `npm run feature:new`, or copy `agent/specs/TEMPLATE.md`).
+- [ ] 2. Read `CHANGE_POLICY.md` — the full permission matrix for what you may touch.
+- [ ] 3. Read `architecture/OVERVIEW.md` — runtime topology.
+- [ ] 4. Read `architecture/MODULE_MAP.md` — locate the files you will edit.
+- [ ] 5. Read `INDEX.yaml` — identify the feature and its safety level (compact registry).
+- [ ] 6. Read the relevant `features/<name>.md` — understand scope and risks.
+- [ ] 7. Locate or create `specs/<feature>/spec.md` (run `npm run feature:new`, or copy `specs/TEMPLATE.md`).
 - [ ] 8. Confirm the spec `Status` is `APPROVED` before touching any application file.
-- [ ] 9. Read prior eval reports in `agent/evaluations/<feature>/eval.md` if they exist.
+- [ ] 9. Read prior eval reports in `evaluations/<feature>/eval.md` if they exist.
 
 > Steps 3–6 are _on-demand reference_, not bulk reading. Open only what your task needs.
 
@@ -62,6 +62,6 @@ If you reach an uncertain state:
 - [ ] `npm run check` (TypeScript) passes.
 - [ ] `npm run lint` passes.
 - [ ] `npm run test:ci` passes.
-- [ ] Eval report written at `agent/evaluations/<feature>/eval.md`.
+- [ ] Eval report written at `evaluations/<feature>/eval.md`.
 - [ ] No secrets committed.
 - [ ] No unrelated files modified.
