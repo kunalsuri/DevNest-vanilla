@@ -14,7 +14,7 @@ AI agents MAY perform the following without special approval beyond the standard
 | Add new services | `server/services/` — requires MEDIUM spec |
 | Add/modify tests | `tests/` — encouraged, no gate |
 | Update documentation | `docs/`, `*.md` in repo root |
-| Fix linting/formatting | Any file — no spec required |
+| Fix linting/formatting | `ai-meta/` docs only — no spec required; application files require at minimum a LOW spec |
 
 ---
 

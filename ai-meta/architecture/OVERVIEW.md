@@ -70,8 +70,8 @@ Client                           Server
   │                                │  1. Zod validate body
   │                                │  2. authService.login()
   │                                │     a. getUserByUsername → storage
-  │                                │     b. bcrypt.compare(password, hash)
-  │                                │     c. Check account lockout (lockedUntil)
+  │                                │     b. Check account lockout (lockedUntil)
+  │                                │     c. bcrypt.compare(password, hash)
   │                                │     d. signAccessToken (15 min)
   │                                │     e. signRefreshToken (7 days)
   │                                │     f. bcrypt.hash(refreshToken) → session
@@ -113,7 +113,7 @@ Client (PreferencesPage)
 | Unauthenticated access | `authenticate` middleware (JWT verify + session check) |
 | Admin-only routes | `requireAdmin` middleware (role === 'admin') |
 | CSRF attacks | `validateCSRF` middleware (token in header, hash in session) |
-| Brute-force login | Account lockout (5 failed attempts) + authLimiter (5/15min) |
+| Brute-force login | Account lockout (10 failed attempts → 30-min lock) + authLimiter (5/15min) |
 | Credential exposure | Password fields stripped in all responses (`PublicUser` type) |
 | Data dir access | Express route blocks `/data/{*path}` → 404 |
 | Secret leakage in logs | `SENSITIVE_FIELDS` list sanitized before `logger.error()` |
@@ -139,11 +139,10 @@ Client (PreferencesPage)
 |---|---|---|
 | `NODE_ENV` | `development` | Controls CSP, logging verbosity |
 | `PORT` | `5000` | Server listen port |
-| `JWT_SECRET` | — | Signs access tokens (required) |
-| `JWT_REFRESH_SECRET` | — | Signs refresh tokens (required) |
-| `JWT_EXPIRES_IN` | `15m` | Access token TTL |
-| `JWT_REFRESH_EXPIRES_IN` | `7d` | Refresh token TTL |
-| `ALLOWED_ORIGINS` | — | CORS allow-list (comma-separated) |
+| `JWT_ACCESS_SECRET` | *(dev default)* | Signs access tokens (min 32 chars; required in production) |
+| `JWT_REFRESH_SECRET` | *(dev default)* | Signs refresh tokens (min 32 chars; required in production) |
+| `SESSION_SECRET` | *(dev default)* | Session signing secret (min 32 chars; required in production) |
+| `ALLOWED_ORIGINS` | `http://localhost:5173,...` | CORS allow-list (comma-separated) |
 | `RATE_LIMIT_WINDOW_MS` | `900000` | Rate limit window (15 min) |
 | `RATE_LIMIT_MAX_REQUESTS` | `100` | Max requests per window |
 | `DATABASE_URL` | — | Optional; enables PostgreSQL mode |

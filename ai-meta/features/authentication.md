@@ -16,7 +16,7 @@
 - JWT refresh token issuance (7-day TTL), stored as HTTP-only cookie
 - CSRF token issuance, stored as JS-readable cookie + bcrypt hash in session
 - Session management (create, retrieve, revoke, cleanup) via `SessionManager`
-- Login with account lockout (5 failed attempts → `lockedUntil` timestamp)
+- Login with account lockout (10 failed attempts → `lockedUntil` timestamp, 30-minute lock)
 - Token refresh (sliding sessions)
 - Logout (single session) and logout-all (all sessions for user)
 - Password reset request (email token generation)
@@ -64,11 +64,11 @@
 | POST | `/api/auth/login` | None | 5/15min |
 | POST | `/api/auth/refresh` | refreshToken cookie | 5/15min |
 | POST | `/api/auth/logout` | refreshToken cookie | — |
-| POST | `/api/auth/logout-all` | ****** | — |
-| GET | `/api/auth/user` | ****** | — |
+| POST | `/api/auth/logout-all` | `Bearer` access token | — |
+| GET | `/api/auth/user` | `Bearer` access token | — |
 | POST | `/api/auth/password-reset/request` | None | 5/15min |
 | POST | `/api/auth/password-reset/confirm` | None | 5/15min |
-| POST | `/api/auth/cleanup-sessions` | ****** Admin | — |
+| POST | `/api/auth/cleanup-sessions` | `Bearer` access token + admin role | — |
 
 ---
 
@@ -80,7 +80,7 @@
 | Refresh token theft via XSS | LOW | HIGH | httpOnly cookie; CSRF double-submit pattern |
 | Session fixation | LOW | HIGH | New session created on every login |
 | Brute-force login | MEDIUM | HIGH | authLimiter (5/15min) + account lockout |
-| bcrypt timing attack via login error | LOW | MEDIUM | Uniform error message "Invalid credentials" regardless of step that failed |
+| bcrypt timing attack via login error | LOW | MEDIUM | "Invalid credentials" returned for missing user or bad password; distinct "Account locked…" message returned when `lockedUntil` is in the future (before password check) — acceptable trade-off as it reveals lockout state but not credentials |
 | Stale sessions after server restart | LOW | MEDIUM | `SERVER_START_TIME` exported to help invalidate pre-restart sessions |
 | Concurrent write race on sessions.json | LOW | HIGH | Mutex in `SessionManager` serializes all writes |
 

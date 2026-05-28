@@ -7,7 +7,7 @@
 | **Feature** | Authentication (JWT) |
 | **Feature ID** | F-01 |
 | **Spec Version** | 1.0 |
-| **Status** | DONE |
+| **Status** | APPROVED |
 | **Safety Level** | HIGH |
 | **Author** | AI Agent (architectural analysis) |
 | **Date** | 2026-05-28 |
@@ -65,7 +65,7 @@ future agent may modify `auth-service.ts` or `session-manager.ts`.
 
 ### 3.2 After (Target Behavior)
 - Unit tests exist for account lockout: correct login resets counter; bad password
-  increments counter; counter reaching 5 sets `lockedUntil`; locked account rejects login.
+  increments counter; counter reaching 10 sets `lockedUntil`; locked account rejects login.
 - Unit tests exist for session cleanup: expired sessions are deleted; active sessions
   are retained; `revokedAt`-set sessions are not returned by `getSession`.
 
@@ -106,7 +106,7 @@ None.
 |---|---|---|
 | Successful login resets failedLoginAttempts | User with failedLoginAttempts=3, correct password | failedLoginAttempts reset to 0, returns tokens |
 | Failed login increments failedLoginAttempts | User with failedLoginAttempts=0, wrong password | failedLoginAttempts becomes 1, throws "Invalid credentials" |
-| 5th failed login sets lockedUntil | User with failedLoginAttempts=4, wrong password | lockedUntil set to future timestamp, throws lockout error |
+| 10th failed login sets lockedUntil | User with failedLoginAttempts=9, wrong password | lockedUntil set to future timestamp, throws lockout error |
 | Locked account rejects correct password | User with lockedUntil in future, correct password | Throws lockout error without checking password |
 | Lockout expires allows login | User with lockedUntil in past, correct password | Login succeeds, lockedUntil cleared |
 | Register duplicate username rejected | Existing username in storage | Throws "Username already exists" |
