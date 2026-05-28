@@ -3,14 +3,14 @@ You are initializing an audit remediation workflow on this codebase.
 ## Step 0 — Bootstrap (run once)
 
 1. Create the directory structure defined in CLAUDE.md if absent.
-2. If `/ai-meta/history/audits/20260405-audit-report.md` does not exist, halt and output:
+2. If `/agent/history/audits/20260405-audit-report.md` does not exist, halt and output:
    "BLOCKED: No audit report found. Provide audit-report.md before proceeding."
 3. If it exists, confirm its presence and proceed immediately to Step 1.
 
 ## Step 1 — Generate Specifications
 
-Read `/ai-meta/history/audits/20260405-audit-report.md`.
-For each finding, append a SPEC block to `/ai-meta/history/remediation/remediation_specs.md`:
+Read `/agent/history/audits/20260405-audit-report.md`.
+For each finding, append a SPEC block to `/agent/history/remediation/remediation_specs.md`:
 SPEC-XXX
 
 Audit-ID: AUDIT-XXX
@@ -22,7 +22,7 @@ Risks: <side-effects, regressions, breaking changes>
 Acceptance Criteria: <each criterion must be independently testable>
 Test Plan: <specific commands or test cases to verify the fix>
 
-When all SPECs are written, write to `/ai-meta/history/remediation/session_state.md`:
+When all SPECs are written, write to `/agent/history/remediation/session_state.md`:
 CURRENT_SPEC: SPEC-001
 STATUS: IN_PROGRESS
 
@@ -42,11 +42,11 @@ FAIL → fix and re-test (max 3 attempts per CLAUDE.md rules)
 
 ## Step 3 — Final Summary
 
-When all SPECs reach status ✅ or 🚫 (blocked), generate `/ai-meta/history/remediation/final_summary.md`.
+When all SPECs reach status ✅ or 🚫 (blocked), generate `/agent/history/remediation/final_summary.md`.
 Include: issues resolved, issues blocked, security posture delta, production readiness verdict.
 
 Begin now with Step 0.
 
 ---
 
-Read "/ai-meta/history/remediation/traceability_matrix.md" and resume the audit remediation loop from the "PENDING" SPECs. Follow all rules in CLAUDE.md. Do not re-process completed SPECs.
+Read "/agent/history/remediation/traceability_matrix.md" and resume the audit remediation loop from the "PENDING" SPECs. Follow all rules in CLAUDE.md. Do not re-process completed SPECs.

@@ -4,19 +4,17 @@
 
 Autonomous engineering agent. Senior architect + security auditor. Never act outside an approved spec.
 
-## Canonical Governance: `ai-meta/`
+## Governance lives in `AGENTS.md`
 
-**`ai-meta/` is the single source of truth for all AI-agent governance.** Do not create a
-parallel process. Start every session at [`ai-meta/README.md`](ai-meta/README.md).
+**All AI-agent governance is defined once, in [`AGENTS.md`](AGENTS.md)** (the open-standard
+constitution). This file adds only Claude- and project-specific context; it does not restate
+the rules. Read `AGENTS.md` first, then route via [`agent/INDEX.yaml`](agent/INDEX.yaml).
 
-- **Invariant:** no application file is created, modified, renamed, or deleted without an
-  `APPROVED` spec at `ai-meta/specs/<feature>/spec.md`. See [`ai-meta/AGENT_GUIDE.md`](ai-meta/AGENT_GUIDE.md).
-- **Permissions / boundaries:** [`ai-meta/CHANGE_POLICY.md`](ai-meta/CHANGE_POLICY.md).
-- **Spec rules & lifecycle:** [`ai-meta/SDD_CONTROL.md`](ai-meta/SDD_CONTROL.md)
-  (`DRAFT → REVIEW → APPROVED → IN_PROGRESS → DONE`; `REJECTED`/`BLOCKED`).
-- **Feature registry:** [`ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) (deep) — load
-  [`ai-meta/INDEX.yaml`](ai-meta/INDEX.yaml) first for a compact lookup.
-- **Eval on completion:** write `ai-meta/evaluations/<feature>/eval.md`.
+In short: **no `APPROVED` spec at `agent/specs/<feature>/spec.md` → no change to
+`server/`, `client/`, or `shared/`.** Lifecycle, safety levels, boundaries, and the
+specs-vs-features distinction are all in `AGENTS.md`. Deep per-feature docs are in
+[`agent/FEATURE_MAP.md`](agent/FEATURE_MAP.md). Scaffold a new feature with
+`npm run feature:new`; check consistency with `npm run feature:check`.
 
 ## Test Sequence (run after every implementation)
 
@@ -26,10 +24,10 @@ parallel process. Start every session at [`ai-meta/README.md`](ai-meta/README.md
 
 No tests for a module? Write them per the spec's Test Plan first.
 
-## Historical Records: `ai-meta/history/`
+## Historical Records: `agent/history/`
 
-`ai-meta/history/remediation/` (remediation_specs.md, traceability_matrix.md, blockers.md) and
-`ai-meta/history/audits/` are the **completed** April-2026 security-remediation audit trail
+`agent/history/remediation/` (remediation_specs.md, traceability_matrix.md, blockers.md) and
+`agent/history/audits/` are the **completed** April-2026 security-remediation audit trail
 (all 23 SPECs PASS). They are read-only history — do not resume that flow. New work follows the
 governance above.
 

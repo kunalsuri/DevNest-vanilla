@@ -3,7 +3,7 @@
 User- and integrator-facing documentation for the DevNest SaaS template.
 
 > **Contributing to the codebase?** Developer and AI-agent process docs live in
-> [`/ai-meta/`](../ai-meta/README.md), not here. This `docs/` tree is for *using* the app
+> [`/agent/`](../agent/README.md), not here. This `docs/` tree is for _using_ the app
 > and its API.
 
 ## Guides
