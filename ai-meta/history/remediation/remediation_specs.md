@@ -1,6 +1,6 @@
 # Remediation Specifications
 
-# Source Audit: /docs/audits/20260405-audit-report.md
+# Source Audit: /ai-meta/history/audits/20260405-audit-report.md
 
 # Generated: 2026-04-06
 

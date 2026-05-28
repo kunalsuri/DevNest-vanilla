@@ -21,7 +21,7 @@ Before writing a single line of application code, confirm ALL of the following:
 - [ ] 1. Read `ai-meta/CHANGE_POLICY.md` — know what you are permitted to touch.
 - [ ] 2. Read `ai-meta/architecture/OVERVIEW.md` — understand the runtime topology.
 - [ ] 3. Read `ai-meta/architecture/MODULE_MAP.md` — locate the files you will edit.
-- [ ] 4. Read `ai-meta/features/INDEX.md` — identify the feature and its safety level.
+- [ ] 4. Read `ai-meta/INDEX.yaml` — identify the feature and its safety level (compact registry).
 - [ ] 5. Read the relevant `ai-meta/features/<name>.md` — understand scope and risks.
 - [ ] 6. Locate or create `ai-meta/specs/<feature>/spec.md` using `ai-meta/specs/TEMPLATE.md`.
 - [ ] 7. Confirm the spec `Status` is `APPROVED` before touching any application file.

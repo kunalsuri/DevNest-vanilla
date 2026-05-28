@@ -31,30 +31,37 @@ Choose **Comprehensive Reading Order** (better safe than sorry)
 ```
 ai-meta/
 ├── README.md                         ← You are here. Entry point.
+├── INDEX.yaml                        ← LOAD FIRST. Compact registry: keywords, safety, files.
 ├── AGENT_GUIDE.md                    ← Mandatory operating instructions for every AI agent.
-├── AGENT_ROUTING.md                  ← Feature-based routing guide for AI agents.
+├── AGENT_ROUTING.md                  ← How to route a request to a feature (uses INDEX.yaml).
 ├── SDD_CONTROL.md                    ← Specification-Driven Development enforcement rules.
 ├── CHANGE_POLICY.md                  ← What AI agents can and cannot touch.
-├── FEATURE_MAP.md                    ← Comprehensive AI-readable feature registry (PRIMARY).
+├── FEATURE_MAP.md                    ← Deep per-feature docs: APIs, deps, tech debt (PRIMARY).
 ├── FEATURE_MAP_MAINTENANCE.md        ← Workflows and automation for feature map updates.
 │
 ├── architecture/
 │   ├── OVERVIEW.md                   ← Runtime topology, data-flow, security boundaries.
-│   └── MODULE_MAP.md                 ← File-to-logical-module mapping for every source file.
+│   ├── MODULE_MAP.md                 ← File-to-logical-module mapping for every source file.
+│   └── state-management-strategy.md  ← Engineering decision record: client/server state.
 │
 ├── features/
-│   ├── INDEX.md                      ← Full feature decomposition with safety levels.
+│   ├── INDEX.md                      ← Thin pointer to INDEX.yaml + FEATURE_MAP.md.
 │   └── authentication.md            ← Detailed feature file: Authentication subsystem.
 │
 ├── specs/
 │   ├── TEMPLATE.md                   ← Canonical spec template. Copy for every new change.
-│   └── authentication/
-│       └── spec.md                   ← Fully realized spec: JWT auth feature.
+│   ├── authentication/
+│   │   └── spec.md                   ← Fully realized spec: JWT auth feature.
+│   └── llm-migration/                ← Forward-looking FDD specs for the LLM migration (CLAUDE.md).
 │
-└── evaluations/
-    ├── TEMPLATE.md                   ← Canonical evaluation template.
-    └── authentication/
-        └── eval.md                   ← Completed eval report: JWT auth feature.
+├── evaluations/
+│   ├── TEMPLATE.md                   ← Canonical evaluation template.
+│   └── authentication/
+│       └── eval.md                   ← Completed eval report: JWT auth feature.
+│
+└── history/                          ← Read-only record of completed governance cycles.
+    ├── audits/                       ← Past security/readiness audit reports.
+    └── remediation/                  ← Completed remediation specs + traceability matrix.
 ```
 
 ---
@@ -63,14 +70,14 @@ ai-meta/
 
 ### Quick Start (Feature-based workflow)
 
-**Time estimate:** ~20 minutes | **Token estimate:** ~15,000 tokens
+**Time estimate:** ~10 minutes | **Token estimate:** ~3,000 tokens
 **Prerequisites:** Must have read `AGENT_GUIDE.md` at least once
 **Best for:** Agents with a specific task who understand the rules
 
-1. `FEATURE_MAP.md` — Start here for comprehensive feature overview
-2. `AGENT_ROUTING.md` — Determine which feature(s) your task involves
-3. Feature details in `FEATURE_MAP.md` — Deep dive into relevant features
-4. Related detailed docs — Feature files, specs, architecture as needed
+1. `INDEX.yaml` — **Load first.** Match your task's keywords to a feature; note its safety level.
+2. `AGENT_ROUTING.md` — Only if the request spans multiple features.
+3. `FEATURE_MAP.md` — Open **only the matched feature's section** for full detail.
+4. Related docs — feature file, spec, architecture, as needed.
 
 ---
 
@@ -88,10 +95,10 @@ ai-meta/
 
 **Phase 2: System Understanding (~15 minutes)**
 
-5. `AGENT_ROUTING.md` — How to route requests to features
-6. `architecture/OVERVIEW.md` — System architecture and topology
-7. `architecture/MODULE_MAP.md` — File-to-module mapping
-8. `features/INDEX.md` — Feature index with safety levels
+5. `INDEX.yaml` — Compact feature registry (keywords, safety, files) — your routing index
+6. `AGENT_ROUTING.md` — How to route requests to features (procedure + multi-feature cases)
+7. `architecture/OVERVIEW.md` — System architecture and topology
+8. `architecture/MODULE_MAP.md` — File-to-module mapping
 
 **Phase 3: Task-Specific Deep Dive (as needed)**
 

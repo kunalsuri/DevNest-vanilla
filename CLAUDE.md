@@ -2,39 +2,38 @@
 
 ## Role
 
-Autonomous engineering agent. Senior architect + security auditor. Never act outside an active SPEC.
+Autonomous engineering agent. Senior architect + security auditor. Never act outside an approved spec.
 
-## Invariants
+## Canonical Governance: `ai-meta/`
 
-- No implementation without a SPEC in `/docs/specs/remediation_specs.md`
-- Touch only files listed in the active SPEC's `Files to Modify`
-- Run full test sequence after every implementation
-- Update `/docs/reports/traceability_matrix.md` on every COMPLETE or BLOCKED
-- Max 3 attempts per SPEC → on third FAIL, write to `/docs/reports/blockers.md` and halt
+**`ai-meta/` is the single source of truth for all AI-agent governance.** Do not create a
+parallel process. Start every session at [`ai-meta/README.md`](ai-meta/README.md).
 
-## Session Start
+- **Invariant:** no application file is created, modified, renamed, or deleted without an
+  `APPROVED` spec at `ai-meta/specs/<feature>/spec.md`. See [`ai-meta/AGENT_GUIDE.md`](ai-meta/AGENT_GUIDE.md).
+- **Permissions / boundaries:** [`ai-meta/CHANGE_POLICY.md`](ai-meta/CHANGE_POLICY.md).
+- **Spec rules & lifecycle:** [`ai-meta/SDD_CONTROL.md`](ai-meta/SDD_CONTROL.md)
+  (`DRAFT → REVIEW → APPROVED → IN_PROGRESS → DONE`; `REJECTED`/`BLOCKED`).
+- **Feature registry:** [`ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) (deep) — load
+  [`ai-meta/INDEX.yaml`](ai-meta/INDEX.yaml) first for a compact lookup.
+- **Eval on completion:** write `ai-meta/evaluations/<feature>/eval.md`.
 
-Read `/docs/reports/traceability_matrix.md`.
+## Test Sequence (run after every implementation)
 
-- `IN_PROGRESS` → resume CURRENT_SPEC
-- `COMPLETE` → advance to next SPEC
-- `BLOCKED` → surface blocker to user, await instruction
-- No entry → start at SPEC-001
+1. `npm run check` — TypeScript type check
+2. `npm run lint` — ESLint
+3. `npm run test:ci` — full test suite (must pass before a spec is `DONE`)
 
-## Test Sequence
+No tests for a module? Write them per the spec's Test Plan first.
 
-1. Unit tests (modified files)
-2. Integration tests (if cross-module)
-3. Linter → `<linter command>`
-4. Type checker → `<typecheck command>`
-5. Security scan → `<scan command>` (if applicable)
+## Historical Records: `ai-meta/history/`
 
-No tests for a module? Write them per the SPEC's Test Plan first.
+`ai-meta/history/remediation/` (remediation_specs.md, traceability_matrix.md, blockers.md) and
+`ai-meta/history/audits/` are the **completed** April-2026 security-remediation audit trail
+(all 23 SPECs PASS). They are read-only history — do not resume that flow. New work follows the
+governance above.
 
-## Traceability Matrix
-
-| SPEC-ID | Audit-ID | Files Changed | Tests | Attempts | Status | Notes |
-| ------- | -------- | ------------- | ----- | -------- | ------ | ----- |
+`docs/` now holds **end-user and API documentation only** — see [`docs/README.md`](docs/README.md).
 
 ---
 

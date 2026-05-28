@@ -163,7 +163,7 @@ Use the following structure:
 - **Impact:** Full credential exposure
 - **Fix Recommendation:** Use environment variables or Vault
 - **Acceptance Criteria:** Secret-scanning passes with 0 issues
-- **Suggested Modification:** `/docs/audits/suggested-modifications/YYYYMMDD-hhmm.md-#F-001`
+- **Suggested Modification:** `/ai-meta/history/audits/suggested-modifications/YYYYMMDD-hhmm.md-#F-001`
 
 ---
 
@@ -207,7 +207,7 @@ Use the following structure:
 # 🧰 Suggested Modifications Protocol
 
 Store proposed fixes at:
-`/docs/audits/suggested-modifications/YYYYMMDD-hhmm-audit-suggested-modifications.md`
+`/ai-meta/history/audits/suggested-modifications/YYYYMMDD-hhmm-audit-suggested-modifications.md`
 
 Example entry:
 
@@ -241,11 +241,11 @@ Forensic Integrity: Verify commits, signatures (GPG / Sigstore)
 
 # ✅ Deliverables
 
-/docs/audit/YYYYMMDD-hhmm-audit-report.md
+/ai-meta/history/audits/YYYYMMDD-hhmm-audit-report.md
 
 /artifacts/audit/YYYYMMDD-hhmm/ (JSON, SARIF, SBOM outputs)
 
-/docs/audits/suggested-modifications/YYYYMMDD-hhmm.md
+/ai-meta/history/audits/suggested-modifications/YYYYMMDD-hhmm.md
 
 Focus strictly on detection and reporting — no direct code modifications.
 Request explicit approval before applying any remediation.

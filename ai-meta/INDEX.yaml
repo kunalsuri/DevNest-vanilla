@@ -1,0 +1,136 @@
+# DevNest-Vanilla — Compact Feature Index (LOAD FIRST)
+#
+# Purpose: progressive disclosure for AI agents. Read THIS file first to route a
+# task to the right feature, then open the deep doc only for that feature.
+# This is the single machine-readable source of truth for: feature registry,
+# routing keywords, and primary file locations.
+#
+# Deep references (open on demand, not up front):
+#   detail: ai-meta/FEATURE_MAP.md     (full per-feature docs: APIs, deps, tech debt)
+#   rules:  ai-meta/AGENT_GUIDE.md + CHANGE_POLICY.md + SDD_CONTROL.md
+#   specs:  ai-meta/specs/<slug>/spec.md   evals: ai-meta/evaluations/<slug>/eval.md
+#
+# safety: LOW | MEDIUM | HIGH | CRITICAL    status: STABLE | PARTIAL
+# Last updated: 2026-05-28
+
+features:
+  - id: F-01
+    name: Authentication (JWT)
+    safety: HIGH
+    status: STABLE
+    keywords: [login, signup, register, logout, password, session, token, jwt, refresh, csrf, 2fa, auth]
+    server: [server/auth/, server/services/auth-service.ts]
+    client: [client/src/features/auth/, client/src/pages/auth-page.tsx]
+    spec: specs/authentication/spec.md
+
+  - id: F-02
+    name: User Profile
+    safety: MEDIUM
+    status: STABLE
+    keywords: [profile, avatar, picture, upload, name, email, phone, department, position]
+    server: [server/profile.ts, server/services/user-service.ts]
+    client: [client/src/features/user-profile/, client/src/pages/profile-page.tsx]
+
+  - id: F-03
+    name: Account Preferences
+    safety: MEDIUM
+    status: STABLE
+    keywords: [settings, preferences, theme, dark mode, notifications, auto-logout, 2fa toggle]
+    server: [server/profile.ts, server/storage.ts]
+    client: [client/src/pages/preferences-page.tsx]
+
+  - id: F-04
+    name: Admin User Management
+    safety: HIGH
+    status: STABLE
+    keywords: [admin, manage users, delete user, change role, user list, audit log, stats]
+    server: [server/api/admin-routes.ts, server/services/user-service.ts]
+    client: [client/src/pages/admin-users-page.tsx]
+
+  - id: F-05
+    name: Feature Flags
+    safety: MEDIUM
+    status: STABLE
+    keywords: [feature flag, toggle, rollout, a/b test, targeting, gradual release]
+    server: [server/api/feature-flag-routes.ts, server/services/feature-flag-service.ts]
+    client: []
+
+  - id: F-06
+    name: Notifications
+    safety: MEDIUM
+    status: PARTIAL  # UI incomplete; API wired
+    keywords: [notification, alert, in-app notification, notification center, unread]
+    server: [server/api/notification-routes.ts, server/services/notification-service.ts]
+    client: []
+
+  - id: F-07
+    name: Subscriptions
+    safety: MEDIUM
+    status: PARTIAL  # business logic incomplete; API scaffolded
+    keywords: [subscription, plan, billing, payment, upgrade, downgrade]
+    server: [server/api/subscription-routes.ts, server/services/subscription-service.ts]
+    client: []
+
+  - id: F-08
+    name: Dashboard
+    safety: LOW
+    status: PARTIAL  # data binding partial
+    keywords: [dashboard, stats, analytics, charts, overview, widgets]
+    server: []
+    client: [client/src/pages/dashboard-page.tsx, client/src/features/dashboard/]
+
+  - id: F-09
+    name: Workspaces
+    safety: LOW
+    status: PARTIAL  # no backend API
+    keywords: [workspace, organization, team, multi-tenant]
+    server: []
+    client: [client/src/pages/workspaces-page.tsx]
+
+  - id: F-10
+    name: Observability (Client)
+    safety: MEDIUM
+    status: STABLE
+    keywords: [client error, browser log, metrics, tracing, sentry, error boundary, performance]
+    server: []
+    client: [client/src/lib/logger.ts, client/src/lib/error-logger.ts, client/src/lib/tracing.ts, client/src/lib/metrics.ts, client/src/lib/sentry.ts, client/src/features/observability/]
+
+  - id: F-11
+    name: Observability (Server)
+    safety: MEDIUM
+    status: STABLE
+    keywords: [server log, winston, sentry, trace, audit log, monitoring, distributed tracing]
+    server: [server/logger.ts, server/monitoring/sentry.ts, server/middleware/trace-middleware.ts, server/services/audit-log-service.ts]
+    client: []
+
+  - id: F-12
+    name: Storage Layer
+    safety: CRITICAL  # changes cascade to all features
+    status: STABLE
+    keywords: [storage, database, json files, file storage, persistence, drizzle, postgresql, migration]
+    server: [server/storage.ts, shared/schema.ts, drizzle.config.ts]
+    client: []
+
+  - id: F-13
+    name: App Shell / Navigation
+    safety: LOW
+    status: STABLE
+    keywords: [sidebar, navigation, layout, app shell, menu, routing, theme]
+    server: []
+    client: [client/src/features/app-shell/, client/src/components/theme-provider.tsx]
+
+  - id: F-14
+    name: Health Checks
+    safety: LOW
+    status: STABLE
+    keywords: [health check, liveness, readiness, docker health, monitoring probe]
+    server: [server/health.ts]
+    client: []
+
+  - id: F-15
+    name: API Documentation (Swagger)
+    safety: LOW
+    status: STABLE
+    keywords: [swagger, openapi, api docs, documentation, /api-docs]
+    server: [server/swagger.ts]
+    client: []
