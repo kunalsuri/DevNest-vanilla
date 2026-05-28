@@ -5,7 +5,7 @@ Prompt 01
 Read `/repo-legacy/server/` fully. Identify all files related to LLM connectivity:
 provider adapters, chat services, streaming, conversation memory, chat route handlers.
 
-For each logical feature found, write a YAML spec to `repo-sota/ai-meta/specs/llm-migration/<feature-name>.yaml`:
+For each logical feature found, write a YAML spec to `repo-sota/agent/specs/llm-migration/<feature-name>.yaml`:
 
 ```yaml
 feature: <name>

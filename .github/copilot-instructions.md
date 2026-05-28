@@ -1,3 +1,17 @@
+# Copilot Instructions — DevNest
+
+## Governance (read first)
+
+This repository uses spec-driven development. **All agent governance is defined in
+[`/AGENTS.md`](../AGENTS.md)** — the prime directive, the specs-vs-features distinction,
+the spec lifecycle, safety levels, and hard boundaries. Read it before generating code.
+
+**Core rule:** no code in `server/`, `client/`, or `shared/` without an `APPROVED` spec at
+`agent/specs/<feature>/spec.md`. Route tasks via `agent/INDEX.yaml`. The style rules below
+apply _within_ that process; they do not override it.
+
+---
+
 # General + React + TypeScript Ruleset
 
 ## Meta Rule

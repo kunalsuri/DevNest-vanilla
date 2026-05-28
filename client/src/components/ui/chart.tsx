@@ -105,7 +105,13 @@ const ChartTooltip = RechartsPrimitive.Tooltip;
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<"div"> & {
+    React.ComponentProps<"div"> &
+    // Recharts v3 reads `payload`/`label` from chart context, so they are absent
+    // from `TooltipProps` and only present on the content-renderer props. Re-add
+    // them (optional, since Recharts injects them at render time).
+    Partial<
+      Pick<RechartsPrimitive.TooltipContentProps, "payload" | "label">
+    > & {
       hideLabel?: boolean;
       hideIndicator?: boolean;
       indicator?: "line" | "dot" | "dashed";
@@ -192,7 +198,7 @@ const ChartTooltipContent = React.forwardRef<
 
             return (
               <div
-                key={item.dataKey}
+                key={index}
                 className={cn(
                   "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground",
                   indicator === "dot" && "items-center",
@@ -261,9 +267,12 @@ const ChartLegend = RechartsPrimitive.Legend;
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+    // `LegendProps` in Recharts v3 omits `payload` (it lives on the content-renderer
+    // props as `LegendPayload[]`) and keeps `verticalAlign`.
+    Pick<RechartsPrimitive.LegendProps, "verticalAlign"> & {
       hideIcon?: boolean;
       nameKey?: string;
+      payload?: ReadonlyArray<RechartsPrimitive.LegendPayload>;
     }
 >(
   (

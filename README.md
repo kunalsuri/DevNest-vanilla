@@ -27,39 +27,47 @@ Requires **Node.js 20+** and **npm 10+**. PostgreSQL is optional — file-based 
 ## 🤖 For Developers & AI Agents
 
 This is a **SaaS template** built with specification-driven development and AI-first documentation.
-All contributor and AI-agent guidance lives in one place: **[`/ai-meta/`](ai-meta/README.md)**.
 
-**Start at [`/ai-meta/README.md`](ai-meta/README.md)** (🚦 Start Here). Agents load
-[`/ai-meta/INDEX.yaml`](ai-meta/INDEX.yaml) first for a compact feature lookup, then open
-[`FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) only for the feature they touch. No code without an
-approved spec under [`/ai-meta/specs/`](ai-meta/SDD_CONTROL.md).
+**Every AI agent starts at [`/AGENTS.md`](AGENTS.md)** — the open-standard constitution
+(read by Claude Code, Copilot, Cursor, Codex, Gemini CLI, and more). It defines the prime
+directive, the **specs-vs-features** distinction, the spec lifecycle, and safety levels.
+Deep reference docs live in **[`/agent/`](agent/README.md)**: load
+[`/agent/INDEX.yaml`](agent/INDEX.yaml) first for a compact feature lookup, then open
+[`FEATURE_MAP.md`](agent/FEATURE_MAP.md) only for the feature you touch.
+
+No code in `server/`, `client/`, or `shared/` without an approved spec under
+[`/agent/specs/`](agent/SDD_CONTROL.md). Scaffold one with `npm run feature:new`.
 
 ---
 
 ## Scripts
 
-| Command                 | Description                     |
-| ----------------------- | ------------------------------- |
-| `npm run dev`           | Start dev server (hot reload)   |
-| `npm run build`         | Production build                |
-| `npm start`             | Run production server           |
-| `npm run check`         | TypeScript type check           |
-| `npm test`              | Run all tests                   |
-| `npm run test:coverage` | Tests with coverage report      |
-| `npm run lint`          | ESLint                          |
-| `npm run format`        | Prettier                        |
-| `npm run db:push`       | Push Drizzle schema to database |
-| `npm run create-admin`  | Create an admin user            |
+| Command                 | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| `npm run dev`           | Start dev server (hot reload)                    |
+| `npm run build`         | Production build                                 |
+| `npm start`             | Run production server                            |
+| `npm run check`         | TypeScript type check                            |
+| `npm test`              | Run all tests                                    |
+| `npm run test:coverage` | Tests with coverage report                       |
+| `npm run lint`          | ESLint                                           |
+| `npm run format`        | Prettier                                         |
+| `npm run db:push`       | Push Drizzle schema to database                  |
+| `npm run create-admin`  | Create an admin user                             |
+| `npm run feature:new`   | Scaffold a new feature (spec + registry + tests) |
+| `npm run feature:check` | Validate spec/feature-map consistency            |
 
 ## Project Structure
 
 ```
-ai-meta/             AI-first documentation & specs (READ THIS FIRST!)
-  FEATURE_MAP.md    Comprehensive feature registry (15 features)
-  AGENT_GUIDE.md    Operating instructions for AI agents
+AGENTS.md           Agent constitution — START HERE (governance, rules, safety)
+agent/              AI-first reference docs (READ AFTER AGENTS.md)
+  INDEX.yaml        Compact feature registry — load first to route a task
+  FEATURE_MAP.md    Deep per-feature docs: APIs, deps, tech debt (15 features)
+  AGENT_GUIDE.md    Operating checklist for AI agents
   architecture/     System topology & module mapping
-  features/         Feature documentation with safety levels
-  specs/            Feature specifications (spec-driven development)
+  features/         Per-feature narrative docs (what each feature IS)
+  specs/            Change specs — work orders, one per change (what WILL CHANGE)
 client/             React frontend (Vite + Tailwind + shadcn/ui)
 server/             Express.js backend
   auth/             JWT auth, CSRF, session management
@@ -119,8 +127,8 @@ docker run --env-file .env -p 5000:5000 devnest
 ## Contributing
 
 This project follows **specification-driven development** — no code without an approved spec.
-The full workflow, safety levels, and boundaries live in [`/ai-meta/`](ai-meta/README.md);
-start there. In short: create a spec under `/ai-meta/specs/`, get it approved, implement,
+The full workflow, safety levels, and boundaries live in [`/agent/`](agent/README.md);
+start there. In short: create a spec under `/agent/specs/`, get it approved, implement,
 keep tests passing (`npm run test:ci`, >70% coverage), then open a PR linking your spec.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for repository mechanics (branching, commit style).
