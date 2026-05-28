@@ -1,10 +1,28 @@
 // @vitest-environment node
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import express from "express";
 import request from "supertest";
+import fs from "node:fs/promises";
 import { setupFeatureFlagAdminRoutes } from "@server/api/feature-flag-routes";
 import { generateTokenPair } from "@server/auth/jwt-utils";
 import { featureFlagService } from "@server/services";
+
+// Isolate the flags file to a temp path so test runs don't persist state into
+// the tracked data/feature-flags.json file.
+const tmpFlagsFile = vi.hoisted(() => {
+  const os = require("node:os") as typeof import("node:os");
+
+  const nodepath = require("node:path") as typeof import("node:path");
+  return nodepath.join(os.tmpdir(), `feature-flags-test-${Date.now()}.json`);
+});
+
+vi.mock("@server/services/feature-flag-service", async () => {
+  const actual = await vi.importActual<
+    typeof import("@server/services/feature-flag-service")
+  >("@server/services/feature-flag-service");
+  const svc = new actual.FeatureFlagService(tmpFlagsFile);
+  return { ...actual, featureFlagService: svc };
+});
 
 // Mock session manager so authenticate middleware passes
 vi.mock("@server/auth/session-manager", () => ({
@@ -57,6 +75,10 @@ function userToken() {
     sessionId: "ff-user-session",
   }).accessToken;
 }
+
+afterAll(async () => {
+  await fs.rm(tmpFlagsFile, { force: true });
+});
 
 describe("Feature Flag Admin Routes", () => {
   let app: express.Express;

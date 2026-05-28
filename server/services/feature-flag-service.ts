@@ -41,16 +41,14 @@ export interface FeatureFlagContext {
   environment: string;
 }
 
-class FeatureFlagService {
+export class FeatureFlagService {
   private readonly flags: Map<string, FeatureFlag> = new Map();
   private readonly mutex = new Mutex();
-  private readonly flagsFile = path.resolve(
-    process.cwd(),
-    "data",
-    "feature-flags.json",
-  );
+  private readonly flagsFile: string;
 
-  constructor() {
+  constructor(flagsFile?: string) {
+    this.flagsFile =
+      flagsFile ?? path.resolve(process.cwd(), "data", "feature-flags.json");
     this.initializeDefaultFlags();
   }
 
