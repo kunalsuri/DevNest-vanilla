@@ -22,6 +22,43 @@ npm run dev             # http://localhost:5000
 
 Requires **Node.js 20+** and **npm 10+**. PostgreSQL is optional — file-based JSON storage works out of the box.
 
+---
+
+## 🤖 For Developers & AI Agents
+
+**New to this codebase?** This is a **SaaS template** built with specification-driven development and AI-first documentation.
+
+### For Human Developers
+
+**Adding new features?**
+1. Read [`/ai-meta/README.md`](ai-meta/README.md) — Start with the 🚦 **Start Here** section
+2. Follow the **Comprehensive Reading Order** (steps 1-4 are mandatory)
+3. Review [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) to understand existing features
+4. Create a spec in `/ai-meta/specs/` before writing code (required)
+5. Follow the specification-driven development workflow
+
+**Quick reference:**
+- **Feature registry:** [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) — All 15 features documented
+- **Architecture:** [`/ai-meta/architecture/OVERVIEW.md`](ai-meta/architecture/OVERVIEW.md) — System topology
+- **Module map:** [`/ai-meta/architecture/MODULE_MAP.md`](ai-meta/architecture/MODULE_MAP.md) — File locations
+- **Change policy:** [`/ai-meta/CHANGE_POLICY.md`](ai-meta/CHANGE_POLICY.md) — What you can modify
+
+### For AI Agents
+
+**📝 Start here:**
+
+> Go to [`/ai-meta/README.md`](ai-meta/README.md) and start with the **🚦 Start Here** section. If this is your first time, follow the **Comprehensive Reading Order** (steps 1-4 are mandatory). Complete the checkpoint at the end to verify you're ready.
+
+**Key guidelines:**
+- ✅ Always consult [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) before making changes
+- ✅ Read [`/ai-meta/AGENT_GUIDE.md`](ai-meta/AGENT_GUIDE.md) for operating instructions
+- ✅ Follow [`/ai-meta/SDD_CONTROL.md`](ai-meta/SDD_CONTROL.md) — No code without approved specs
+- ✅ Check [`/ai-meta/CHANGE_POLICY.md`](ai-meta/CHANGE_POLICY.md) for safety boundaries
+
+**Onboarding time:** ~30 minutes for comprehensive understanding
+
+---
+
 ## Scripts
 
 | Command                 | Description                     |
@@ -40,12 +77,18 @@ Requires **Node.js 20+** and **npm 10+**. PostgreSQL is optional — file-based 
 ## Project Structure
 
 ```
+ai-meta/             AI-first documentation & specs (READ THIS FIRST!)
+  FEATURE_MAP.md    Comprehensive feature registry (15 features)
+  AGENT_GUIDE.md    Operating instructions for AI agents
+  architecture/     System topology & module mapping
+  features/         Feature documentation with safety levels
+  specs/            Feature specifications (spec-driven development)
 client/             React frontend (Vite + Tailwind + shadcn/ui)
 server/             Express.js backend
   auth/             JWT auth, CSRF, session management
   api/              Admin routes
   services/         Business logic (auth-service, user-service)
-  middleware/        Rate limiting, error handling, logging
+  middleware/       Rate limiting, error handling, logging
   monitoring/       Health & observability
 shared/             Shared types & Zod schemas
 tests/              Unit, integration, and e2e tests
@@ -98,7 +141,44 @@ docker run --env-file .env -p 5000:5000 devnest
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Fork, branch, PR.
+We welcome contributions! This project follows **specification-driven development** (SDD).
+
+### Development Workflow
+
+1. **Understand the codebase**
+   - Start with [`/ai-meta/README.md`](ai-meta/README.md)
+   - Review [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) for existing features
+   - Check [`/ai-meta/architecture/OVERVIEW.md`](ai-meta/architecture/OVERVIEW.md) for system design
+
+2. **Plan your changes**
+   - Create a spec in `/ai-meta/specs/<feature-name>/spec.md`
+   - Use `/ai-meta/specs/TEMPLATE.md` as a starting point
+   - Get spec reviewed and approved before coding
+
+3. **Implement**
+   - Follow the spec exactly
+   - Update [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) if adding/modifying features
+   - Write tests (unit + integration)
+   - Ensure all tests pass: `npm test`
+
+4. **Submit**
+   - Fork the repository
+   - Create a feature branch: `git checkout -b feature/your-feature-name`
+   - Commit with clear messages
+   - Open a pull request
+   - Link to your spec in the PR description
+
+### Guidelines
+
+- **No code without specs** — See [`/ai-meta/SDD_CONTROL.md`](ai-meta/SDD_CONTROL.md)
+- **Follow safety levels** — Check [`/ai-meta/FEATURE_MAP.md`](ai-meta/FEATURE_MAP.md) for feature risk levels
+- **Respect boundaries** — Read [`/ai-meta/CHANGE_POLICY.md`](ai-meta/CHANGE_POLICY.md)
+- **Maintain documentation** — Update feature map when adding features
+- **Test coverage** — Maintain >80% coverage
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+---
 
 ## License
 
