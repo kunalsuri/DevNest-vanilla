@@ -204,11 +204,11 @@ export default function AuthPage() {
 
   /** Quick-fill and submit as a regular user account (dev/test helper) */
   const onUserSignIn = async () => {
-    loginForm.setValue("username", "lucas.anderson"); // matches data/users.json seeded user
+    loginForm.setValue("username", "lucas.petit"); // matches data/users.json seeded user
     loginForm.setValue("password", "SncfDemo2026!");
     try {
       await loginMutation.mutateAsync({
-        username: "lucas.anderson",
+        username: "lucas.petit",
         password: "SncfDemo2026!",
       });
       setLocation("/dashboard");
@@ -220,7 +220,7 @@ export default function AuthPage() {
   const onRegister = async (data: RegisterFormData) => {
     try {
       await registerMutation.mutateAsync(data);
-      setLocation("/");
+      setLocation("/dashboard");
     } catch (error) {
       // Error handled by mutation onError
     }
